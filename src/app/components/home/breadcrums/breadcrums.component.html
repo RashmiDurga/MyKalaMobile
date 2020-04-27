@@ -1,0 +1,4 @@
+<p>
+  <span class="bcpointer" (click)="sendBreadCrum(undefined, undefined)">Home</span>
+  <span class="bcpointer" *ngFor="let bc of breadCrums" [id]="bc.id" (click)="sendBreadCrum(bc, 'IsBc')">> {{bc.name}} </span>
+</p>

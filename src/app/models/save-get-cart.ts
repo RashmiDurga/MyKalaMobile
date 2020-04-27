@@ -1,0 +1,31 @@
+export class SaveGetCartItems {
+    constructor(
+        public userId: string,
+        public label: string,
+        public retailerId: string,
+        public retailerName: string,
+        public productId: string,
+        public productName: string,
+        public price: number,
+        public quantity: number,
+        public inStock: number,
+        public productImage: string,
+        public taxCode: string,
+        public productSKUCode: string,
+        public productUPCCode: number,
+        public shippingWidth: number,
+        public shippingHeight: number,
+        public shippingLength: number,
+        public shippingWeight: number,
+        public shipProfileId: string,
+        public productDescription: string,
+        public orderFrom: string,
+        public productHierarchy: string,
+        public productAttributes: string,
+        public retailerIntegrationMethod: string,
+        public leadTimeToShip:number,
+        public cartId?: string,
+        public offerMade?:boolean,
+        public offerCreatedDate?:Date
+    ) { }
+}

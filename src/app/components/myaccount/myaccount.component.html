@@ -1,0 +1,738 @@
+<div class="container scrollContainer p-0">
+  <div class="mob-allpageHeader">
+    <div class="row">
+      <div class="col-3 text-center" (click)="core.goPrevPage()">
+        <i class="fa fa-angle-left" aria-hidden="true"></i>
+        <span>back</span>
+      </div>
+      <div class="col-6 text-center">
+        <h5>My Account</h5>
+      </div>
+      <div class="col-3 text-right"> </div>
+    </div>
+  </div>
+
+  <div class="contentHeight"></div>
+
+  <div class="container">
+    <div class="myaccount row">
+      <div class="col-12 p-0">
+        <div class="myaccount_row">
+          <!--Profile Image : Start-->
+          <div class="row" style="position:relative">
+            <div class="col-4 colorlightGray p-2">profile image</div>
+            <div class="col-6 text-right pl-2 pt-2 pb-2 pr-0">
+              <img id="pro_pic_usr" [src]="myAccountModel.profileInfo.consumerImagePath" class="userIcon" />
+              <input (change)="fileChangeEvent($event)" accept="image/*" type="file" class="form-control uploadImage" />
+            </div>
+            <button class="col-2 text-right p-2 colorred txtasbutton cursor" (click)="enableEdit('profileImage')">
+              <i class="fa fa-caret-right" aria-hidden="true"></i>
+            </button>
+
+            <!--Change Layout-->
+            <div class="changelayoutWrapper" *ngIf="editProfileImage">
+              <!--Header-->
+              <div class="layoutHeading float-left w-100">
+                Profile Image
+                <img src="./assets/images/loader.gif" *ngIf="loader_profileImage" class="float-right" width="20" />
+              </div>
+              <!--Header-->
+
+              <!--Content-->
+              <div class="layoutContent float-left w-100 mt-4 mb-4 text-center">
+                <div class="imagWrapper">
+                  <img [src]="mockProfileImage" />
+                </div>
+              </div>
+              <!--Content-->
+
+              <!--Footer-->
+              <div class="layoutFooter float-left w-100">
+                <button class="txtasbutton btn btn-outer btn_red_right btnDone float-left" style="position: inherit"
+                  (click)="uploadImage()">
+                  upload photo
+                </button>
+                <button class="btn-outer btn_redouter_right btn-outer-margin float-right" style="position: inherit"
+                  (click)="disableEdit('profileImage')">cancel</button>
+                <button class="txtasbutton btn btn-outer btn_red_right btnDone float-right mr-2" style="position: inherit"
+                  (click)="saveChange('profileImage')">done</button>
+              </div>
+              <!--Footer-->
+            </div>
+            <!--Change Layout-->
+          </div>
+          <!--Profile Image : Ends-->
+
+
+
+          <!--Name-->
+          <div class="row">
+            <div class="col-4 colorlightGray p-2">name</div>
+            <div class="col-6 text-right pl-2 pt-2 pb-2 pr-0">{{myAccountModel.profileInfo.firstName}}
+              {{myAccountModel.profileInfo.lastName}}</div>
+            <div class="col-2 text-right p-2"></div>
+          </div>
+          <!--Name-->
+
+
+
+          <!--Email Address-->
+          <div class="row" style="position:relative">
+            <div class="col-2 colorlightGray p-2">email</div>
+            <div class="col-8 text-right pl-2 pt-2 pb-2 pr-0">
+              <span #emailElement *ngIf="!input_Email">{{myAccountModel.userData.emailId}}</span>
+            </div>
+          </div>
+          <!--Email Address-->
+
+
+
+          <!--Password : Starts-->
+          <div class="row" style="position:relative">
+            <div class="col-4 colorlightGray p-2">password</div>
+            <div class="col-6 text-right pl-2 pt-2 pb-2 pr-0">
+              <span #passwordElement *ngIf="!input_Password">{{myAccountModel.userData.password}}</span>
+            </div>
+            <button class="col-2 text-right p-2 colorred txtasbutton cursor" (click)="enableEdit('password')">
+              <i class="fa fa-caret-right" aria-hidden="true"></i>
+            </button>
+
+            <!--Change Layout-->
+            <div class="changelayoutWrapper" *ngIf="editPassword">
+              <!--Header-->
+              <div class="layoutHeading float-left w-100">
+                Password
+                <img src="./assets/images/loader.gif" *ngIf="loader_password" class="float-right" width="20" />
+              </div>
+              <!--Header-->
+
+              <!--Content-->
+              <div class="layoutContent float-left w-100 mt-4 mb-2 text-center">
+                <form [formGroup]="changePasswordForm">
+                  <div class="form-group">
+                    <input readonly formControlName="currentPassword" type="password" class="input-lg form-control">
+                  </div>
+
+                  <div class="form-group">
+                    <input formControlName="newPassword" type="password" class="input-lg form-control" placeholder="New Password">
+                  </div>
+
+                  <div class="form-group">
+                    <input formControlName="confirmPassword" type="password" class="input-lg form-control" placeholder="Confirm Password">
+                  </div>
+
+                  <div class="form-group errorMessages2 text-left">
+                    {{errorValidationMessage}}
+                  </div>
+                </form>
+              </div>
+              <!--Content-->
+
+              <!--Footer-->
+              <div class="layoutFooter float-left w-100">
+                <button class="btn-outer btn_redouter_right btn-outer-margin float-right" style="position: inherit"
+                  (click)="disableEdit('password')">cancel</button>
+                <button class="txtasbutton btn btn-outer btn_red_right btnDone float-right mr-2" style="position: inherit"
+                  (click)="saveChange('password')">done</button>
+              </div>
+              <!--Footer-->
+            </div>
+            <!--Change Layout-->
+          </div>
+          <!--Password : Ends-->
+        </div>
+
+
+
+        <div class="myaccount_row">
+          <!--Gender-->
+          <div class="row">
+            <div class="col-2 p-2 colorlightGray">gender</div>
+            <div class="col-8 pl-2 pt-2 pb-2 pr-0 text-right">{{myAccountModel.profileInfo.gender}}</div>
+            <button class="col-2 text-right p-2 colorred txtasbutton cursor" (click)="enableEdit('gender')">
+              <i class="fa fa-caret-right" aria-hidden="true"></i>
+            </button>
+
+            <!--Change Layout-->
+            <div class="changelayoutWrapper" *ngIf="editGender">
+              <!--Header-->
+              <div class="layoutHeading float-left w-100">
+                Gender
+                <img src="./assets/images/loader.gif" *ngIf="loader_gender" class="float-right" width="20" />
+              </div>
+              <!--Header-->
+
+              <!--Content-->
+              <div class="layoutContent float-left w-100 mt-4 mb-2 text-center">
+                <form [formGroup]="changeGenderForm">
+                  <div class="form-group float-left w-100">
+                    <input type="radio" value="Male" name="gender" formControlName="gender" id="genderMale" [checked]="myAccountModel.profileInfo.gender=='Male'" />
+                    <label class="genderWrapper male" for="genderMale">
+                    </label>
+
+                    <input type="radio" value="Female" name="gender" formControlName="gender" id="genderFemale" [checked]="myAccountModel.profileInfo.gender=='Female'"/>
+                    <label class="genderWrapper female" for="genderFemale">
+                    </label>
+                  </div>
+
+                  <div class="form-group errorMessages2 float-left w-100 text-left">
+                    {{errorValidationMessage}}
+                  </div>
+                </form>
+              </div>
+              <!--Content-->
+
+              <!--Footer-->
+              <div class="layoutFooter float-left w-100">
+                <button class="btn-outer btn_redouter_right btn-outer-margin float-right" style="position: inherit"
+                  (click)="disableEdit('gender')">cancel</button>
+                <button class="txtasbutton btn btn-outer btn_red_right btnDone float-right mr-2" style="position: inherit"
+                  (click)="saveChange('gender')">done</button>
+              </div>
+              <!--Footer-->
+            </div>
+            <!--Change Layout-->
+          </div>
+          <!--Gender-->
+
+
+
+          <!--Location : Starts-->
+          <div class="row" style="position:relative">
+            <div class="col-2 p-2 colorlightGray">location</div>
+            <div class="col-8 pl-2 pt-2 pb-2 pr-0 text-right">
+              <span #locationElement *ngIf="!input_Location && profileAddress != undefined && profileAddress != null">
+                <!-- <span *ngFor="let address of myAccountModel.profileInfo.address"> -->
+                  <span >
+                    {{profileAddress.city}}, {{profileAddress.state}}, {{profileAddress.zipcode}}
+                  </span>
+                <!-- </span> -->
+              </span>
+            </div>
+
+            <button class="col-2 text-right p-2 colorred txtasbutton cursor" (click)="enableEdit('location')">
+              <i class="fa fa-caret-right" aria-hidden="true"></i>
+            </button>
+
+            <!--Change Layout-->
+            <div class="changelayoutWrapper" *ngIf="editLocation">
+              <!--Header-->
+              <div class="layoutHeading float-left w-100">
+                Location
+                <img src="./assets/images/loader.gif" *ngIf="loader_profileAddress" class="float-right" width="20" />
+              </div>
+              <!--Header-->
+
+              <!--Content-->
+              <div class="layoutContent float-left w-100 mt-4 mb-2 text-center">
+                <form [formGroup]="changeLocationForm">
+                  <div class="form-group">
+                    <input (keyup)="_keuyp($event)" (keypress)="core.allowOnlyNumbers($event)" [(ngModel)]="append_location" formControlName="location"
+                      type="number" class="input-lg form-control" placeholder="Zip Code" />
+                    <p *ngIf="input_getLocation" class="clearfix colorlightGray pt-0 mt-3 mb-0 pb-0 text-left">{{fetchGeoCode}}</p>
+                  </div>
+
+                  <div class="form-group errorMessages2 text-left">
+                    {{errorValidationMessage}}
+                  </div>
+                </form>
+              </div>
+              <!--Content-->
+
+              <!--Footer-->
+              <div class="layoutFooter float-left w-100">
+                <button class="btn-outer btn_redouter_right btn-outer-margin float-right" style="position: inherit"
+                  (click)="disableEdit('location')">cancel</button>
+                <button class="txtasbutton btn btn-outer btn_red_right btnDone float-right mr-2" style="position: inherit"
+                  (click)="saveChange('location')">done</button>
+              </div>
+              <!--Footer-->
+            </div>
+            <!--Change Layout-->
+          </div>
+          <!--Location : Ends-->
+
+
+
+          <!--Date of Birth-->
+          <div class="row">
+            <div class="col-4 p-2 colorlightGray">
+              Date of Birth:
+            </div>
+
+            <div class="col-6 pl-2 pt-2 pb-2 pr-0 text-right">
+              <span *ngIf="myAccountModel.profileInfo.dob;else emptyDate">
+                {{myAccountModel.profileInfo.dob | date:"MM/dd/yyyy" }}
+              </span>
+              <ng-template #emptyDate></ng-template>
+            </div>
+
+            <div class="col-2 p-0 text-right">
+              <button class="text-right p-2 colorred txtasbutton cursor" (click)="enableEdit('dob')">
+                <i class="fa fa-caret-right" aria-hidden="true"></i>
+              </button>
+            </div>
+
+            <!--Change Layout-->
+            <div class="changelayoutWrapper" *ngIf="editDateOfBirth">
+              <!--Header-->
+              <div class="layoutHeading float-left w-100">
+                Date of Birth
+                <img src="./assets/images/loader.gif" *ngIf="loader_DOB" class="float-right" width="20" />
+              </div>
+              <!--Header-->
+
+              <!--Content-->
+              <div class="layoutContent float-left w-100 mt-4 mb-2 text-center">
+                <div class="col-sm-5 p-0 text-right matDOB mb-3 position-relative">
+                  <mat-form-field class="example-full-width w-100 form-group" floatLabel="never">
+                    <input readonly maxlength="10" (paste)="$event.preventDefault()" [value]="myAccountModel.profileInfo.dob"
+                      (dateChange)="addEvent('change', $event)" (keypress)="core.allowOnlyNumbers($event)" class="input-lg form-control datePickerInput"
+                      (mousedown)="picker.open()" matInput [min]="minDate" [max]="maxDate" [matDatepicker]="picker">
+                    <mat-placeholder class="placeholder">mm/dd/yyyy</mat-placeholder>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </div>
+              <!--Content-->
+
+              <!--Footer-->
+              <div class="layoutFooter float-left w-100">
+                <button class="btn-outer btn_redouter_right btn-outer-margin float-right" style="position: inherit"
+                  (click)="disableEdit('dob')">cancel</button>
+                <button class="txtasbutton btn btn-outer btn_red_right btnDone float-right mr-2" style="position: inherit"
+                  (click)="saveChange('dob')">done</button>
+              </div>
+              <!--Footer-->
+            </div>
+            <!--Change Layout-->
+          </div>
+          <!--Date of Birth-->
+
+
+
+          <!--Style Preferences-->
+          <div class="row border-bottom-0 pb-2" style="position:relative">
+            <div class="col-4 p-2 colorlightGray">
+              <div class="colorlightGray">style preferences</div>
+            </div>
+            <div class="col-6  pl-2 pt-2 pb-2 pr-0">&nbsp;</div>
+            <button class="col-2 text-right p-2 colorred txtasbutton cursor changeInterestBtn" (click)="enableEdit('consumerInterest')">
+              <i class="fa fa-caret-right" aria-hidden="true"></i>
+            </button>
+
+            <!--Change Layout-->
+            <div class="changelayoutWrapper" *ngIf="editConsumerInterest">
+              <!--Header-->
+              <div class="layoutHeading float-left w-100">
+                Style Preferences
+                <img src="./assets/images/loader.gif" *ngIf="loader_Interest" class="float-right" width="20" />
+              </div>
+              <!--Header-->
+
+              <!--Content-->
+              <div class="layoutContent float-left w-100 mt-4 mb-2">
+                <div class="interestImagesMyAc" *ngFor="let interest of myAccountModel.profileInfo.consumerInterests">
+                  <img (click)="selectInterest($event, interest)" style="cursor: pointer" src="{{interest.consumerInterestImagePath}}"
+                    title="{{interest.consumerInterestImageName}}" id="{{interest.id}}" />
+                  <img class="aboluteImg" src="./assets/images/select.png" *ngIf="interest.selectImg" />
+                  <span class="interestLabels">{{interest.consumerInterestImageName}}</span>
+                </div>
+              </div>
+              <!--Content-->
+
+              <!--Footer-->
+              <div class="layoutFooter float-left w-100">
+                <button class="btn-outer btn_redouter_right btn-outer-margin float-right" style="position: inherit"
+                  (click)="disableEdit('consumerInterest')">cancel</button>
+                <button class="txtasbutton btn btn-outer btn_red_right btnDone float-right mr-2" style="position: inherit"
+                  (click)="saveChange('consumerInterest')">done</button>
+              </div>
+              <!--Footer-->
+            </div>
+            <!--Change Layout-->
+
+            <div class="float-left w-100 ml-2">
+              <div class="interestImagesMyAcSelected d-inline-block" *ngFor="let interest of myAccountModel.profileInfo.consumerInterests">
+                <img (click)="selectInterest($event, interest)" style="cursor: pointer" src="{{interest.consumerInterestImagePath}}"
+                  title="{{interest.consumerInterestImageName}}" id="{{interest.id}}" />
+              </div>
+            </div>
+          </div>
+          <!--Style Preferences-->
+        </div>
+      </div>
+
+      <div class="col-12 p-0">
+        <div class="myaccount_row">
+          <div class="row border-bottom-0 pb-0">
+            <div class="col-6 colorlightGray py-2">
+              shipping addresses
+            </div>
+            <div class="col-6 pr-0">
+              <button (click)="ShowAllAddress()" class="col-sm-3 text-right float-right colorred txtasbutton cursor">
+                <i class="fa fa-caret-down" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+          <!--Shipping Address-->
+          <div class="row">
+            <div class="col-4 p-0">
+              <button (click)="enableEdit('addShipping')" class="txtasbutton colorred cursor" style="padding-top: 0 !important">add</button>
+            </div>
+
+            <div class="col-8 p-0">
+              <!--Change Layout-->
+              <div class="changelayoutWrapper" *ngIf="addShipping">
+                <!--Header-->
+                <div class="layoutHeading float-left w-100">
+                  Add Shipping Address
+                  <img src="./assets/images/loader.gif" *ngIf="loader_shippingAddress" class="float-right" width="20" />
+                </div>
+                <!--Header-->
+
+                <!--Content-->
+                <div class="layoutContent float-left w-100 mt-4 mb-2 text-center">
+                  <form [formGroup]="addShippingAddressForm">
+                    <div class="form-group">
+                      <input formControlName="addressLineOne" type="text" class="input-lg form-control" placeholder="Address Line 1" />
+                    </div>
+
+                    <div class="form-group">
+                      <input formControlName="addressLineTwo" type="text" class="input-lg form-control" placeholder="Address line 2" />
+                    </div>
+
+                    <div class="form-group">
+                      <input formControlName="addCity" type="text" class="input-lg form-control" placeholder="City" />
+                    </div>
+
+                    <div class="form-group">
+                      <select formControlName="addStates" type="text" class="input-lg form-control" placeholder="State">
+                        <option value selected disabled hidden>State</option>
+                        <option *ngFor="let state of getStates" value="{{state}}">{{state}}</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <input (keypress)="core.allowOnlyNumbers($event)" formControlName="addZipcode"
+                        type="number" class="input-lg form-control" placeholder="Zip Code" maxlength="5" />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-check-label d-inline-block">
+                          <input type="checkbox" formControlName="appendAdddefaultShipping" class="form-check-input"> Set as default address
+                      </label>  
+                    </div>
+                    <div class="form-group errorMessages2 text-left mb-0">
+                      {{errorValidationMessage}}
+                    </div>
+                  </form>
+                </div>
+                <!--Content-->
+
+                <!--Footer-->
+                <div class="layoutFooter float-left w-100">
+                  <button class="btn-outer btn_redouter_right btn-outer-margin float-right" style="position: inherit"
+                    (click)="disableEdit('addShipping')">cancel</button>
+                  <button class="txtasbutton btn btn-outer btn_red_right btnDone float-right mr-2" style="position: inherit"
+                    (click)="saveChange('addShipping')">done</button>
+                </div>
+                <!--Footer-->
+              </div>
+              <!--Change Layout-->
+
+              <!--Edit Address-->
+              <div *ngIf="!addShippingAddress" class="col-sm-12 row text-right">
+                <div class="w-100" *ngFor="let shippingAddress of myAccountModel.profileInfo.address; let i = index">
+                  <div class="row" *ngIf="shippingAddress.addressType == 'shippingAddress' && i <= addresscount">
+                    <div class="col-12 text-right p-0 pb-2" style="padding-top: 0 !important" [ngClass]="{'default_shipping_red': (shippingAddress != undefined && shippingAddress.defaultAddress)}">
+                      <span *ngIf="!shippingAddress.input_shippingAddress">{{shippingAddress.addressLine1}}, </span>
+                      <span *ngIf="!shippingAddress.input_shippingAddress">{{shippingAddress.addressLine2}}
+                        <span *ngIf="shippingAddress.addressLine2 != ''">,</span>
+                      </span>
+                      <span *ngIf="!shippingAddress.input_shippingAddress">{{shippingAddress.city}},</span>
+                      <span *ngIf="!shippingAddress.input_shippingAddress">{{shippingAddress.state}},</span>
+                      <span *ngIf="!shippingAddress.input_shippingAddress">{{shippingAddress.zipcode}}</span>
+
+                      <br />
+
+                      <div class="p-0 pull-right addDel_Icon colorred cursor" *ngIf="!shippingAddress.input_shippingAddress">
+                        <i class="fa fa-trash" aria-hidden="true" title="delete address" (click)="confirmDeleteAddress(shippingAddress)"></i>
+                        <button *ngIf="!shippingAddress.input_shippingAddress" class="text-right  colorred txtasbutton cursor"
+                          style="padding-top: 0 !important; cursor: pointer" (click)="enableEdit('editShipping', shippingAddress)">
+                          <i class="fa fa-caret-right" aria-hidden="true"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!--Change Layout-->
+                <div class="changelayoutWrapper" *ngIf="editShipping">
+                  <!--Header-->
+                  <div class="layoutHeading float-left w-100 text-left">
+                    Edit Shipping Address
+                    <img src="./assets/images/loader.gif" *ngIf="loader_shippingAddress" class="float-right" width="20" />
+                  </div>
+                  <!--Header-->
+
+                  <!--Content-->
+                  <div class="layoutContent float-left w-100 mt-4 mb-2 text-center">
+                    <form [formGroup]="editShippingAddressForm">
+                      <div class="form-group">
+                        <input formControlName="editaddressLineOne" type="text" class="input-lg form-control"
+                          placeholder="Address Line 1" />
+                      </div>
+
+                      <div class="form-group">
+                        <input formControlName="editaddressLineTwo" type="text" class="input-lg form-control"
+                          placeholder="Address line 2" />
+                      </div>
+
+                      <div class="form-group">
+                        <input formControlName="editCity" type="text" class="input-lg form-control" placeholder="City" />
+                      </div>
+
+                      <div class="form-group">
+                        <select formControlName="editStates" type="text" class="input-lg form-control" placeholder="State">
+                          <option value selected disabled hidden>State</option>
+                          <option *ngFor="let state of getStates" value="{{state}}" selected="shippingAddress.append_editShippingState == state">{{state}}</option>
+                        </select>
+                      </div>
+
+                      <div class="form-group">
+                        <input (keypress)="core.allowOnlyNumbers($event)" formControlName="editZipcode"
+                          type="number" class="input-lg form-control" placeholder="Zip Code" maxlength="5" />
+                      </div>
+                      <div class="form-group">
+                        <label class="form-check-label d-inline-block">
+                          <input type="checkbox" formControlName="defaultAddress" class="form-check-input"> Set as default address
+                        </label>
+                      </div>
+                      <div class="form-group errorMessages2 text-left mb-0">
+                        {{errorValidationMessage}}
+                      </div>
+                    </form>
+                  </div>
+                  <!--Content-->
+
+                  <!--Footer-->
+                  <div class="layoutFooter float-left w-100">
+                    <button class="btn-outer btn_redouter_right btn-outer-margin float-right" style="position: inherit"
+                      (click)="disableEdit('editShipping')">cancel</button>
+                    <button class="txtasbutton btn btn-outer btn_red_right btnDone float-right mr-2" style="position: inherit"
+                      (click)="saveChange('editShipping')">done</button>
+                  </div>
+                  <!--Footer-->
+                </div>
+                <!--Change Layout-->
+              </div>
+              <!--Edit Address-->
+            </div>
+          </div>
+          <!--Shipping Address-->
+
+          <!--Add New Cards-->
+          <div class="row border-bottom-0 pb-0">
+            <div class="col-12 py-2 colorlightGray">
+              payment information
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 p-0 mb-2">
+              <button class="p-1 colorred txtasbutton cursor" (click)="enableEdit('addCard')">add</button>
+            </div>
+
+            <div class="col-12 py-2">
+              <div class="categ_outline_gray mr-2 mb-2" style="cursor:pointer" [ngClass]="{'default_card_outline_red': (card.defaultCard)}" *ngFor="let card of getCardsDetails">
+                {{card.cardType}} {{card.last4Digit}}
+                <span (click)="confirmDeleteCard(card)" class="ml-2">
+                  <i title="delete card" class="fa fa-times" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+
+            <!--Change Layout-->
+            <div class="changelayoutWrapper" *ngIf="editCard">
+              <!--Header-->
+              <div class="layoutHeading float-left w-100">
+                Payment Information
+                <img src="./assets/images/loader.gif" *ngIf="loader_addCard" class="float-right" width="20" />
+              </div>
+              <!--Header-->
+
+              <!--Content-->
+              <div class="layoutContent float-left w-100 mt-4 mb-2 text-center">
+                <form [formGroup]="addPaymentCard" (ngSubmit)="onSubmit(addPaymentCard)" class="w-100 pl-0 pr-0 pb-0 pt-0 m-0">
+                  <div class="pl-0 pr-0">
+                    <div class="form-group position-relative">
+                      <span class="brand" style="top: 10px; right: 18px; position: absolute">
+                        <i class="pf pf-credit-card" id="brand-icon" style="font-size: 15px"></i>
+                      </span>
+
+                      <input id="cc-number" (keyup)="getCardType($event)" formControlName="creditCard" type="tel" class="input-lg form-control cc-number"
+                      autocomplete="off"  placeholder="1234 1234 1234 1234" maxlength="19" ccNumber>
+                    </div>
+
+                    <div class="form-group">
+                      <input id="cc-exp" formControlName="expirationDate" type="tel" class="input-lg form-control cc-exp"
+                      autocomplete="off"  placeholder="MM / YY" maxlength="7" ccExp>
+                    </div>
+
+                    <div class="form-group">
+                      <input id="cc-cvc" formControlName="cvc" type="tel" class="input-lg form-control cc-cvc"
+                        autocomplete="off" placeholder="CVV" maxlength="3" ccCVC>
+                    </div>
+
+                    <div class="form-group">
+                      <input id="cc-czipcode"  formControlName="cardZipcode" type="tel" class="input-lg form-control"
+                        autocomplete="off" maxlength="5" placeholder="Zip Code">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-check-label d-inline-block">
+                            <input type="checkbox" class="form-check-input" formControlName = "defaultPayment"> Set as default payment option
+                          </label>
+                    </div>
+                    <div class="form-group errorMessages2 text-left">
+                      {{error}}
+                    </div>
+                  </div>
+
+                  <div class="col-12 p-0 text-right mb-3 mt-3">
+                    <button type="submit" class="btn btn_red_right btn-font btn-size">done</button>
+                    <button type="button" (click)="disableEdit('addCard')" class="btn-outer btn_redouter_right btn-outer-margin btn_paymentadjest"
+                      style="top:1px">cancel</button>
+                  </div>
+                </form>
+              </div>
+              <!--Content-->
+            </div>
+            <!--Change Layout-->
+          </div>
+          <!--Add New Cards-->
+        </div>
+
+        <div class="myaccount_row" *ngIf="getUserInfo!=undefined">
+          <div class="colorlightGray pt-2">settings and privacy</div>
+          <div class="row pl-2">
+            <div class="col-8 p-2 text-left colorred" position-relative>email notifications
+              <i class="fa fa-question-circle helpIcon" aria-hidden="true" (click)="emailNotify()"></i>
+              <br />
+              <span *ngIf="IsEmailNotify" class="tooltipText">Turning off email notifications means you won’t receive
+                order confirmations, shipping notifications, product
+                review alerts, or other news from Kala. You will still receive emails for password resets, verifying
+                your
+                account info, and other critical alerts.</span>
+            </div>
+            <div class="col-4 p-2 text-right">
+              <span class="switch primary-switch float-right">
+                <label>
+                  <input type="checkbox" [checked]="!getUserInfo.emailNotification" (change)="turnOnOffNotifications($event, 'email')">
+                  <span class="lever"></span>
+                </label>
+              </span>
+            </div>
+          </div>
+          <div class="row pl-2">
+            <div class="col-8 p-2 text-left colorred" position-relative>alerts notifications
+              <i class="fa fa-question-circle helpIcon" aria-hidden="true" (click)="alertNotify()"></i>
+              <br />
+              <span *ngIf="IsAlertNotify" class="tooltipText">Turning off alert notifications means you won’t receive
+                news and alert notifications in your account portal
+                or on your mobile device for new orders, offer requests, shipping notifications, product reviews, or
+                other
+                news from Kala.</span>
+            </div>
+            <div class="col-4 p-2 text-right">
+              <span class="switch primary-switch float-right">
+                <label>
+                  <input type="checkbox" [checked]="!getUserInfo.alertNotification" (change)="turnOnOffNotifications($event, 'alert')">
+                  <span class="lever"></span>
+                </label>
+              </span>
+            </div>
+          </div>
+          <div class="row pl-2">
+            <div class="col-6 p-2 text-left colorred" (click)="confirmCloseAccount()" style="cursor: pointer">close
+              your account</div>
+            <div class="col-6 p-2 text-right"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Close Account-->
+<ng-template #closeAccountModal let-c="close" let-d="dismiss">
+  <div class="modal-body">
+    <p>We're sorry to see you leave. Are you sure that you want to close your account?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outer btn_red_right" (click)="c('Close click'); closeAccount()">Yes</button>
+    <button type="button" class="btn btn-outer btn_redouter_right" (click)="c('Close click')">No</button>
+  </div>
+</ng-template>
+<!--Close Account-->
+
+<!--Delete Card-->
+<ng-template #deleteCardModal let-c="close" let-d="dismiss">
+  <div class="modal-body">
+    <p>Are you sure you want to delete the card?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outer btn_red_right" (click)="c('Close click'); deleteCard()">Yes</button>
+    <button type="button" class="btn btn-outer btn_redouter_right" (click)="c('Close click')">No</button>
+  </div>
+</ng-template>
+<!--Close Account-->
+<!--Delete address-->
+<ng-template #deleteAddressModal let-c="close" let-d="dismiss">
+  <div class="modal-body">
+    <div class="row">
+      <div class="p-2">Are you sure you want to delete the address?</div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outer btn_red_right mt-0" (click)="c('Close click'); deleteAddress()">Yes</button>
+    <button type="button" class="btn btn-outer btn_redouter_right" (click)="c('Close click')">No</button>
+  </div>
+</ng-template>
+<!--Delete address-->
+
+
+<!-- camera -->
+<ng-template #camModal let-c="close" let-d="dismiss">
+  <div class="p-2 text-left colorred">Image Upload
+    <span class="cross-close" (click)="c('Close click')">x</span>
+  </div>
+  <div class="text-center col-12 my-3">
+    <button type="button" class="btn btn-outer btn_red_right mt-0" (click)="fromCam()">Camera</button>
+    <button type="button" class="btn btn-outer btn_red_right mt-0" (click)="fromGallery()">Gallery</button>
+  </div>
+</ng-template>
+<!-- camera -->
+
+<!--File Size Exceeded-->
+<ng-template #fileSizeTooBig let-c="close" let-d="dismiss">
+    <div class="modal-body">
+      <p>File size exceeded the limit of 2 MB.</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outer btn_red_right" (click)="c('Close click')">Close</button>
+    </div>
+  </ng-template>
+  <!--File Size Exceeded-->
+
+ 
+<!--Invalid address-->
+<ng-template #invalidAddressModel let-c="close" let-d="dismiss">
+  <div class="modal-body">
+    <p>{{invalidAddress}}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outer btn_red_right" (click)="c('Close click')">Close</button>
+  </div>
+</ng-template>
+<!--Invalid address-->
+

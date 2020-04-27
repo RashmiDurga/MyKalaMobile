@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "/Volumes/Untitled/Kala/myKalaMobile/myKalaMobile/platforms/android/app/build/intermediates/incremental/mergeReleaseResources/merged.dir/values-zh/values-zh.xml",
+            "map": [
+                {
+                    "source": "/Users/accion/.gradle/caches/transforms-1/files-1.1/stripe-android-4.1.2.aar/b39a0dc9c28effba053c92c1fd94c8b5/res/values-zh/values-zh.xml",
+                    "from": {
+                        "startLines": "2,3,4",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,110,167",
+                        "endColumns": "54,56,50",
+                        "endOffsets": "105,162,213"
+                    }
+                }
+            ]
+        }
+    ]
+}

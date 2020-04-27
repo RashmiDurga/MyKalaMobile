@@ -1,0 +1,463 @@
+<div *ngIf="!core.showMyorderDetail && !core.whereIsItFromCUI" class="container scrollContainer p-0 myordercontainer">
+  <div class="mob-allpageHeader">
+    <div class="row">
+      <div class="col-3 text-center" (click)="core.goPrevPage()">
+        <i class="fa fa-angle-left" aria-hidden="true"></i>
+        <span>back</span>
+      </div>
+      <div class="col-6 text-center">
+        <h5 *ngIf="!IsSearchText">My Orders</h5>
+        <div *ngIf="IsSearchText">
+          <input type="text" name="focus" required class="search-box topSearch w-100 txt-chat" [(ngModel)]="searchText"
+            (keyup)="searchOrderItems()" placeholder="Enter search term" />
+          <button class="close-icon" type="reset" (click)="closeSearchText()"></button>
+        </div>
+      </div>
+      <div class="col-3 text-right">
+        <!-- <i class="fa fa-search" *ngIf="!IsSearchText" aria-hidden="true" (click)="searchHideShow()"></i>
+        <i class="fa fa-search" *ngIf="IsSearchText" aria-hidden="true" (click)="searchOrderItems()"></i> -->
+      </div>
+    </div>
+  </div>
+  <div class="container p-0">
+    <div class="contentHeight">&nbsp;</div>
+    <div class="myCart">
+      <!--Orders Available-->
+      <img src="./assets/images/loader.gif" style="margin:0 49%" class="mt-3" *ngIf="loader" />
+
+      <div *ngIf="!loader">
+        <div *ngIf="myorderModal.length > 0;else noOrders">
+          <div *ngFor="let modal of myorderModal">
+            <div class="myCart-list" *ngFor="let order of modal.orderItems; let rowIndex=index">
+              <div class="row">
+                <div class="col-11">
+                  <h5 class="subtitle clearfix mb-4" style="line-height: 22px">
+                    <span *ngIf="order.productItemStatus == 'ORDER DELIVERED';else defaultOrders">
+                      Delivered on:
+                      <br />
+                      <strong style="font-family: 'open_sanssemibold'">{{getDeliveryDate(order.deliveryMethod,
+                        order.orderDeliveredDate,order.leadTimeToShip)}}</strong>
+                    </span>
+                    <ng-template #defaultOrders>
+                      Estimated delivery on:
+                      <br />
+                      <strong style="font-family: 'open_sanssemibold'">{{getDeliveryDate(order.deliveryMethod,
+                        modal.purchasedDate,order.leadTimeToShip)}}</strong>
+                    </ng-template>
+                  </h5>
+                </div>
+              </div>
+              <div class="row orderDetails">
+                <div class="col-4 pr-2 orderImageContainer">
+                  <span *ngIf="order.productImage;else noImage">
+                    <img [src]="order.productImage" (click)="core.getProductDetails(order.productId)" class="img-fluid cursor" />
+                  </span>
+                  <ng-template #noImage>
+                    <span class="noImageLogo">
+                      <i class="fa fa-picture-o" aria-hidden="true"></i>
+                      <br /> Image Not Available
+                    </span>
+                  </ng-template>
+                </div>
+                <div class="col-8">
+                  <strong (click)="core.getProductDetails(order.productId)" class="cursor mb-2 d-inline-block">{{order.productName}}</strong>
+                  <div class="row mb-2">
+                    <div class="col-5">
+                      <div class="colorlightGray">Order Id:</div>
+                    </div>
+                    <div class="col-7 text-right wordWrap">
+                      {{modal.orderId}}
+                    </div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-5">
+                      <div class="colorlightGray">Retailer:</div>
+                    </div>
+                    <div class="col-7 text-right">
+                      {{order.retailerName}}
+                    </div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-5">
+                      <div class="colorlightGray">Quantity:</div>
+                    </div>
+                    
+                    <div class="col-7 text-right" *ngIf="order.totalQuantityCanceled <= 0 || order.totalQuantityCanceled == order.productQuantity;else otherQuantity">
+                      {{order.productQuantity}}
+                    </div>
+                    <ng-template #otherQuantity>
+                         
+                      <div class="col-7 text-right" style="word-spacing: 5px;" >
+                          <span >{{order.productQuantity - order.totalQuantityCanceled }}</span>
+                          <span style="text-decoration: line-through;font-size: 11px !important; color: #c3c3c3; margin-left: 5px ">{{order.productQuantity}}</span>
+                      </div>
+        
+                    </ng-template>
+
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-5">
+                      <div class="colorlightGray">Price:</div>
+                    </div>
+                    <div class="col-7 text-right">
+                      {{order.productPrice | currency}}
+                    </div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-4">
+                      <p class="colorlightGray mb-0">Status:</p>
+                    </div>
+                    <div class="col-8 text-right" *ngIf="order.productItemStatus != undefined && order.totalQuantityCanceled > 0 && order.refundedStatus!=true && order.totalQuantityCanceled != order.productQuantity && order.shipmentClass != 'Freight';else RefundedStatus" >ORDER UPDATED
+                    </div>
+                    <ng-template #RefundedStatus>
+                      <div class="col-8 text-right" *ngIf="order.refundedStatus==true && order.shipmentClass !='Freight' ;else otherStatus">
+                        ORDER REFUNDED
+                      </div>
+                    </ng-template>
+                    <ng-template #otherStatus>
+                      <div class="col-8 text-right" *ngIf="order.shipmentClass!='Freight'; else freightStatus">
+                        {{order.productItemStatus}}
+                      </div>
+                    </ng-template>
+                    <ng-template #freightStatus>
+                        <div class="col-8 text-right">
+                            SHIPPED FREIGHT
+                        </div>
+                      </ng-template>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <i class="orderbtn_toggle fa fa-caret-down float-right  colorred pr-3" id="dropdownBasic1" aria-hidden="true"
+                  (click)="ToggleOrderItem(order)"></i>
+              </div>
+              <div *ngIf="order.showToggleButtons" class="col-12 p-0 mt-2 orderButtons">
+                <div class="w-100">
+                  <div>
+                    <div class="row">
+                      <div class="col-6 mb-3 pr-2">
+                        <button class="dropdown-item btn btn-outer btn_redouter_right" [disabled]="order.contactSupport"
+                          (click)="contactKalaCUI(modal, order)">contact kala</button>
+                      </div>
+                      <div class="col-6 mb-2 pl-1">
+                        <button class="dropdown-item btn btn-outer btn_redouter_right" [disabled]="order.trackOrder"
+                          (click)="trackOrder(modal, order)">where
+                          is it?</button>
+                        <!--[disabled]="order.trackOrder"-->
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-6 mb-3 pr-2">
+                        <button class="dropdown-item btn btn-outer btn_redouter_right" [disabled]="order.leaveReview"
+                          (click)="leaveReview(modal, order)">leave review</button>
+                      </div>
+                      <div class="col-6 pl-1">
+                        <button class="dropdown-item btn btn-outer btn_redouter_right" [disabled]="order.cancelOrder"
+                          (click)="cancelOrder(modal, order)">cancel order</button>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-12">
+                        <button class="dropdown-item btn btn-outer btn_red_right" (click)="ViewOrderDetails(modal, order)">view
+                          details</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--Orders Available-->
+
+        <!--No Orders Available-->
+        <ng-template #noOrders>
+          <div class="myCart-list text-center mt-2 colorred" *ngIf="!noOrdersFoundOnSearch;else noOrdersOnSearch">
+            <u routerLink="/home">You have not placed any orders yet. Click here to continue shopping.</u>
+          </div>
+        </ng-template>
+        <!--No Orders Available-->
+
+        <!--No Orders Available-->
+        <ng-template #noOrdersOnSearch>
+          <div *ngIf="!loader" class="myCart-list text-center mt-2 colorred">
+            <u>No orders found.</u>
+          </div>
+        </ng-template>
+        <!--No Orders Available-->
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="core.showMyorderDetail" class="container scrollContainer p-0 orderProductDetails backgroundWhite">
+  <div class="mob-allpageHeader">
+    <div class="row">
+      <div class="col-2 text-center">
+        <span class="btnClose closeIcon" (click)="closeViewOrderDetails()" style="cursor: pointer" tabindex="0">X</span>
+      </div>
+      <div class="col-9 text-center">
+        <div (click)="core.getProductDetails(viewOrderDetail.productId)" class="cursor ellipsis">{{viewOrderDetail.productName}}</div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="orderDetails">
+      <div class="contentHeight">&nbsp;</div>
+      <h5 class="subtitle clearfix p-2" style="line-height: 22px">
+        <span *ngIf="viewOrderDetail.productItemStatus == 'ORDER DELIVERED';else defaultOrders">
+          Delivered on
+          <br />
+          <strong style="font-family: 'open_sanssemibold'">{{getDeliveryDate(viewOrderDetail.deliveryMethod,
+            viewOrderDetail.orderDeliveredDate,viewOrderDetail.leadTimeToShip)}}</strong>
+        </span>
+        <ng-template #defaultOrders>
+          Estimated delivery on:
+          <br />
+          <strong style="font-family: 'open_sanssemibold'">{{getDeliveryDate(viewOrderDetail.deliveryMethod,
+            viewOrderModalDetail.purchasedDate,viewOrderDetail.leadTimeToShip)}}</strong>
+        </ng-template>
+      </h5>
+      <div class="row pt-0 pl-2 pr-2">
+        <div class="col-4 pr-0 orderImageContainer">
+          <img [src]="viewOrderDetail.productImage" (click)="core.getProductDetails(viewOrderDetail.productId)" class="img-fluid cursor" />
+        </div>
+        <div class="col-8">
+          <strong (click)="core.getProductDetails(viewOrderDetail.productId)" class="cursor d-inline-block mb-2">{{viewOrderDetail.productName}}</strong>
+          <div class="row mb-2">
+            <div class="col-5">
+              <div class="colorlightGray">Order Id:</div>
+            </div>
+            <div class="col-7 wordWrap">
+              {{viewOrderModalDetail.orderId}}
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-5">
+              <div class="colorlightGray">Retailer:</div>
+            </div>
+            <div class="col-7">
+              {{viewOrderDetail.retailerName}}
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-5">
+              <div class="colorlightGray">Quantity:</div>
+            </div>
+            <div class="col-7" *ngIf="viewOrderDetail.totalQuantityCanceled <= 0 || viewOrderDetail.totalQuantityCanceled == viewOrderDetail.productQuantity;else otherQuantity">
+              {{viewOrderDetail.productQuantity}}
+            </div>
+            <ng-template #otherQuantity>
+                 
+              <div class="col-7" style="word-spacing: 5px;" >
+                  <span >{{viewOrderDetail.productQuantity - viewOrderDetail.totalQuantityCanceled }}</span>
+                  <span *ngIf="viewOrderDetail.productQuantity != viewOrderDetail.productQuantity - viewOrderDetail.totalQuantityCanceled && viewOrderDetail.productQuantity!=0" style="text-decoration: line-through;font-size: 11px !important; color: #c3c3c3; margin-left: 5px">{{viewOrderDetail.productQuantity}}</span>
+              </div>
+
+            </ng-template>
+          </div>
+          <div class="row mb-2">
+            <div class="col-5">
+              <div class="colorlightGray">Price:</div>
+            </div>
+            <div class="col-7">
+              {{viewOrderDetail.productPrice | currency}}
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-5">
+              <p class="colorlightGray">Status:</p>
+            </div>
+            <div class="col-7" *ngIf="viewOrderDetail.productItemStatus != undefined && viewOrderDetail.totalQuantityCanceled > 0 && viewOrderDetail.refundedStatus!=true && viewOrderDetail.totalQuantityCanceled != viewOrderDetail.productQuantity && viewOrderDetail.ShipmentClass != 'Freight';else RefundedStatus" >ORDER UPDATED
+                      
+            </div>
+            <ng-template #RefundedStatus>
+              <div  *ngIf="viewOrderDetail.refundedStatus==true && viewOrderDetail.shipmentClass != 'Freight' ;else otherStatus" class="col-7">
+                ORDER REFUNDED
+              </div>
+            </ng-template>
+            <ng-template #otherStatus>
+              <div class="col-7" *ngIf="viewOrderDetail.shipmentClass != 'Freight'; else freightStatus">
+                {{viewOrderDetail.productItemStatus}}
+              </div>
+            </ng-template>
+            <ng-template #freightStatus>
+                <div class="col-7">
+                   SHIPPED FREIGHT
+                </div>
+              </ng-template>
+          </div>
+          
+        </div>
+      </div>
+
+    </div>
+    <hr class="mt-0" />
+
+    <div class="row mb-2">
+      <div class="col-6 colorlightGray">Order placed:</div>
+      <div class="col-6 text-right">{{getPurchaseDate(viewOrderModalDetail.purchasedDate)}}</div>
+    </div>
+    <div class="row mb-2">
+      <div class="col-6 colorlightGray">{{getShiName(viewOrderDetail.deliveryMethod)}}:</div>
+      <div class="col-6 text-right" *ngIf="viewOrderDetail.totalQuantityCanceled <= 0  && viewOrderDetail.updatedShippingCost == 0 || viewOrderDetail.totalQuantityCanceled == viewOrderDetail.productQuantity;else otherShipCost">{{viewOrderDetail.shippingCost | currency}}</div>
+      <ng-template #otherShipCost>
+        <div class="col-6 text-right">
+        <span >{{viewOrderDetail.updatedShippingCost | currency}}</span>
+        <span *ngIf="viewOrderDetail.updatedShippingCost !=viewOrderDetail.shippingCost" style="text-decoration: line-through;font-size: 11px !important; color: #c3c3c3; margin-left: 5px ">{{viewOrderDetail.shippingCost | currency}}</span>
+        </div>
+      </ng-template>
+    </div>
+    <div class="row mb-2">
+      <div class="col-6 colorlightGray">Tax:</div>
+      <div class="col-6 text-right" *ngIf="viewOrderDetail.productTaxCost != undefined && viewOrderDetail.totalQuantityCanceled <= 0 || viewOrderDetail.totalQuantityCanceled == viewOrderDetail.productQuantity;else otherContent ">{{viewOrderDetail.productTaxCost
+        | currency}}</div>
+      <ng-template #otherContent>
+        <div *ngIf="viewOrderDetail.totalQuantityCanceled <= 0 ;else otherTaxCost" class="col-9">$0 | currency</div>
+      </ng-template>
+      <ng-template #otherTaxCost>
+        <div class="col-6 text-right">
+          <span >{{viewOrderDetail.updatedTaxCost
+            | currency}}</span>
+          <span *ngIf="viewOrderDetail.updatedTaxCost !=viewOrderDetail.productTaxCost" style="text-decoration: line-through;font-size: 11px !important; color: #c3c3c3; margin-left: 5px ">{{viewOrderDetail.productTaxCost
+            | currency}}</span>
+        </div>
+      </ng-template>
+    </div>
+    <div class="row mb-2">
+      <div class="col-6 colorlightGray">Total:</div>
+      <div class="col-6 text-right" *ngIf="viewOrderDetail.totalQuantityCanceled <= 0 && viewOrderDetail.totalCanceledAmount ==0 && viewOrderDetail.updatedShippingCost==0 || viewOrderDetail.totalQuantityCanceled == viewOrderDetail.productQuantity;else otherTotal">
+        <strong>{{getTotalCost(viewOrderDetail.shippingCost, viewOrderDetail.productPrice * viewOrderDetail.productQuantity,
+          viewOrderDetail.productTaxCost) | currency}}
+        </strong>
+      </div>
+      <ng-template #otherTotal>
+        <div *ngIf="viewOrderDetail.updatedShippingCost==0 && viewOrderDetail.updatedTaxCost==0" class="col-6 text-right">
+          <strong>{{getTotalCostWithMinRefund(viewOrderDetail.shippingCost, viewOrderDetail.productPrice * (viewOrderDetail.productQuantity - viewOrderDetail.totalQuantityCanceled), viewOrderDetail.productTaxCost,viewOrderDetail.totalCanceledAmount ) |
+            currency}}
+          </strong>
+          <span *ngIf="getTotalCostWithMinRefund(viewOrderDetail.shippingCost, viewOrderDetail.productPrice * (viewOrderDetail.productQuantity - viewOrderDetail.totalQuantityCanceled), viewOrderDetail.productTaxCost,viewOrderDetail.totalCanceledAmount ) != getTotalCost(viewOrderDetail.shippingCost, viewOrderDetail.productPrice * viewOrderDetail.productQuantity, viewOrderDetail.productTaxCost)" 
+          style="text-decoration: line-through;font-size: 11px !important; color: #c3c3c3; margin-left: 5px ">{{getTotalCost(viewOrderDetail.shippingCost, viewOrderDetail.productPrice * viewOrderDetail.productQuantity, viewOrderDetail.productTaxCost) |
+            currency}}</span>
+        </div>
+        <div *ngIf="viewOrderDetail.updatedShippingCost > 0 && viewOrderDetail.updatedTaxCost==0" class="col-6 text-right">
+            <strong>{{getTotalCostWithMinRefund(viewOrderDetail.updatedShippingCost, viewOrderDetail.productPrice * (viewOrderDetail.productQuantity - viewOrderDetail.totalQuantityCanceled), viewOrderDetail.productTaxCost,viewOrderDetail.totalCanceledAmount ) |
+              currency}}
+            </strong>
+            <span *ngIf="getTotalCostWithMinRefund(viewOrderDetail.updatedShippingCost, viewOrderDetail.productPrice * (viewOrderDetail.productQuantity - viewOrderDetail.totalQuantityCanceled), viewOrderDetail.productTaxCost,viewOrderDetail.totalCanceledAmount ) != getTotalCost(viewOrderDetail.shippingCost, viewOrderDetail.productPrice * viewOrderDetail.productQuantity, viewOrderDetail.productTaxCost)"  style="text-decoration: line-through;font-size: 11px !important; color: #c3c3c3; margin-left: 5px ">{{getTotalCost(viewOrderDetail.shippingCost, viewOrderDetail.productPrice * viewOrderDetail.productQuantity, viewOrderDetail.productTaxCost) |
+              currency}}</span>
+          </div>
+        <div  *ngIf="viewOrderDetail.updatedShippingCost==0 && viewOrderDetail.updatedTaxCost>0" class="col-6 text-right">
+              <strong>{{getTotalCostWithMinRefund(viewOrderDetail.shippingCost, viewOrderDetail.productPrice * (viewOrderDetail.productQuantity - viewOrderDetail.totalQuantityCanceled), viewOrderDetail.updatedTaxCost,viewOrderDetail.totalCanceledAmount ) |
+                currency}}
+              </strong>
+              <span *ngIf="getTotalCostWithMinRefund(viewOrderDetail.shippingCost, viewOrderDetail.productPrice * (viewOrderDetail.productQuantity - viewOrderDetail.totalQuantityCanceled), viewOrderDetail.updatedTaxCost,viewOrderDetail.totalCanceledAmount ) != getTotalCost(viewOrderDetail.shippingCost, viewOrderDetail.productPrice * viewOrderDetail.productQuantity, viewOrderDetail.productTaxCost)" style="text-decoration: line-through;font-size: 11px !important; color: #c3c3c3; margin-left: 5px ">{{getTotalCost(viewOrderDetail.shippingCost, viewOrderDetail.productPrice * viewOrderDetail.productQuantity, viewOrderDetail.productTaxCost) |
+                currency}}</span>
+        </div>
+        <div *ngIf="viewOrderDetail.updatedShippingCost>0 && viewOrderDetail.updatedTaxCost>0" class="col-6 text-right">
+                <strong> {{getTotalCostWithMinRefund(viewOrderDetail.updatedShippingCost, viewOrderDetail.productPrice * (viewOrderDetail.productQuantity - viewOrderDetail.totalQuantityCanceled), viewOrderDetail.updatedTaxCost,viewOrderDetail.totalCanceledAmount ) |
+                  currency}}
+                </strong>
+                <span *ngIf="getTotalCostWithMinRefund(viewOrderDetail.updatedShippingCost, viewOrderDetail.productPrice * (viewOrderDetail.productQuantity - viewOrderDetail.totalQuantityCanceled), viewOrderDetail.updatedTaxCost,viewOrderDetail.totalCanceledAmount ) != getTotalCost(viewOrderDetail.shippingCost, viewOrderDetail.productPrice * viewOrderDetail.productQuantity, viewOrderDetail.productTaxCost)"  style="text-decoration: line-through;font-size: 11px !important; color: #c3c3c3; margin-left: 5px ">{{getTotalCost(viewOrderDetail.shippingCost, viewOrderDetail.productPrice * viewOrderDetail.productQuantity, viewOrderDetail.productTaxCost) |
+                  currency}}</span>
+        </div>
+      </ng-template>
+    </div>
+    <div class="row mb-2" *ngIf="viewOrderDetail.totalCanceledAmount>0">
+      <div class="col-6">
+        <div  class="colorlightGray">Refund:</div>
+      </div>
+      <div class="col-6 text-right">
+        {{viewOrderDetail.totalCanceledAmount | currency}}
+      </div>
+    </div>
+    <div class="row mb-2">
+      <div class="col-6 colorlightGray">Pay with:</div>
+      <div class="col-6 text-right">
+        <strong>{{viewOrderModalDetail.paymentSource}} {{viewOrderModalDetail.last4Digits}}</strong>
+      </div>
+    </div>
+    <div class="row mb-4">
+      <div class="col-6 colorlightGray">Ship to:</div>
+      <div class="col-6 text-right">
+        <strong>
+          <span>{{viewOrderModalDetail.address.addressLine1}}</span>,
+          <span *ngIf="viewOrderModalDetail.address.addressLine2 != '' && viewOrderModalDetail.address.addressLine2 != undefined && viewOrderModalDetail.address.addressLine2 != null">
+            {{viewOrderModalDetail.address.addressLine2}},
+          </span>
+          <span>{{viewOrderModalDetail.address.city}}</span>,
+          <span>{{viewOrderModalDetail.address.state}}</span>,
+          <span>{{viewOrderModalDetail.address.zipcode}}</span>
+        </strong>
+      </div>
+    </div>
+    <div class="row orderButtons">
+      <div class="col-6 mb-3 pr-2">
+        <button class="dropdown-item btn btn-outer btn_redouter_right" [disabled]="viewOrderDetail.contactSupport"
+          (click)="contactKalaCUI(viewOrderModalDetail, viewOrderDetail)">contact kala</button>
+      </div>
+      <div class="col-6 mb-3 pl-2">
+        <button class="dropdown-item btn btn-outer btn_redouter_right" [disabled]="viewOrderDetail.trackOrder" (click)="trackOrder(viewOrderModalDetail, viewOrderDetail)">where
+          is it?</button>
+      </div>
+    </div>
+
+    <div class="row orderButtons">
+      <div class="col-6 mb-3 pr-2">
+        <button class="dropdown-item btn btn-outer btn_redouter_right" [disabled]="viewOrderDetail.leaveReview" (click)="leaveReview(viewOrderModalDetail, viewOrderDetail)">leave
+          review</button>
+      </div>
+      <div class="col-6 mb-3 pl-2">
+        <button class="dropdown-item btn btn-outer btn_redouter_right" [disabled]="viewOrderDetail.cancelOrder" (click)="cancelOrder(viewOrderModalDetail, viewOrderDetail)">cancel
+          order</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Product Already Reviewed-->
+<ng-template #productAlreadyReviewed let-c="close" let-d="dismiss">
+  <div class="modal-body">
+    <p>You have already reviewed this product.</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outer btn_redouter_right" (click)="c('Close click')">Close</button>
+  </div>
+</ng-template>
+<!--Product Already Reviewed-->
+
+<!--Cancel Order-->
+<ng-template #cancelOrdersModal let-c="close" let-d="dismiss">
+  <div class="modal-body">
+    <p>Are you sure you want to cancel the order?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outer btn_red_right" (click)="c('Close click'); confirmCancelOrder()">Yes</button>
+    <button type="button" class="btn btn-outer btn_redouter_right" (click)="c('Close click')">No</button>
+  </div>
+</ng-template>
+<!--Cancel Order-->
+
+<!--Freight Order-->
+<ng-template #freightorderModal let-c="close" let-d="dismiss">
+    <div class="modal-body">
+      <p>We’re sorry, but we’re unable to track your shipment in Kala, as the seller has
+          shipped your order via freight service. Please check your email for the Shipping Carrier and
+          Tracking Number.</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outer btn_redouter_right" (click)="c('Close click')">Close</button>
+    </div>
+  </ng-template>
+  <!--Freight Order-->
+  <!--cant track Order-->
+<ng-template #canttrackModal let-c="close" let-d="dismiss">
+    <div class="modal-body">
+      <p>We’re sorry, but we’re unable to track your shipment in Kala, as the tracking number provided by the seller is invalid.</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outer btn_redouter_right" (click)="c('Close click')">Close</button>
+    </div>
+  </ng-template>
+  <!--cant track Order-->

@@ -1,0 +1,1642 @@
+<div class="container">
+  <div class="clearfix">&nbsp;</div>
+  <ng4-loading-spinner [threshold]="1000" [template]="template" [zIndex]="999"></ng4-loading-spinner>
+
+  <div class="col-12 px-0 scrollIntoView">
+    <app-checkout *ngIf="core.IsCheckout"></app-checkout>
+    
+    <div *ngIf="core.IsTrackOrder" class="chat_product whereIsIt">
+      <div class="title"> where is it?</div>
+      <div class="row m-0 mt-2">
+        <div class="col-4 pr-2">
+          <span *ngIf="selectedOrder.productImage;else noImage">
+            <img [src]="selectedOrder.productImage" class="img-fluid" />
+          </span>
+          <ng-template #noImage>
+            <span class="noImageLogo">
+              <i class="fa fa-picture-o" aria-hidden="true"></i>
+              <br /> Image Not Available
+            </span>
+          </ng-template>
+        </div>
+        <div class="col-8">
+          <strong (click)="core.getProductDetails(selectedOrder.productId)" class="cursor mb-2 d-inline-block">{{selectedOrder.productName}}</strong>
+          <div class="row mb-2">
+            <div class="col-5">
+              <div class="colorlightGray">Quantity:</div>
+            </div>
+            <div class="col-7">
+              {{selectedOrder.productQuantity}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-5">
+              <div class="colorlightGray">Price:</div>
+            </div>
+            <div class="col-7">
+              {{selectedOrder.productPrice | currency}}
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr class="mb-2" />
+      <div class="row m-0">
+        <div class="col-12 colorred">
+          Tracking No:
+          <strong> {{trackingOrder.tracking_number}} </strong>
+        </div>
+      </div>
+    </div>
+
+    <app-track-order class="left_chat" *ngIf="core.IsTrackOrder" style="width: 289px"></app-track-order>
+
+    <div *ngIf="userData == undefined">
+        <div *ngFor="let conversation of conversations ; let i = index;">
+          <div [ngClass]="conversation.position==1?'left_chat':'right_chat'">
+            <!--Sign Up Consumer Interest-->
+            <div *ngIf="showInterestPreference && conversation.data.label != undefined;else defaultinterest">
+              <div *ngFor="let interest of conversation.data.data; let i=index">
+                <div class="img_holder banner p-2 position-relative">
+                  <span class="banner-head">{{interest.consumerInterestImageName}}</span>
+                  <img (click)="selectInterest($event, interest)" class="interested_categories" src="{{interest.consumerInterestImagePath}}"
+                    title="{{interest.consumerInterestImageName}}" id="{{interest.id}}" class="img-fluid" alt="" />
+                  <img class="aboluteImg" src="./assets/images/select.png" *ngIf="interest.selectImg" />
+                </div>
+              </div>
+            </div>
+            <!--Sign Up Consumer Interest-->
+    
+            
+            <ng-template #defaultinterest>
+              <!--Selected Shipping Address Checkout-->
+              <div *ngIf="showShippingMethod && conversation.from == 'guest';else defaultshowship">
+                <span>{{conversation.data.addressLine1}}, </span>
+                <span *ngIf="conversation.data.addressLine2 != undefined && conversation.data.addressLine2 != '' && conversation.data.addressLine2 != null">{{conversation.data.addressLine2}},
+                </span>
+                <span>{{conversation.data.city}}, </span>
+                <span>{{conversation.data.state}}, </span>
+                <span>{{conversation.data.zipcode}}</span>
+              </div>
+    
+             
+              
+              <!--Selected Shipping Address Checkout-->
+    
+              <ng-template #defaultshowship>
+                <!--Select Shipping Method-->
+                <div *ngIf="conversation.from == 'selectShippingMethod' && conversation.data != 'How fast?';else showNextselectshippingMeth">
+                  <!--Layout : If Flat Shipping-->
+                  <div *ngIf="conversation.data.noDeliveryMethod; else loadProducts">{{conversation.data.noDeliveryMessage}}.
+                    Please update your cart.</div>
+                  <!--Layout : If Flat Shipping-->
+    
+                   
+                  <!--Layout : Else Default-->
+                  <ng-template #loadProducts>
+                    <!--Order Level with Same Shipping Method-->
+                    <div *ngIf="conversation.data.isSMSelected != undefined && !conversation.data.differentShippingMethod; else orderItemLevel">
+                      <!--Layout-->
+                      <div class="sellerProduct pt-0">
+                        <div class="sellerProduct" *ngFor="let order of conversation.data.orderItems">
+                          <div class="backgroundWhite curve">
+                            <div class="row p-2">
+                              <div class="col-3">
+                                <img [src]="order.productImage" (click)="core.getProductDetails(order.productId)" class="img-fluid cursor" />
+                              </div>
+                              <div class="col-9 p-0">
+                                <div class="pr-3">{{order.productName}}</div>
+                                <div class="pr-2">Quantity: {{order.quantity}}</div>
+                                <div class="pr-3">Prize: {{order.price | currency}}
+                                  <span class="float-right">
+                                    <strong>{{getPerItemTotal(order.price, order.quantity) | currency}}</strong>
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!--Layout-->
+                    </div>
+                    <!--Order Level with Same Shipping Method-->
+    
+                    <!--Order Level with Different Shipping Method-->
+                    <ng-template #orderItemLevel>
+                      <!--Layout-->
+                      <div class="sellerProduct pt-0">
+                        <div class="sellerProduct" *ngFor="let order of conversation.data">
+                          <div class="backgroundWhite curve">
+                            <div class="row p-2">
+                              <div class="col-3">
+                                <img [src]="order.productImage" (click)="core.getProductDetails(order.productId)" class="img-fluid cursor" />
+                              </div>
+                              <div class="col-9 p-0">
+                                <div class="pr-3">{{order.productName}}</div>
+                                <div class="pr-2">Quantity: {{order.quantity}}</div>
+                                <div class="pr-3">Prize: {{order.price | currency}}
+                                  <span class="float-right">
+                                    <strong>{{getPerItemTotal(order.price, order.quantity) | currency}}</strong>
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!--Layout-->
+                    </ng-template>
+                    <!--Order Level with Different Shipping Method-->
+                  </ng-template>
+                  <!--Layout : Else Default-->
+                </div>
+                <!--Select Shipping Method-->
+    
+                <ng-template #showNextselectshippingMeth>
+                  <!--Order Summary-->
+                  <div *ngIf="conversation.from == 'Order Summary'; else showNextOrdSum">
+                    <div class="row px-4">
+                      Here's your order!
+                    </div>
+                    <!--Listing Products : Single Order-->
+                    <div *ngIf="itemsInCart.length == 1;else multipleOrders">
+                      <div *ngFor="let item of itemsInCart">
+                        <hr class="mt-2 paymentBorder">
+                        <div class="row">
+                          <div class="col-4 pl-4 pr-3">
+                            <img class="img-fluid" [src]="item.productImage" />
+                          </div>
+                          <div class="col-8">
+                            <div class="pb-2">
+                              <strong>{{item.productName}}</strong>
+                            </div>
+                          </div>
+                        </div>
+                        <hr class="paymentBorder">
+                        <div class="row pb-2">
+                          <div class="col-4">Retailer:</div>
+                          <div class="col-8 text-right">{{item.retailerName}}</div>
+                        </div>
+    
+                        <div class="row pb-2">
+                          <div class="col-4">Price:</div>
+                          <div class="col-8 text-right">{{item.price | currency}}</div>
+                        </div>
+    
+                        <div class="row pb-2">
+                          <div class="col-4">Quantity:</div>
+                          <div class="col-8 text-right">{{item.quantity}}</div>
+                        </div>
+    
+                        <div class="row pb-2">
+                          <div class="col-4">Delivery:</div>
+                          <div class="col-8 text-right">{{item.shippingCost | currency}} - {{getShiName(item.deliveryMethod)}}</div>
+                        </div>
+    
+                        <div class="row pb-2">
+                          <div class="col-4">Tax:</div>
+                          <div class="col-8 text-right">{{item.productTaxCost | currency}}</div>
+                        </div>
+    
+                        <div class="row pb-2">
+                          <div class="col-4">Total:</div>
+                          <div class="col-8 text-right">
+                            {{getTotalProductCost(item.shippingCost, item.productTaxCost, item.price * item.quantity) |
+                            currency}}
+                          </div>
+                        </div>
+    
+                        <div class="row pb-2">
+                          <div class="col-4">Pay with:</div>
+                          <div class="col-8 text-right">
+                            {{selectedCardDetails.cardType}} {{selectedCardDetails.last4Digit}}
+                          </div>
+                        </div>
+    
+                        <div class="row pb-2">
+                          <div class="col-4">Ship to:</div>
+                          <div class="col-8 text-right">
+                            <span>{{selectedAddressDetails.addressLine1}}, </span>
+                            <span *ngIf="selectedAddressDetails.addressLine != undefined && selectedAddressDetails.addressLine != null && selectedAddressDetails.addressLine != ''">{{selectedAddressDetails.addressLine2}},
+                            </span>
+                            <span>{{selectedAddressDetails.city}}, </span>
+                            <span>{{selectedAddressDetails.state}}, </span>
+                            <span>{{selectedAddressDetails.zipcode}}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!--Listing Products : Single Order-->
+    
+                    <!--Listing Products : Multiple Order-->
+                    <ng-template #multipleOrders>
+                      <div *ngFor="let item of itemsInCart">
+                        <!--Basic Summary-->
+                        <hr class="mt-2 paymentBorder">
+                        <div class="row">
+                          <div class="col-4 pl-4 pr-3">
+                            <img class="img-fluid" [src]="item.productImage" />
+                          </div>
+                          <div class="col-8">
+                            <div class="pb-2">
+                              <strong>{{item.productName}}</strong>
+                            </div>
+                            <div class="pb-2 pr-2">
+                              <span style="font-family: 'open_sanssemibold'" class="colorred" (click)="showOrderDetails(item)">{{!item.isExpanded
+                                ? 'show more +' : 'show less -'}}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <!--Basic Summary-->
+    
+                        <!--Accordian Details-->
+                        <div [hidden]="!item.isExpanded">
+                          <hr class="paymentBorder">
+                          <div class="row pb-2">
+                            <div class="col-4">Retailer:</div>
+                            <div class="col-8 text-right">{{item.retailerName}}</div>
+                          </div>
+    
+                          <div class="row pb-2">
+                            <div class="col-4">Price:</div>
+                            <div class="col-8 text-right">{{item.price | currency}}</div>
+                          </div>
+    
+                          <div class="row pb-2">
+                            <div class="col-4">Quantity:</div>
+                            <div class="col-8 text-right">{{item.quantity}}</div>
+                          </div>
+    
+                          <div class="row pb-2">
+                            <div class="col-4">Delivery:</div>
+                            <div class="col-8 text-right">{{item.shippingCost | currency}} - {{getShiName(item.deliveryMethod)}}</div>
+                          </div>
+    
+                          <div class="row pb-2">
+                            <div class="col-4">Tax:</div>
+                            <div class="col-8 text-right">{{item.productTaxCost | currency}}</div>
+                          </div>
+    
+                          <div class="row pb-2">
+                            <div class="col-4">Total:</div>
+                            <div class="col-8 text-right">
+                              {{getTotalProductCost(item.shippingCost, item.productTaxCost, item.price * item.quantity) |
+                              currency}}
+                            </div>
+                          </div>
+                        </div>
+                        <!--Accordian Details-->
+                      </div>
+    
+                      <!--Order Total-->
+                      <hr class="paymentBorder" />
+    
+                      <div class="row pb-2">
+                        <div class="col-4">Pay with:</div>
+                        <div class="col-8 text-right">
+                          {{selectedCardDetails.cardType}} {{selectedCardDetails.last4Digit}}
+                        </div>
+                      </div>
+    
+                      <div class="row pb-2">
+                        <div class="col-4">Ship to:</div>
+                        <div class="col-8 text-right">
+                          <span>{{selectedAddressDetails.addressLine1}}, </span>
+                          <span *ngIf="selectedAddressDetails.addressLine != undefined && selectedAddressDetails.addressLine != null && selectedAddressDetails.addressLine != ''">{{selectedAddressDetails.addressLine2}},
+                          </span>
+                          <span>{{selectedAddressDetails.city}}, </span>
+                          <span>{{selectedAddressDetails.state}}, </span>
+                          <span>{{selectedAddressDetails.zipcode}}</span>
+                        </div>
+                      </div>
+    
+                      <div class="row pb-2">
+                        <div class="col-4">Order Total:</div>
+                        <div class="col-8 text-right">
+                          <span>{{getOrderTotal() | currency}}</span>
+                        </div>
+                      </div>
+                      <!--Order Total-->
+                    </ng-template>
+                    <!--Listing Products : Multiple Order-->
+                  </div>
+                  <!--Order Summary-->
+    
+                  <ng-template #showNextOrdSum>
+                    <!--Contact Kala Order Summary-->
+                    <div *ngIf="conversation.from == 'contactKalaOrder'; else defaultcontactKala">
+                      <div class="row p-2">
+                        <div class="col-12 mb-3">
+                          <strong>{{conversation.data.retailerName}}</strong>
+                        </div>
+    
+                        <div class="col-4">
+                          <img class="w-100" [src]="conversation.data.productImage" />
+                        </div>
+    
+                        <div class="col-8 pl-0">
+                          <div class="col-12 mb-3 pr-0 pl-0">{{conversation.data.productName}}</div>
+    
+                          <div class="col-12 pl-0">
+                            <div class="row pl-3">
+                              <div class="col-6 pl-0">Quantity:</div>
+                              <div class="col-6 pl-0">{{conversation.data.quantity}}</div>
+                            </div>
+                          </div>
+    
+                          <div class="col-12 pl-0">
+                            <div class="row pl-3">
+                              <div class="col-6 pl-0">Price:</div>
+                              <div class="col-6 pl-0">{{conversation.data.productPrice | currency}}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!--Contact Kala Order Summary-->
+    
+                    <ng-template #defaultcontactKala>
+                      <span *ngIf="conversation.from=='cameraImg'; else defaultcanImg">
+                        <img [src]="conversation.data" class="userIcon" id="pro_pic_usr" />
+                      </span>
+    
+                      <ng-template #defaultcanImg>
+                        <!--Browse Product UI-->
+                        <div *ngIf="conversation.from=='bpCUI'; else defaultbpcui">
+                          <span class="d-block mb-3 pb-2" style="border-bottom: solid 1px #999999">{{productMatchesMsg}}</span>
+                          <div *ngIf="conversation.data.length > 0">
+                            <div class="prouctMatchedList" *ngFor="let tile of conversation.data; let i=index">
+                              <div class="row m-0" *ngIf="i<3;else spliceItems(i, conversation.data)" (click)="viewDetails(tile)">
+                                <div class="col-4 p-0">
+                                  <span class="fixImageContainer" *ngIf="tile.product.mainImageSrc;else noImage">
+                                    <img [src]="tile.product.mainImageSrc" class="product_hover img-fluid">
+                                  </span>
+                                  <ng-template #noImage>
+                                    <span class="noImageLogo">
+                                      <i class="fa fa-picture-o" aria-hidden="true"></i>
+                                      <br /> Image Not Available
+                                    </span>
+                                  </ng-template>
+                                </div>
+                                <div class="col-8 pr-0">
+                                  <span style="font-family: 'open_sanssemibold'" class="mb-3 d-inline-block">{{tile.product.productName}}</span>
+                                  <br />
+                                  <span style="text-decoration:line-through; color: #cccccc" class="float-right" *ngIf="tile.product.retailPrice > tile.product.kalaPrice && tile.product.kalaPrice != tile.product.retailPrice">{{tile.product.retailPrice
+                                    | currency}}</span>
+                                  <span style="font-family: 'open_sansbold'; color: #e06263; margin-right: 15px" class="float-right">{{tile.product.kalaPrice
+                                    | currency}}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!--Browse Product UI-->
+    
+                        <ng-template #defaultbpcui>
+                          <!--ES UI-->
+                          <div *ngIf="conversation.from=='esCUI'; else defaultescui">
+                            <span class="d-block mb-3 pb-2" style="border-bottom: solid 1px #999999">{{productMatchesMsg}}</span>
+                            <div *ngIf="conversation.data.length > 0">
+                              <div class="prouctMatchedList" *ngFor="let tile of conversation.data; let i=index">
+                                <div class="row m-0" *ngIf="i<3;else spliceItems(i, conversation.data)" (click)="viewDetails(tile)">
+                                  <div class="col-4 p-0">
+                                    <span class="fixImageContainer" *ngIf="tile.product.mainImageSrc;else noImage">
+                                      <img [src]="tile.product.mainImageSrc" class="product_hover img-fluid">
+                                    </span>
+                                    <ng-template #noImage>
+                                      <span class="noImageLogo">
+                                        <i class="fa fa-picture-o" aria-hidden="true"></i>
+                                        <br /> Image Not Available
+                                      </span>
+                                    </ng-template>
+                                  </div>
+                                  <div class="col-8 pr-0">
+                                    <span style="font-family: 'open_sanssemibold'" class="mb-3 d-inline-block">{{tile.product.productName}}</span>
+                                    <br />
+                                    <span style="text-decoration:line-through; color: #cccccc" class="float-right" *ngIf="tile.product.retailPrice > tile.product.kalaPrice && tile.product.kalaPrice != tile.product.retailPrice">{{tile.product.retailPrice
+                                      | currency}}</span>
+                                    <span style="font-family: 'open_sansbold'; color: #e06263; margin-right: 15px" class="float-right">{{tile.product.kalaPrice
+                                      | currency}}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!--ES UI-->
+    
+                          <ng-template #defaultescui>{{conversation.data}}</ng-template>
+                        </ng-template>
+                      </ng-template>
+                    </ng-template>
+                  </ng-template>
+                </ng-template>
+              </ng-template>
+            </ng-template>
+          </div>
+    
+          <div class="clearfix"></div>
+    
+          <!-- Get offer summary ,conversation.data =='No, thanks' and conversations[conversations.length - 2].data == "Almost done. Any special instructions to the retailer?" - to make summary visible as part of conversation , not a seperate div -->
+          <div *ngIf="showGetOfferSummary && conversations[i-1] != undefined && (conversation.data =='No, thanks' || conversations[i-1].data == 'Almost done. Any special instructions to the retailer?')"
+            class="left_chat">
+            <div class="row p-2">
+              <div class="col-12 reviewBorder">
+                Let’s review your request.
+              </div>
+            </div>
+            <div class="row px-2">
+              <div class="col-6 colorlightGray">
+                <p class="mb-2">Place:</p>
+              </div>
+              <div class="col-6 text-right pl-0">
+                {{this.Step4Summary.place.name}}
+              </div>
+            </div>
+            <div class="row px-2">
+              <div class="col-6 colorlightGray">
+                <p class="mb-2">Category:</p>
+              </div>
+              <div class="col-6 text-right pl-0">
+                {{this.Step4Summary.category.name}}
+              </div>
+            </div>
+            <div class="row px-2">
+              <div class="col-6 colorlightGray">
+                <p class="mb-2">Sub - category:</p>
+              </div>
+              <div class="col-6 text-right pl-0">
+                {{this.Step4Summary.subCategory.name}}
+              </div>
+            </div>
+            <div class="row px-2" *ngIf="Step4Summary.type != undefined && Step4Summary.type.length > 0 && Step4Summary.type != null">
+              <div class="col-6 colorlightGray">
+                <p class="mb-2">Product:</p>
+              </div>
+              <div class="col-6 text-right">
+                <span *ngFor="let type of Step4Summary.type; let isLast=last">{{type.name}}{{isLast ? '' : ', '}}</span>
+              </div>
+            </div>
+            <!-- <div class="row px-2">
+              <div class="col-6 colorlightGray">
+                <p class="mb-2">Special Instructions:</p>
+              </div>
+              <div class="col-6 text-right">{{Step4Summary.instruction==''? "n/a" : Step4Summary.instruction }}</div>
+            </div> -->
+            <div class="row px-2" *ngIf="Step2Data != undefined && Step2Data != ''">
+              <div class="col-12">
+                <div class="row" *ngFor="let data of step2DataArr">
+                  <div *ngIf="data.key != 'Type'" class="col-6 text-left colorlightGray">
+                    <p class="mb-2">{{data.key}}:</p>
+                  </div>
+                  <div *ngIf="data.key != 'Type'" class="col-6 text-right">
+                    <span *ngFor="let values of data.values; let isLast=last">{{values}}{{isLast ? '' : ', '}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row px-2">
+              <div class="col-6 colorlightGray">
+                <p class="mb-2">Price range:</p>
+              </div>
+              <div class="col-6 text-right">{{Step4Summary.priceRange.minPrice | currency}} -
+                {{Step4Summary.priceRange.maxPrice | currency}}</div>
+            </div>
+            <div class="row px-2">
+              <div class="col-6 colorlightGray">
+                <p class="mb-2">Zipcode:</p>
+              </div>
+              <div class="col-6 text-right" *ngFor="let location of Step4Summary.location">{{location.zipcode}}</div>
+            </div>
+            <div class="row px-2">
+              <div class="col-6 colorlightGray">
+                <p class="mb-2">Delivery:</p>
+              </div>
+              <div class="col-6 text-right">{{Step4Summary.delivery}}</div>
+            </div>
+            <div class="row px-2">
+              <div class="col-6 colorlightGray">
+                <p class="mb-2">Special Instructions:</p>
+              </div>
+              <div class="col-6 text-right">{{Step4Summary.instruction==''? "n/a" : Step4Summary.instruction }}</div>
+            </div>
+          </div>
+          <!--End- Get offer summary -->
+        </div>
+      </div>
+
+  <div *ngIf="userData != undefined">
+    <div *ngFor="let conversation of conversations ; let i = index;">
+      <div [ngClass]="conversation.position==1?'left_chat':'right_chat'">
+        <!--Sign Up Consumer Interest-->
+        <div *ngIf="showInterestPreference && conversation.data.label != undefined;else defaultinterest">
+          <div *ngFor="let interest of conversation.data.data; let i=index">
+            <div class="img_holder banner p-2 position-relative">
+              <span class="banner-head">{{interest.consumerInterestImageName}}</span>
+              <img (click)="selectInterest($event, interest)" class="interested_categories" src="{{interest.consumerInterestImagePath}}"
+                title="{{interest.consumerInterestImageName}}" id="{{interest.id}}" class="img-fluid" alt="" />
+              <img class="aboluteImg" src="./assets/images/select.png" *ngIf="interest.selectImg" />
+            </div>
+          </div>
+        </div>
+        <!--Sign Up Consumer Interest-->
+
+        
+        <ng-template #defaultinterest>
+          <!--Selected Shipping Address Checkout-->
+          <div *ngIf="showShippingMethod && conversation.data.addID != undefined;else defaultshowship">
+            <span>{{conversation.data.addressLine1}}, </span>
+            <span *ngIf="conversation.data.addressLine2 != undefined && conversation.data.addressLine2 != '' && conversation.data.addressLine2 != null">{{conversation.data.addressLine2}},
+            </span>
+            <span>{{conversation.data.city}}, </span>
+            <span>{{conversation.data.state}}, </span>
+            <span>{{conversation.data.zipcode}}</span>
+          </div>
+
+         
+          
+          <!--Selected Shipping Address Checkout-->
+
+          <ng-template #defaultshowship>
+            <!--Select Shipping Method-->
+            <div *ngIf="conversation.from == 'selectShippingMethod' && conversation.data != 'How fast?';else showNextselectshippingMeth">
+              <!--Layout : If Flat Shipping-->
+              <div *ngIf="conversation.data.noDeliveryMethod; else loadProducts">{{conversation.data.noDeliveryMessage}}.
+                Please update your cart.</div>
+              <!--Layout : If Flat Shipping-->
+
+               
+              <!--Layout : Else Default-->
+              <ng-template #loadProducts>
+                <!--Order Level with Same Shipping Method-->
+                <div *ngIf="conversation.data.isSMSelected != undefined && !conversation.data.differentShippingMethod; else orderItemLevel">
+                  <!--Layout-->
+                  <div class="sellerProduct pt-0">
+                    <div class="sellerProduct" *ngFor="let order of conversation.data.orderItems">
+                      <div class="backgroundWhite curve">
+                        <div class="row p-2">
+                          <div class="col-3">
+                            <img [src]="order.productImage" (click)="core.getProductDetails(order.productId)" class="img-fluid cursor" />
+                          </div>
+                          <div class="col-9 p-0">
+                            <div class="pr-3">{{order.productName}}</div>
+                            <div class="pr-2">Quantity: {{order.quantity}}</div>
+                            <div class="pr-3">Prize: {{order.price | currency}}
+                              <span class="float-right">
+                                <strong>{{getPerItemTotal(order.price, order.quantity) | currency}}</strong>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!--Layout-->
+                </div>
+                <!--Order Level with Same Shipping Method-->
+
+                <!--Order Level with Different Shipping Method-->
+                <ng-template #orderItemLevel>
+                  <!--Layout-->
+                  <div class="sellerProduct pt-0">
+                    <div class="sellerProduct" *ngFor="let order of conversation.data">
+                      <div class="backgroundWhite curve">
+                        <div class="row p-2">
+                          <div class="col-3">
+                            <img [src]="order.productImage" (click)="core.getProductDetails(order.productId)" class="img-fluid cursor" />
+                          </div>
+                          <div class="col-9 p-0">
+                            <div class="pr-3">{{order.productName}}</div>
+                            <div class="pr-2">Quantity: {{order.quantity}}</div>
+                            <div class="pr-3">Prize: {{order.price | currency}}
+                              <span class="float-right">
+                                <strong>{{getPerItemTotal(order.price, order.quantity) | currency}}</strong>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!--Layout-->
+                </ng-template>
+                <!--Order Level with Different Shipping Method-->
+              </ng-template>
+              <!--Layout : Else Default-->
+            </div>
+            <!--Select Shipping Method-->
+
+            <ng-template #showNextselectshippingMeth>
+              <!--Order Summary-->
+              <div *ngIf="conversation.from == 'Order Summary'; else showNextOrdSum">
+                <div class="row px-4">
+                  Here's your order!
+                </div>
+                <!--Listing Products : Single Order-->
+                <div *ngIf="itemsInCart.length == 1;else multipleOrders">
+                  <div *ngFor="let item of itemsInCart">
+                    <hr class="mt-2 paymentBorder">
+                    <div class="row">
+                      <div class="col-4 pl-4 pr-3">
+                        <img class="img-fluid" [src]="item.productImage" />
+                      </div>
+                      <div class="col-8">
+                        <div class="pb-2">
+                          <strong>{{item.productName}}</strong>
+                        </div>
+                      </div>
+                    </div>
+                    <hr class="paymentBorder">
+                    <div class="row pb-2">
+                      <div class="col-4">Retailer:</div>
+                      <div class="col-8 text-right">{{item.retailerName}}</div>
+                    </div>
+
+                    <div class="row pb-2">
+                      <div class="col-4">Price:</div>
+                      <div class="col-8 text-right">{{item.price | currency}}</div>
+                    </div>
+
+                    <div class="row pb-2">
+                      <div class="col-4">Quantity:</div>
+                      <div class="col-8 text-right">{{item.quantity}}</div>
+                    </div>
+
+                    <div class="row pb-2">
+                      <div class="col-4">Delivery:</div>
+                      <div class="col-8 text-right">{{item.shippingCost | currency}} - {{getShiName(item.deliveryMethod)}}</div>
+                    </div>
+
+                    <div class="row pb-2">
+                      <div class="col-4">Tax:</div>
+                      <div class="col-8 text-right">{{item.productTaxCost | currency}}</div>
+                    </div>
+
+                    <div class="row pb-2">
+                      <div class="col-4">Total:</div>
+                      <div class="col-8 text-right">
+                        {{getTotalProductCost(item.shippingCost, item.productTaxCost, item.price * item.quantity) |
+                        currency}}
+                      </div>
+                    </div>
+
+                    <div class="row pb-2">
+                      <div class="col-4">Pay with:</div>
+                      <div class="col-8 text-right">
+                        {{selectedCardDetails.cardType}} {{selectedCardDetails.last4Digit}}
+                      </div>
+                    </div>
+
+                    <div class="row pb-2">
+                      <div class="col-4">Ship to:</div>
+                      <div class="col-8 text-right">
+                        <span>{{selectedAddressDetails.addressLine1}}, </span>
+                        <span *ngIf="selectedAddressDetails.addressLine != undefined && selectedAddressDetails.addressLine != null && selectedAddressDetails.addressLine != ''">{{selectedAddressDetails.addressLine2}},
+                        </span>
+                        <span>{{selectedAddressDetails.city}}, </span>
+                        <span>{{selectedAddressDetails.state}}, </span>
+                        <span>{{selectedAddressDetails.zipcode}}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!--Listing Products : Single Order-->
+
+                <!--Listing Products : Multiple Order-->
+                <ng-template #multipleOrders>
+                  <div *ngFor="let item of itemsInCart">
+                    <!--Basic Summary-->
+                    <hr class="mt-2 paymentBorder">
+                    <div class="row">
+                      <div class="col-4 pl-4 pr-3">
+                        <img class="img-fluid" [src]="item.productImage" />
+                      </div>
+                      <div class="col-8">
+                        <div class="pb-2">
+                          <strong>{{item.productName}}</strong>
+                        </div>
+                        <div class="pb-2 pr-2">
+                          <span style="font-family: 'open_sanssemibold'" class="colorred" (click)="showOrderDetails(item)">{{!item.isExpanded
+                            ? 'show more +' : 'show less -'}}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <!--Basic Summary-->
+
+                    <!--Accordian Details-->
+                    <div [hidden]="!item.isExpanded">
+                      <hr class="paymentBorder">
+                      <div class="row pb-2">
+                        <div class="col-4">Retailer:</div>
+                        <div class="col-8 text-right">{{item.retailerName}}</div>
+                      </div>
+
+                      <div class="row pb-2">
+                        <div class="col-4">Price:</div>
+                        <div class="col-8 text-right">{{item.price | currency}}</div>
+                      </div>
+
+                      <div class="row pb-2">
+                        <div class="col-4">Quantity:</div>
+                        <div class="col-8 text-right">{{item.quantity}}</div>
+                      </div>
+
+                      <div class="row pb-2">
+                        <div class="col-4">Delivery:</div>
+                        <div class="col-8 text-right">{{item.shippingCost | currency}} - {{getShiName(item.deliveryMethod)}}</div>
+                      </div>
+
+                      <div class="row pb-2">
+                        <div class="col-4">Tax:</div>
+                        <div class="col-8 text-right">{{item.productTaxCost | currency}}</div>
+                      </div>
+
+                      <div class="row pb-2">
+                        <div class="col-4">Total:</div>
+                        <div class="col-8 text-right">
+                          {{getTotalProductCost(item.shippingCost, item.productTaxCost, item.price * item.quantity) |
+                          currency}}
+                        </div>
+                      </div>
+                    </div>
+                    <!--Accordian Details-->
+                  </div>
+
+                  <!--Order Total-->
+                  <hr class="paymentBorder" />
+
+                  <div class="row pb-2">
+                    <div class="col-4">Pay with:</div>
+                    <div class="col-8 text-right">
+                      {{selectedCardDetails.cardType}} {{selectedCardDetails.last4Digit}}
+                    </div>
+                  </div>
+
+                  <div class="row pb-2">
+                    <div class="col-4">Ship to:</div>
+                    <div class="col-8 text-right">
+                      <span>{{selectedAddressDetails.addressLine1}}, </span>
+                      <span *ngIf="selectedAddressDetails.addressLine != undefined && selectedAddressDetails.addressLine != null && selectedAddressDetails.addressLine != ''">{{selectedAddressDetails.addressLine2}},
+                      </span>
+                      <span>{{selectedAddressDetails.city}}, </span>
+                      <span>{{selectedAddressDetails.state}}, </span>
+                      <span>{{selectedAddressDetails.zipcode}}</span>
+                    </div>
+                  </div>
+
+                  <div class="row pb-2">
+                    <div class="col-4">Order Total:</div>
+                    <div class="col-8 text-right">
+                      <span>{{getOrderTotal() | currency}}</span>
+                    </div>
+                  </div>
+                  <!--Order Total-->
+                </ng-template>
+                <!--Listing Products : Multiple Order-->
+              </div>
+              <!--Order Summary-->
+
+              <ng-template #showNextOrdSum>
+                <!--Contact Kala Order Summary-->
+                <div *ngIf="conversation.from == 'contactKalaOrder'; else defaultcontactKala">
+                  <div class="row p-2">
+                    <div class="col-12 mb-3">
+                      <strong>{{conversation.data.retailerName}}</strong>
+                    </div>
+
+                    <div class="col-4">
+                      <img class="w-100" [src]="conversation.data.productImage" />
+                    </div>
+
+                    <div class="col-8 pl-0">
+                      <div class="col-12 mb-3 pr-0 pl-0">{{conversation.data.productName}}</div>
+
+                      <div class="col-12 pl-0">
+                        <div class="row pl-3">
+                          <div class="col-6 pl-0">Quantity:</div>
+                          <div class="col-6 pl-0">{{conversation.data.quantity}}</div>
+                        </div>
+                      </div>
+
+                      <div class="col-12 pl-0">
+                        <div class="row pl-3">
+                          <div class="col-6 pl-0">Price:</div>
+                          <div class="col-6 pl-0">{{conversation.data.productPrice | currency}}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!--Contact Kala Order Summary-->
+
+                <ng-template #defaultcontactKala>
+                  <span *ngIf="conversation.from=='cameraImg'; else defaultcanImg">
+                    <img [src]="conversation.data" class="userIcon" id="pro_pic_usr" />
+                  </span>
+
+                  <ng-template #defaultcanImg>
+                    <!--Browse Product UI-->
+                    <div *ngIf="conversation.from=='bpCUI'; else defaultbpcui">
+                      <span class="d-block mb-3 pb-2" style="border-bottom: solid 1px #999999">{{productMatchesMsg}}</span>
+                      <div *ngIf="conversation.data.length > 0">
+                        <div class="prouctMatchedList" *ngFor="let tile of conversation.data; let i=index">
+                          <div class="row m-0" *ngIf="i<3;else spliceItems(i, conversation.data)" (click)="viewDetails(tile)">
+                            <div class="col-4 p-0">
+                              <span class="fixImageContainer" *ngIf="tile.product.mainImageSrc;else noImage">
+                                <img [src]="tile.product.mainImageSrc" class="product_hover img-fluid">
+                              </span>
+                              <ng-template #noImage>
+                                <span class="noImageLogo">
+                                  <i class="fa fa-picture-o" aria-hidden="true"></i>
+                                  <br /> Image Not Available
+                                </span>
+                              </ng-template>
+                            </div>
+                            <div class="col-8 pr-0">
+                              <span style="font-family: 'open_sanssemibold'" class="mb-3 d-inline-block">{{tile.product.productName}}</span>
+                              <br />
+                              <span style="text-decoration:line-through; color: #cccccc" class="float-right" *ngIf="tile.product.retailPrice > tile.product.kalaPrice && tile.product.kalaPrice != tile.product.retailPrice">{{tile.product.retailPrice
+                                | currency}}</span>
+                              <span style="font-family: 'open_sansbold'; color: #e06263; margin-right: 15px" class="float-right">{{tile.product.kalaPrice
+                                | currency}}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!--Browse Product UI-->
+
+                    <ng-template #defaultbpcui>
+                      <!--ES UI-->
+                      <div *ngIf="conversation.from=='esCUI'; else defaultescui">
+                        <span class="d-block mb-3 pb-2" style="border-bottom: solid 1px #999999">{{productMatchesMsg}}</span>
+                        <div *ngIf="conversation.data.length > 0">
+                          <div class="prouctMatchedList" *ngFor="let tile of conversation.data; let i=index">
+                            <div class="row m-0" *ngIf="i<3;else spliceItems(i, conversation.data)" (click)="viewDetails(tile)">
+                              <div class="col-4 p-0">
+                                <span class="fixImageContainer" *ngIf="tile.product.mainImageSrc;else noImage">
+                                  <img [src]="tile.product.mainImageSrc" class="product_hover img-fluid">
+                                </span>
+                                <ng-template #noImage>
+                                  <span class="noImageLogo">
+                                    <i class="fa fa-picture-o" aria-hidden="true"></i>
+                                    <br /> Image Not Available
+                                  </span>
+                                </ng-template>
+                              </div>
+                              <div class="col-8 pr-0">
+                                <span style="font-family: 'open_sanssemibold'" class="mb-3 d-inline-block">{{tile.product.productName}}</span>
+                                <br />
+                                <span style="text-decoration:line-through; color: #cccccc" class="float-right" *ngIf="tile.product.retailPrice > tile.product.kalaPrice && tile.product.kalaPrice != tile.product.retailPrice">{{tile.product.retailPrice
+                                  | currency}}</span>
+                                <span style="font-family: 'open_sansbold'; color: #e06263; margin-right: 15px" class="float-right">{{tile.product.kalaPrice
+                                  | currency}}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!--ES UI-->
+
+                      <ng-template #defaultescui>{{conversation.data}}</ng-template>
+                    </ng-template>
+                  </ng-template>
+                </ng-template>
+              </ng-template>
+            </ng-template>
+          </ng-template>
+        </ng-template>
+      </div>
+
+      <div class="clearfix"></div>
+
+      <!-- Get offer summary ,conversation.data =='No, thanks' and conversations[conversations.length - 2].data == "Almost done. Any special instructions to the retailer?" - to make summary visible as part of conversation , not a seperate div -->
+      <div *ngIf="showGetOfferSummary && conversations[i-1] != undefined && (conversation.data =='No, thanks' || conversations[i-1].data == 'Almost done. Any special instructions to the retailer?')"
+        class="left_chat">
+        <div class="row p-2">
+          <div class="col-12 reviewBorder">
+            Let’s review your request.
+          </div>
+        </div>
+        <div class="row px-2">
+          <div class="col-6 colorlightGray">
+            <p class="mb-2">Place:</p>
+          </div>
+          <div class="col-6 text-right pl-0">
+            {{this.Step4Summary.place.name}}
+          </div>
+        </div>
+        <div class="row px-2">
+          <div class="col-6 colorlightGray">
+            <p class="mb-2">Category:</p>
+          </div>
+          <div class="col-6 text-right pl-0">
+            {{this.Step4Summary.category.name}}
+          </div>
+        </div>
+        <div class="row px-2">
+          <div class="col-6 colorlightGray">
+            <p class="mb-2">Sub - category:</p>
+          </div>
+          <div class="col-6 text-right pl-0">
+            {{this.Step4Summary.subCategory.name}}
+          </div>
+        </div>
+        <div class="row px-2" *ngIf="Step4Summary.type != undefined && Step4Summary.type.length > 0 && Step4Summary.type != null">
+          <div class="col-6 colorlightGray">
+            <p class="mb-2">Product:</p>
+          </div>
+          <div class="col-6 text-right">
+            <span *ngFor="let type of Step4Summary.type; let isLast=last">{{type.name}}{{isLast ? '' : ', '}}</span>
+          </div>
+        </div>
+        <!-- <div class="row px-2">
+          <div class="col-6 colorlightGray">
+            <p class="mb-2">Special Instructions:</p>
+          </div>
+          <div class="col-6 text-right">{{Step4Summary.instruction==''? "n/a" : Step4Summary.instruction }}</div>
+        </div> -->
+        <div class="row px-2" *ngIf="Step2Data != undefined && Step2Data != ''">
+          <div class="col-12">
+            <div class="row" *ngFor="let data of step2DataArr">
+              <div *ngIf="data.key != 'Type'" class="col-6 text-left colorlightGray">
+                <p class="mb-2">{{data.key}}:</p>
+              </div>
+              <div *ngIf="data.key != 'Type'" class="col-6 text-right">
+                <span *ngFor="let values of data.values; let isLast=last">{{values}}{{isLast ? '' : ', '}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row px-2">
+          <div class="col-6 colorlightGray">
+            <p class="mb-2">Price range:</p>
+          </div>
+          <div class="col-6 text-right">{{Step4Summary.priceRange.minPrice | currency}} -
+            {{Step4Summary.priceRange.maxPrice | currency}}</div>
+        </div>
+        <div class="row px-2">
+          <div class="col-6 colorlightGray">
+            <p class="mb-2">Zipcode:</p>
+          </div>
+          <div class="col-6 text-right" *ngFor="let location of Step4Summary.location">{{location.zipcode}}</div>
+        </div>
+        <div class="row px-2">
+          <div class="col-6 colorlightGray">
+            <p class="mb-2">Delivery:</p>
+          </div>
+          <div class="col-6 text-right">{{Step4Summary.delivery}}</div>
+        </div>
+        <div class="row px-2">
+          <div class="col-6 colorlightGray">
+            <p class="mb-2">Special Instructions:</p>
+          </div>
+          <div class="col-6 text-right">{{Step4Summary.instruction==''? "n/a" : Step4Summary.instruction }}</div>
+        </div>
+      </div>
+      <!--End- Get offer summary -->
+    </div>
+  </div>
+
+
+
+    <!-- my offer page -->
+    <app-myoffers *ngIf="showMyOffer"> </app-myoffers>
+    <!--  my offer page ends -->
+    <!-- <div class="cntFooter_height">&nbsp;</div> -->
+    <div *ngIf="invalidInput" class="right_chat"> {{invalidInputText}}</div>
+    <!-- <div  class="chat_product">
+                      <div class="title">title</div>
+                      <div class="backgroundWhite curve">
+                          <div class="row p-2">
+                              <div class="col-3">
+                                  <img src="../images/catg-1.png" class="img-fluid">
+                              </div>
+                              <div class="col-9 p-0">
+                                  <div class="pr-3">Wood Floral Ceiling Lamp - pendant lamp - ceiling lamp</div>
+                                  <div class="pr-2">Quantity: 1</div>
+                                  <div class="pr-3">Size: 20cm <span class="float-right"><strong>$240</strong></span></div>
+                              </div>
+                          </div>
+                      </div>
+          </div> -->
+    <div class="clearfix">&nbsp;</div>
+    <div class="cntFooter_height">&nbsp;</div>
+  </div>
+
+  <div class="container mobile_content">
+    <div class="mobile_chat row">
+      <div class="text-center col-12 whiteSpace signupDatebirth">
+        <!-- <button *ngFor="let i of dynArr" (click)="buttonClicked(i)" + i></button> -->
+        <span *ngIf="showBack" (click)="goBack(order)" class="btn btn_red_right" style="background:#070707; border: none">back</span>
+        <span *ngFor="let questPopup of questionPopUps" class="{{questPopup.question}}" (click)="ShowLogin(questPopup.question,questPopup.from)">
+          <span class="btn btn_red_right" *ngIf="questPopup.question == 'Male' || questPopup.question == 'Female' || questPopup.question =='Camera';else showNext"></span>
+
+          <mat-form-field *ngIf="input_dob" class="example-full-width btn btn btn_red_right dob_small_btn">
+            <input matInput [matDatepicker]="picker" (dateChange)="onDateSelection($event)" class="dateInputpng dob_small_input_btn"
+              (click)="openDatePicker()" placeholder="">
+            <!-- <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle> -->
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+
+          <ng-template #showNext>
+            <!--Contac Kala-->
+            <span class="btn btn btn_red_right" *ngIf="questPopup.from == 'ck'; else showNext1">
+              <span (click)="loadOptions('', questPopup.question)">{{questPopup.question}}</span>
+            </span>
+            <!--Contac Kala-->
+
+            <ng-template #showNext1>
+              <!--Get Cards Details-->
+              <span class="showCardsLatest" *ngIf="questPopup.from == 'cards'; else showNext2">
+                <span class="btn btn btn_red_right" *ngFor="let card of questPopup.question" (click)="selectPayCard(card)">
+                  {{card.cardType}} {{card.last4Digit}}
+                </span>
+                <span *ngIf="userData != undefined" class="btn btn btn_red_right" (click)="addNewCard()">Add new card</span>
+                <span *ngIf="userData == undefined" class="btn btn btn_red_right" (click)="addNewCard()">Add payment info</span>
+              </span>
+              
+              <!--Get Cards Details-->
+
+              <!-- show email option -->
+              <ng-template #showNext2>
+                <span class="btn btn btn_red_right" *ngIf="questPopup.from == 'suggestEmail'; else showNext3">
+                    <span (click)="SelectEmail(questPopup.question)">use: {{questPopup.question}}</span>
+                </span>
+                
+              <!-- show email option -->
+
+              <ng-template #showNext3>
+                <!--Load Shipping Methods-->
+                <span *ngIf="questPopup.from == 'selectShippingMethod'; else noDeliveryProceed">
+                  <!--Methods from Same Shipping Methods-->
+                  <span *ngIf="!questPopup.question.differentShippingMethod; else differentShippingMethods">
+                    <span (click)="selectShippingMethod(questPopup.question, method.deliveryFee, method.deliveryMethodName)"
+                      class="btn btn btn_red_right" *ngFor="let method of questPopup.question.deliveryTiers">{{method.deliveryFee
+                      | currency}} - {{getShiName(method.deliveryMethodName)}}</span>
+                  </span>
+                  <!--Methods from Same Shipping Methods-->
+
+                  <!--Methods from Different Shipping Methods-->
+                  <ng-template #differentShippingMethods>
+                    <span *ngFor="let method of questPopup.question.orderItems[0].deliveryTiers">{{method.deliveryFee |
+                        currency}} - {{getShiName(method.deliveryMethodName)}} </span>
+                      </ng-template>
+                  <!--Methods from Different Shipping Methods-->
+                </span>
+                <!--Load Shipping Methods-->
+
+                <ng-template #noDeliveryProceed>
+                <span  *ngIf="questPopup.from == 'noDeliveryProceed'; else defaultShip">
+                    <span class="btn btn btn_red_right" (click)="proceedWithNoDeliveryOrNot(questPopup.question,questPopup.from)">{{questPopup.question}}</span>
+                  </span>
+                </ng-template>
+
+                <ng-template #defaultShip>
+                  <span class="btn btn btn_red_right" *ngIf="!dobskipper" [ngClass]="{'skip_btn_pad':questPopup.question =='Skip'}">{{questPopup.question}}</span>
+                </ng-template>
+              </ng-template>
+            </ng-template>
+            </ng-template>
+          </ng-template>
+        </span>
+      </div>
+
+      <!--Checkout Shipping Address-->
+      <div *ngIf="showAddressBool == true && showAddressBool != undefined && userData != undefined" class="text-center col-12 whiteSpace height75">
+        <span [ngStyle]="{'opacity': loader_shippingMethod ? '0.5' : '1'}" *ngFor="let address of shippingAddressCheckout" class="btn btn btn_red_right" (click)="selectShippingAddress($event,address)">
+          {{address.addressLine1}}, {{address.city}}, {{address.state}}, {{address.zipcode}}
+        </span>
+        <span [ngStyle]="{'opacity': loader_shippingMethod ? '0.5' : '1'}" class="btn btn btn_red_right" (click)="ShowLogin('Add new address')">Add new address</span>
+
+      </div>
+
+      <ng-container>
+      <div *ngIf="showAddressBool == true && showAddressBool != undefined && userData == undefined" class="text-center col-12 whiteSpace height_auto">
+          <span [ngStyle]="{'opacity': loader_shippingMethod ? '0.5' : '1'}" *ngFor="let address of shippingAddressCheckout" class="btn btn btn_red_right" (click)="selectGuestShippingAddress($event,address)">
+            {{address.addressLine1}}, {{address.city}}, {{address.state}}, {{address.zipcode}}
+          </span>
+          <span [ngStyle]="{'opacity': loader_shippingMethod ? '0.5' : '1'}" class="btn btn btn_red_right" (click)="ShowLogin('Add guest address')">Add shipping address</span>
+  
+        </div>
+      </ng-container>
+      <!-- <img src="./assets/images/loader.gif" style="margin-left: 20px; margin-top: 20px" *ngIf="loader_shippingMethod" /> -->
+        <ng-container *ngIf="showAddressBool ==true && showAddressBool != undefined">
+      <div class=" col-12 quepopupmoreless" [ngClass]="{'hideForGuest' : hideForGuest}">
+        <div class="col-12 mb-3 text-center" >
+          <span [ngStyle]="{'opacity': loader_shippingMethod ? '0.5' : '1'}" class="btnMoreStyel text-center" (click)="ShowMoreLess()">{{showMoreLessStr}}</span>
+        </div>
+      </div>
+    </ng-container>
+      <!--Checkout Shipping Address-->
+
+      <!-- For get places -->
+      <div *ngIf="showAvailablePlaces == true && userResponse.place.length > 0" class="text-center col-12 whiteSpace">
+        <span *ngFor="let place of userResponse.place" class="btn btn btn_red_right" [ngStyle]="{'opacity': place.isProductAvailable == undefined ? '0.5' : '1'}"
+          (click)="place.isProductAvailable && getCategory(place)">
+          {{place.text}}
+        </span>
+      </div>
+      <!-- For category -->
+      <div *ngIf="showAvailableCategory == true && userResponse.category.length > 0" class="text-center col-12 whiteSpace">
+        <span *ngFor="let category of userResponse.category" class="btn btn btn_red_right" [ngStyle]="{'opacity': category.isProductAvailable == undefined ? '0.5' : '1'}"
+          (click)="category.isProductAvailable && getSubCategory(category)">
+          {{category.text}}
+        </span>
+      </div>
+      <!-- For get offers sub category -->
+      <div *ngIf="showAvailablesubcat == true && userResponse.subcategory.length>0 && !showOnly4Options" class="text-center col-12 whiteSpace">
+        <span *ngFor="let subCat of userResponse.subcategory" class="btn btn btn_red_right" [ngStyle]="{'opacity': subCat.isProductAvailable == undefined ? '0.5' : '1'}"
+          (click)="subCat.isProductAvailable && changeSubcategory(subCat,'subcategory')">
+          {{subCat.text}}
+        </span>
+      </div>
+      <!-- To GET only 4 options-->
+      <div *ngIf="showAvailablesubcat == true && userResponse.subcategory.length>0 && showOnly4Options" class="text-center col-12 whiteSpace">
+        <span *ngFor="let subCat of userResponse.subcategory | slice:0:4" class="btn btn btn_red_right" [ngStyle]="{'opacity': subCat.isProductAvailable == undefined ? '0.5' : '1'}"
+          (click)="subCat.isProductAvailable && changeSubcategory(subCat,'subcategory')">
+          {{subCat.text}}
+        </span>
+      </div>
+      <!-- To GET only 4 options-->
+      <div class=" col-12 quepopupmoreless" *ngIf="showAvailablePlaces == true && userResponse.place.length > 4 || showAvailableCategory == true && userResponse.category.length > 4 || showAvailablesubcat ==true && userResponse.subcategory.length > 4">
+        <div class="col-12 mb-3 text-center">
+          <span class="btnMoreStyel text-center" (click)="ShowMoreLess()">{{showMoreLessStr}}</span>
+        </div>
+      </div>
+      <!-- For get offers sub category -->
+
+      <!-- show Types -->
+      <div *ngIf="showAvailableTypes ==true && userResponse.type.length>0 && !showOnly4Options" class="text-center col-12 whiteSpace">
+        <span *ngFor="let type of userResponse.type" class="btn btn btn_red_right" (click)="confirmTypes('single',type)">
+          {{type.text}}
+        </span>
+      </div>
+      <!-- To GET only 4 options-->
+      <div *ngIf="showAvailableTypes ==true && userResponse.type.length>0 && showOnly4Options" class="text-center col-12 whiteSpace">
+        <span *ngFor="let type of userResponse.type | slice:0:4" class="btn btn btn_red_right" (click)="confirmTypes('single',type)">
+          {{type.text}}
+        </span>
+      </div>
+      <!-- To GET only 4 options-->
+      <div class="col-12 quepopupmoreless" *ngIf="showAvailableTypes ==true && userResponse.type.length > 0">
+        <div class="col-12 mb-3 text-center">
+          <span class="btn btn_red_right text-center" *ngIf="showMoreOrMultipleType" (click)="selectMultiple('type')">{{showMoreLessStr}}
+            <!-- <i class="fa fa-caret-down" aria-hidden="true"></i> -->
+          </span>
+          <span class="btn btn_red_right text-center" *ngIf="!showMoreOrMultipleType && userResponse.type.length > 4"
+            (click)="ShowMoreLess()">{{showMoreLessStr}}
+          </span>
+          <!-- <span class="btn btn_red_right text-center" (click)="skipToEnd()">Skip to End
+          </span> -->
+        </div>
+      </div>
+      <!-- show Types  -->
+
+      <!-- show Featues -->
+
+
+      <div *ngIf="showAvailableFeature ==true && trackFeatureObj.length>0 && trackFeatureObj[trackFeatureObj.length-1].key != 'Price' && !showOnly4Options"
+        class="text-center col-12 whiteSpace">
+        <span *ngFor="let value of trackFeatureObj[trackFeatureObj.length-1].values" class="btn btn btn_red_right"
+          (click)="pushpopSelectedSingleFeature(trackFeatureObj[trackFeatureObj.length-1], $event, value)">
+          {{value}}
+        </span>
+      </div>
+      <!-- To GET only 4 options-->
+      <div *ngIf="showAvailableFeature ==true && trackFeatureObj.length>0 && trackFeatureObj[trackFeatureObj.length-1].key != 'Price' && showOnly4Options"
+        class="text-center col-12 whiteSpace">
+        <span *ngFor="let value of trackFeatureObj[trackFeatureObj.length-1].values | slice:0:4" class="btn btn btn_red_right"
+          (click)="pushpopSelectedSingleFeature(trackFeatureObj[trackFeatureObj.length-1], $event, value)">
+          {{value}}
+        </span>
+      </div>
+      <!-- To GET only 4 options-->
+
+      <div class="col-12 quepopupmoreless" *ngIf="showAvailableFeature ==true && trackFeatureObj.length > 0  && trackFeatureObj[trackFeatureObj.length-1].key != 'Price' && trackFeatureObj[trackFeatureObj.length-1].key !='Part Number'">
+        <div class="col-12 mb-3 text-center">
+          <span class="btn btn_red_right text-center" *ngIf="showMoreOrMultipleFeature" (click)="selectMultiple(trackFeatureObj[trackFeatureObj.length-1].key)">{{showMoreLessStr}}
+            <!--  <i class="fa fa-caret-down" aria-hidden="true"></i> -->
+          </span>
+          <span class="btn btn_red_right text-center" *ngIf="!showMoreOrMultipleFeature && trackFeatureObj[trackFeatureObj.length-1].values.length > 4"
+            (click)="ShowMoreLess()">{{showMoreLessStr}}
+          </span>
+          <span class="btn btn_red_right text-center" (click)="skipToEnd()">Skip to End
+          </span>
+        </div>
+      </div>
+
+      <!-- allow user to enter part number -->
+      <div class="col-12 quepopupmoreless" *ngIf="trackFeatureObj.length > 0 && trackFeatureObj[trackFeatureObj.length-1].key =='Part Number' && !showPartNumberSection && hidePartNumberData == false">
+          <div class="col-12 mb-3 text-center">
+            <!-- <span class="btn btn_red_right text-center" *ngIf="showMoreOrMultipleFeature" (click)="selectMultiple(trackFeatureObj[trackFeatureObj.length-1].key)">{{showMoreLessStr}} -->
+              <!--  <i class="fa fa-caret-down" aria-hidden="true"></i> -->
+            <!-- </span> -->
+            <span *ngIf="!showPartNumberSection" class="btn btn_red_right text-center"
+              (click)="ShowAddPartNumber()">Add Part Number(s)
+            </span>
+            <span *ngIf="!showPartNumberSection" class="btn btn_red_right text-center" (click)="skipToEnd()">Skip to End
+            </span>
+          </div>
+        </div>
+      <!-- allow user to enter part number -->
+      
+      <!-- show Features  -->
+      <!-- zip code -->
+      <div *ngIf="showExistingLocation ==true && existingLocation.length>0 && !showOnly4Options" class="text-center col-12 whiteSpace">
+        <span *ngFor="let location of existingLocation" class="btn btn btn_red_right" (click)="selectAddress(location)">
+          {{location.zipcode}}
+        </span>
+      </div>
+      <div *ngIf="showExistingLocation ==true && existingLocation.length>0 && showOnly4Options" class="text-center col-12 whiteSpace">
+        <span *ngFor="let location of existingLocation | slice:0:4" class="btn btn btn_red_right" (click)="selectAddress(location)">
+          {{location.zipcode}}
+        </span>
+      </div>
+      <div class="col-12 quepopupmoreless" *ngIf="showExistingLocation ==true && existingLocation.length > 4">
+        <div class="col-12 mb-3 text-center">
+          <span class="btn btn_red_right text-center" (click)="ShowMoreLess()">{{showMoreLessStr}}
+          </span>
+        </div>
+      </div>
+      <!-- zip code -->
+    </div>
+  </div>
+
+  <!-- <div class="search-wrapper">
+          <form>
+          <input type="text" name="focus" required class="search-box" [(ngModel)]="UserInput" placeholder="Enter search term" />
+            <button class="close-icon" type="reset"></button>
+           <i (click)="addChatInput(UserInput)" class="fa fa-cart-arrow-down" aria-hidden="true"></i>
+          </form>
+        </div> -->
+
+  <!--Shipping Address and Payment pop_overlay-->
+  <div class="CUIpopup">
+    <div *ngIf="core.IsCheckout && showaddressQuestPopup" class="row backgroundWhite mob-bottom-pop mob-bottom-pop_2 && addShippingAddressFormWrapper && showaddressQuestPopup">
+      <!--Shipping Address-->
+      <div class="col-12">
+        <!--Add Shipping Address-->
+        <form [formGroup]="addShippingAddressForm" *ngIf="addShippingAddressFormWrapper && showaddressQuestPopup">
+          <div class="form-group">
+            <input type="text" formControlName="addAddressLineOne" class="form-control" placeholder="Address Line 1" />
+          </div>
+          <div class="form-group">
+            <input type="text" formControlName="addAddressLineTwo" class="form-control" placeholder="Address Line 2" />
+          </div>
+          <div class="form-group">
+            <input type="text" formControlName="addCity" class="form-control" placeholder="City" />
+          </div>
+          <div class="form-group">
+            <select formControlName="addState" class="form-control">
+              <option value selected disabled>Select a state</option>
+              <option *ngFor="let state of getStates" value="{{state}}">{{state}}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <input (keypress)="core.allowOnlyNumbers($event)" type="text" maxlength="5" formControlName="addZipcode"
+              class="form-control" placeholder="Zip Code" />
+          </div>
+          <div class="form-group pl-4" *ngIf="userData != undefined">
+              <label class="form-check-label d-inline-block">
+                  <input type="checkbox" formControlName="appendAdddefaultShipping" class="form-check-input"> Set as default address
+              </label>  
+            </div>
+          <div class="form-group">
+            <button [disabled]="addShippingAddressFormWrapper && !addShippingAddressForm.valid " *ngIf="userData != undefined" type="button" (click)="addEditSave(addShippingAddressForm, 'add')"
+              class="btn btn_red_right mt-0">
+              add
+            </button>
+            <button [disabled]="addShippingAddressFormWrapper && !addShippingAddressForm.valid " *ngIf="userData == undefined" type="button" (click)="addGuestAddress(addShippingAddressForm, 'add')"
+              class="btn btn_red_right mt-0">
+              add
+            </button>
+            <button type="button" (click)="cancelAddress(addShippingAddressForm, 'add')" class="btn btn-outer btn_redouter_right">cancel</button>
+            <img src="./assets/images/loader.gif" style="margin-left: 7px; margin-top: 7px" *ngIf="loader_Address" />
+          </div>
+        </form>
+        <!--Add Shipping Address-->
+
+        <!--Edit Shipping Address-->
+        <form [formGroup]="editShippingAddressForm" *ngIf="editShippingAddressFormWrapper">
+          <div class="form-group">
+            <input type="text" formControlName="editAddressLineOne" class="form-control" placeholder="Address Line 1" />
+          </div>
+          <div class="form-group">
+            <input type="text" formControlName="editAddressLineTwo" class="form-control" placeholder="Address Line 2" />
+          </div>
+          <div class="form-group">
+            <input type="text" formControlName="editCity" class="form-control" placeholder="City" />
+          </div>
+          <div class="form-group">
+            <select formControlName="editState" class="form-control">
+              <option value selected disabled>Select a state</option>
+              <option *ngFor="let state of getStates" value="{{state}}" selected="editShippingAddressForm.editState == state">{{state}}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <input (keypress)="core.allowOnlyNumbers($event)" type="text" maxlength="5" formControlName="editZipcode"
+              class="form-control" placeholder="Zipcode" />
+          </div>
+          <div class="form-group">
+            <button type="button" [disabled]="editShippingAddressFormWrapper && !editShippingAddressForm.valid " (click)="addEditSave(editShippingAddressForm, 'edit')"
+              class="btn btn_red_right">save</button>
+            <button type="button" (click)="cancelAddress(editShippingAddressForm, 'edit')" class="btn btn-outer btn_redouter_right">cancel</button>
+          </div>
+        </form>
+        <!--Edit Shipping Address-->
+      </div>
+    </div>
+
+    <!--Add New Card : Checkout Page-->
+    <div class="row backgroundWhite mob-bottom-pop mob-bottom-pop_2" [hidden]="!addCard">
+        <form [formGroup]="addPaymentCard" (ngSubmit)="onSubmitGuestCard(addPaymentCard)" class="w-100 p-3" *ngIf="addCard && userData == undefined">
+            <div class="pl-0 pr-0">
+                <div class="form-group position-relative">
+                  <span class="brand" style="top: 10px; right: 10px; position: absolute">
+                    <i class="pf pf-credit-card" id="brand-icon" style="font-size: 15px"></i>
+                  </span>
+      
+                  <input id="cc-number" (keyup)="getCardType($event)" formControlName="creditCard" type="tel" class="input-lg form-control cc-number"
+                  autocomplete="off" placeholder="1234 1234 1234 1234" maxlength="19" ccNumber>
+                </div>
+      
+                <div class="form-group">
+                  <input id="cc-exp" formControlName="expirationDate" type="tel" class="input-lg form-control cc-exp"
+                  autocomplete="off" placeholder="MM / YY" maxlength="7" ccExp>
+                </div>
+      
+                <div class="form-group">
+                  <input id="cc-cvc" formControlName="cvc" type="tel" class="input-lg form-control cc-cvc" autocomplete="off"
+                    placeholder="CVC" maxlength="3" ccCVC>
+                </div>
+      
+                <div class="form-group">
+                  <input id="cc-czipcode" formControlName="cardZipcode" type="tel" class="input-lg form-control" autocomplete="off"
+                    placeholder="Zipcode" maxlength="5">
+                </div>
+                
+                <div class="form-group errorMessages2">
+                  {{error}}
+                </div>
+              </div>
+      
+              <div class="col-12 p-0 text-left mb-3 mt-3">
+                <button type="submit" class="btn btn_red_right btn-font btn-size">add card</button>
+                <button type="button" (click)="resetAddCard()" class="btn-outer btn_redouter_right btn-outer-margin btn_paymentadjest">cancel</button>
+                <img src="./assets/images/loader.gif" *ngIf="loader_addCard" class="ml-2" />
+              </div>
+          </form>
+      <form [formGroup]="addPaymentCard" (ngSubmit)="onSubmitAddCard(addPaymentCard)" class="w-100 p-3" *ngIf="addCard && userData != undefined">
+        <div class="pl-0 pr-0">
+          <div class="form-group position-relative">
+            <span class="brand" style="top: 10px; right: 10px; position: absolute">
+              <i class="pf pf-credit-card" id="brand-icon" style="font-size: 15px"></i>
+            </span>
+
+            <input id="cc-number" (keyup)="getCardType($event)" formControlName="creditCard" type="tel" class="input-lg form-control cc-number"
+            autocomplete="off" placeholder="1234 1234 1234 1234" maxlength="19" ccNumber>
+          </div>
+
+          <div class="form-group">
+            <input id="cc-exp" formControlName="expirationDate" type="tel" class="input-lg form-control cc-exp"
+            autocomplete="off" placeholder="MM / YY" maxlength="7" ccExp>
+          </div>
+
+          <div class="form-group">
+            <input id="cc-cvc" formControlName="cvc" type="tel" class="input-lg form-control cc-cvc" autocomplete="off"
+              placeholder="CVC" maxlength="3" ccCVC>
+          </div>
+
+          <div class="form-group">
+            <input id="cc-czipcode" formControlName="cardZipcode" type="tel" class="input-lg form-control" autocomplete="off"
+              placeholder="Zipcode" maxlength="5">
+          </div>
+          <div class="form-group pl-4">
+              <label class="form-check-label d-inline-block">
+                  <input type="checkbox" class="form-check-input" formControlName = "defaultPayment"> Set as default payment option
+                </label>
+          </div>
+
+          <div class="form-group errorMessages2">
+            {{error}}
+          </div>
+        </div>
+
+        <div class="col-12 p-0 text-left mb-3 mt-3">
+          <button type="submit" class="btn btn_red_right btn-font btn-size">add card</button>
+          <button type="button" (click)="resetAddCard()" class="btn-outer btn_redouter_right btn-outer-margin btn_paymentadjest">cancel</button>
+          <img src="./assets/images/loader.gif" *ngIf="loader_addCard" class="ml-2" />
+        </div>
+      </form>
+    </div>
+    <!--Add New Card : Checkout Page-->
+
+    <!-- type div -->
+    <div class="backgroundWhite selectMultiple" *ngIf="showMultipleTypes">
+      <div class="row pt-2 pl-2 pr-2">
+        <div class="col-2">
+          <span class="btnClose" (click)="closeTypes()" style="cursor: pointer" tabindex="0">X</span>
+        </div>
+        <div class="col-8 text-center">
+          <strong>select: Types</strong>
+        </div>
+        <div class="col-2"> </div>
+      </div>
+      <hr />
+      <div class="row p-2">
+        <div class="col-6 pl-4" *ngFor="let type of userResponse.type">
+          <label class="multipleOrder">
+            <input type="checkbox" [checked]="type.isChecked" (change)=" type.isChecked = !type.isChecked;changeType(type,'type')"
+              class="chkBorder" />{{type.text}}
+            <span class="{{filterValue(type.text, '_type')}} checkmark"></span>
+          </label>
+        </div>
+      </div>
+      <hr />
+      <div class="row m-2">
+        <div class="col-12 mb-3`">
+          <button type="button" class="btn btn_red_right w-100" (click)="confirmTypes('multiple')">confirm</button>
+        </div>
+      </div>
+    </div>
+    <!-- Feature Multiple -->
+    <div class="backgroundWhite selectMultiple" *ngIf="showMultipleFeatures && trackFeatureObj[trackFeatureObj.length-1].key != 'Price' && trackFeatureObj[trackFeatureObj.length-1].key != 'Part Number'">
+      <div class="row pt-2 pl-2 pr-2">
+        <div class="col-2">
+          <span class="btnClose" (click)="closeFeatures()" style="cursor: pointer" tabindex="0">X</span>
+        </div>
+        <div class="col-8 text-center">
+          <strong>select:
+            {{trackFeatureObj[trackFeatureObj.length-1].key}}{{trackFeatureObj[trackFeatureObj.length-1].order.Units
+            ? ' ('+ trackFeatureObj[trackFeatureObj.length-1].order.Units + ')':"" }}</strong>
+        </div>
+        <div class="col-2"> </div>
+      </div>
+      <hr />
+      <div class="row p-2">
+        <div class="col-6 pl-4" *ngFor="let value of trackFeatureObj[trackFeatureObj.length-1].values">
+          <label class="multipleOrder">
+            <input type="checkbox" id={{value}} (change)="pushpopSelectedFeature(trackFeatureObj[trackFeatureObj.length-1],$event,value)"
+              class="chkBorder" />{{value}}
+            <span class="{{filterValue(value,'_attr')}} checkmark"></span>
+          </label>
+        </div>
+      </div>
+      <hr />
+      <div class="row m-2">
+        <div class="col-12 mb-3`">
+          <button type="button" class="btn btn_red_right w-100" (click)="confirmFeature(trackFeatureObj[trackFeatureObj.length-1],'multiple')">confirm</button>
+        </div>
+      </div>
+    </div>
+    <!-- Part number section -->
+    <div class="backgroundWhite selectMultiple partNoSection" *ngIf="showPartNumberSection && hidePartNumberData == false">
+        <div class="row pt-2 pl-2 pr-2">
+          <div class="col-2">
+            <span class="btnClose" (click)="closePartNumber()" style="cursor: pointer" tabindex="0">X</span>
+          </div>
+          <div class="col-8 text-center">
+            <strong>Enter Part Number(s)</strong>
+          </div>
+          <div class="col-2"> </div>
+        </div>
+        <hr />
+        <div class="row p-2">
+          <div class="col-9 pl-4" >
+                <input type="text" [(ngModel)]="partNumValue"  placeholder="Part Number" ng-maxlength="14" id={{value}}  />
+            </div>
+            <div class="col-3 p-0" > <span class="plus" (click)="pushPopPartNumber(trackFeatureObj[trackFeatureObj.length-1],partNumValue)" > + </span></div>
+         </div>    
+         <div class="row p-2" *ngIf="partNumberInvalid" class="form-group errorMessages2">
+            <div class="col-12 pl-4" >
+              {{errorMsg}}
+            </div>
+        </div>
+         <div class="row ml-3 partList">
+           <div class="col-12 pl-0 pt-2">
+              <span class="categ_outline_red partNumber" *ngFor="let partNum of partNumberArray; let i = index"><span>{{partNum}} </span>
+                <button type="button" class="close" (click)="deleteSinglepartNumber(trackFeatureObj[trackFeatureObj.length-1],partNum,i)" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </span>
+           </div> 
+          </div> 
+        <hr />
+        <div class="row m-2">
+          <div class="col-12 mb-3 pl-2">
+            <button type="button" class="btn btn_red_right w-100" (click)="confirmFeature(trackFeatureObj[trackFeatureObj.length-1],'Part Number')">confirm</button>
+          </div>
+        </div>
+      </div>
+    <!-- Part number section -->
+
+    <!-- price control -->
+    <div class="getofferSlider mob-bottom-pop" *ngIf="showMinMaxPrice">
+      <form [formGroup]="getOffer_orderInfo">
+        <div class="col-12 ">
+          <div class="dx-fieldset">
+            <div class="dx-field">
+              <div class="dx-field-value">
+                <span style="position: relative" class="d-block">
+                  <span class="currencySymbol">$</span>
+                  <dx-number-box formControlName="minPrice" (onFocusIn)="showInput()" (keypress)="core.allowOnlyNumbers($event);" style="padding-left: 24px;"
+                    [min]="minPrice" [max]="maxPrice" [showSpinButtons]="true" [(value)]="rangeSlider.start" class="w-100 mr-2"></dx-number-box>
+                </span>
+              </div>
+            </div>
+            <div class="dx-field float-right">
+              <div class="dx-field-value">
+                <span style="position: relative" class="d-block">
+                  <span class="currencySymbol">$</span>
+                  <dx-number-box formControlName="maxPrice" (onFocusIn)="showInput()" (keypress)="core.allowOnlyNumbers($event)" style="padding-left: 24px;"
+                    [min]="minPrice" [max]="maxPrice" [showSpinButtons]="true" [(value)]="rangeSlider.end" class="w-100 mr-2"></dx-number-box>
+                </span>
+
+              </div>
+            </div>
+            <div class="dx-field">
+              <dx-range-slider #rangeSlider [min]="0" [max]="maxPrice" [start]="getOffer_orderInfo.controls.minPrice.value"
+                [end]="getOffer_orderInfo.controls.maxPrice.value"></dx-range-slider>
+            </div>
+          </div>
+        </div>
+      </form>
+      <hr />
+      <div class="row m-2">
+        <div class="col-12 mb-3`">
+          <button type="button" class="btn btn_red_right w-100" (click)="confirmPrice()">confirm</button>
+        </div>
+      </div>
+    </div>
+    <div class="cntFooter_height">&nbsp;</div>
+  </div>
+</div>
+<!--Invalid address-->
+<ng-template #invalidAddressModel let-c="close" let-d="dismiss">
+  <div class="modal-body">
+    <p>{{invalidAddress}}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outer btn_red_right" (click)="c('Close click')">Close</button>
+  </div>
+</ng-template>
+<!--Invalid address-->
+
+<!--Close Account-->
+<ng-template #terminateSinupProcessModal let-c="close" let-d="dismiss">
+  <div class="modal-body">
+    <p>Are you sure that you want to terminate the sign up process ?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outer btn_red_right" (click)="c('Close click')">Yes</button>
+    <button type="button" class="btn btn-outer btn_redouter_right" (click)="d('dismiss')">No</button>
+  </div>
+</ng-template>
+<!--Close Account-->
+<ng-template #validationModel let-c="close" let-d="dismiss">
+    <div class="modal-header">
+      <h4 class="modal-title">{{validationHeader}}</h4>
+      <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p>{{invalidValidation}}</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outer btn_red_right" *ngIf="signUpResponse != undefined && signUpResponse.status == true" (click)="c('Close click'); confirmUser()">log in</button>
+      <button type="button" class="btn btn-outer btn_redouter_right" *ngIf="signUpResponse.status == false"  (click)="d('Cross click')">Done</button>
+    </div>
+  </ng-template>
+
+  <ng-template #checkoutConfirmModal let-c="close" let-d="dismiss">
+      <div class="modal-header">
+        <h4 class="modal-title">Checkout</h4>
+        <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>{{paymentSuccessfullMsg}}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outer btn_redouter_right" (click)="d('Cross click')">Done</button>
+      </div>
+  </ng-template>
+
+  <ng-template #checkoutModal let-c="close" let-d="dismiss">
+      <div class="modal-header">
+        <h4 class="modal-title">Guest Checkout</h4>
+        <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>{{this.confirmValidationMsg.message}}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outer btn_red_right" (click)="c('Close click')">Close</button>
+      </div>
+    </ng-template>
+
+<!--Shipping Address and Payment-->
+<app-footer class="optionalFooter" (writtenInput)="addChatInput($event)" (signOutEmit)="signOut($event)" (signInEmit)="signIn($event)"></app-footer>

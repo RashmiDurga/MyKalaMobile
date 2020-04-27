@@ -1,0 +1,18 @@
+<div class="banner_action d-inline-block">
+  <input type="text" [(ngModel)]="core.searchBar" (blur)="core.hideSuggesstionList()" (keyup)="core.searchSuggestion(core.searchBar, null, null,null, $event)"
+    class="form-control float-left esSearchBar" placeholder="What can we help you find?" />
+
+  <img src="./assets/images/loader.gif" style="top: 8px; position: absolute; right: 80px" width="15" *ngIf="core.loader_suggestion" />
+
+  <button (click)="core.search(core.searchBar, null, null)" class="btn btn-red float-left text-center">
+    <span *ngIf="!core.loaderSearch">EXPLORE</span>
+    <img *ngIf="core.loaderSearch" src="./assets/images/loaderWhite.gif" style="margin-top: -3px" />
+  </button>
+
+  <div class="p-0 float-left text-left suggesstionList" *ngIf="core.suggesstionList != undefined && core.suggesstionList.length > 0">
+    <button *ngFor="let list of core.suggesstionList; let i = index" (click)="core.search(list.productLevelName, list.parentName, list.parentId)">{{list.productLevelName}}
+      In {{list.parentName}}
+    </button>
+  </div>
+</div>
+

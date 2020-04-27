@@ -1,0 +1,85 @@
+<div class="container">
+  <div style="height:120px;width:100%;"></div>
+  <div class="title">
+    <h2>Sign In</h2>
+  </div>
+  <div class="col-sm-12 join_layout">
+    <form [formGroup]="loginKala">
+      <div class="join_content">
+        <h4 class="subtitle">log in</h4>
+
+        <div class="form-group">
+          <input (keyup)="hideValidation()" pattern formControlName="email" type="email" class="form-control" aria-describedby="emailHelp" placeholder="Email">
+
+          <!--Validation-->
+          <div *ngIf="emailValidation">
+            <div *ngIf="!loginKala.controls.email.value" class="alert alert-danger errorMessages">{{loginInputValMsg.emailRequired}}</div>
+            <div *ngIf="loginKala.controls.email.value && loginKala.controls.email.errors" class="alert alert-danger errorMessages">{{loginInputValMsg.validEmail}}</div>
+          </div>
+          <!--Validation-->
+
+          <!--Validation
+          <div *ngIf="loginKala.controls.email.dirty || loginKala.controls.email.touched">
+            <div *ngIf="!loginKala.controls.email.value" class="alert alert-danger errorMessages">{{loginInputValMsg.emailRequired}}</div>
+            <div *ngIf="loginKala.controls.email.value && loginKala.controls.email.errors" class="alert alert-danger errorMessages">{{loginInputValMsg.validEmail}}</div>
+          </div>
+          Validation-->
+
+        </div>
+
+        <div class="form-group">
+          <input (keyup)="hideValidation()" formControlName="password" type="password" class="form-control" placeholder="Password">
+
+          <!--Validation-->
+          <div *ngIf="passwordValidation">
+            <div *ngIf="!loginKala.controls.password.value" class="alert alert-danger errorMessages">{{loginInputValMsg.passwordRequired}}</div>
+          </div>
+          <!--Validation-->
+
+          <!--Validation
+          <div *ngIf="loginKala.controls.password.dirty || loginKala.controls.password.touched">
+            <div *ngIf="!loginKala.controls.password.value" class="alert alert-danger errorMessages">{{loginInputValMsg.passwordRequired}}</div>
+          </div>
+          Validation-->
+
+        </div>
+
+        <div class="form-check">
+          <label class="form-check-label d-inline-block">
+            <input type="checkbox" formControlName="remember" class="form-check-input"> remember me
+          </label>
+          <small style="margin-top: 4px" class="float-right">
+            <a routerLink="/forgot-password" class="colorlightGray">forgot password?</a>
+          </small>
+        </div>
+
+        <!--Loader-->
+        <div *ngIf="verificationMail" class="alert alert-success successMessage">
+          {{loginInputValMsg.verifyMail}}
+        </div>
+
+        <div *ngIf="loginError" class="alert alert-danger errorMessages">
+          {{loginUserMessage.error}}
+        </div>
+
+        <div *ngIf="userInactive" class="alert alert-danger errorMessages">
+          {{loginInputValMsg.inactiveUser}}
+          <a class="d-inline" (click)="verifyAccount()">
+            <u>Click here</u>
+          </a> to verify your account.
+        </div>
+
+        <div *ngIf="unAuthorized" class="alert alert-danger errorMessages">
+          {{loginInputValMsg.unAuthorized}}
+        </div>
+
+        <!--Loader-->
+      </div>
+      <hr />
+      <div class="text-center">
+        <button (click)="onSubmit()" type="submit" class="btn btn_red_right">login</button>
+      </div>
+    </form>
+    <div class="clearfix">&nbsp;</div>
+  </div>
+</div>

@@ -1,0 +1,79 @@
+<div class="mob-allpageHeader" *ngIf="!core.IsTrackOrder">
+  <div class="row">
+    <div class="col-3 text-center" (click)="core.goPrevPage()">
+      <i class="fa fa-angle-left" aria-hidden="true"></i>
+      <span>back</span>
+    </div>
+    <div class="col-6 text-center">
+      <h5>Track your order</h5>
+    </div>
+    <div class="col-3"></div>
+  </div>
+</div>
+<div *ngIf="!core.IsTrackOrder" class="contentHeight">&nbsp;</div>
+
+<div class="container" [ngClass]="{'scrollContainer scrollContainerHeight':!core.IsTrackOrder}">
+  <ng4-loading-spinner [threshold]="1000" [template]="template" [zIndex]="999"></ng4-loading-spinner>
+  <div class="row">
+    <div class="col-12 p-0" position-relative>
+      <div #gmap id="map" class="w-100" style="height:250px;"></div>
+    </div>
+
+    <div class="col-12 pl-2 pr-2 pt-2">
+      <div class="row m-0 mb-2">
+        <div class="col-6 colorlightGray float-left pl-0">Order Id:</div>
+        <div  class="col-6 wordWrap float-right">{{selectedOrder.modal.orderId | uppercase}}</div>
+      </div>
+
+      <div class="row m-0 mb-2">
+        <div class="col-6 colorlightGray float-left pl-0">Estimated Delivery:</div>
+        <div *ngIf="selectedOrder != undefined" class="col-6 wordWrap float-right">{{getDeliveryDate(selectedOrder.order.deliveryMethod, selectedOrder.modal.purchasedDate)}}</div>
+      </div>
+
+      <div class="row m-0 mb-2">
+        <div class="col-6 colorlightGray float-left pl-0">Order Shipping From:</div>
+        <div *ngIf="selectedOrder != undefined && selectedOrder.goShippoRes.address_from != null" class="col-6 wordWrap float-right">
+          <span>{{selectedOrder.goShippoRes.address_from.city}}</span>,
+          <span>{{selectedOrder.goShippoRes.address_from.state}}</span>,
+          <span>{{selectedOrder.goShippoRes.address_from.country}}</span>,
+          <span>{{selectedOrder.goShippoRes.address_from.zip}}</span>
+        </div>
+      </div>
+
+      <div class="row m-0 mb-2">
+        <div class="col-6 colorlightGray float-left pl-0">Order Shipping To:</div>
+        <div *ngIf ="selectedOrder!=undefined && selectedOrder.goShippoRes.address_to != null" class="col-6 wordWrap float-right">
+          <span>{{selectedOrder.goShippoRes.address_to.city}}</span>,
+          <span>{{selectedOrder.goShippoRes.address_to.state}}</span>,
+          <span>{{selectedOrder.goShippoRes.address_to.country}}</span>,
+          <span>{{selectedOrder.goShippoRes.address_to.zip}}</span>
+        </div>
+      </div>
+
+      <div class="row m-0 mb-2">
+        <div class="col-6 colorlightGray float-left pl-0">Order Shipment Status:</div>
+        <div *ngIf="selectedOrder.goShippoRes.tracking_status != null" class="col-6 wordWrap float-right">{{selectedOrder.goShippoRes.tracking_status.status_details}}</div>
+      </div>
+
+      <div class="row m-0 mb-2">
+        <div class="col-6 colorlightGray float-left pl-0">Currently At:</div>
+        <div *ngIf="selectedOrder.goShippoRes.tracking_status != null" class="col-6 wordWrap float-right">
+          <span>{{selectedOrder.goShippoRes.tracking_status.location.city}}</span>,
+          <span>{{selectedOrder.goShippoRes.tracking_status.location.state}}</span>,
+          <span>{{selectedOrder.goShippoRes.tracking_status.location.country}}</span>,
+          <span>{{selectedOrder.goShippoRes.tracking_status.location.zip}}</span>
+        </div>
+      </div>
+
+      <div class="row m-0 mb-2">
+        <div class="col-6 colorlightGray float-left pl-0">Arrived at:</div>
+        <div  *ngIf="selectedOrder.goShippoRes.tracking_status !=null" class="col-6 wordWrap float-right">{{getPurchaseDate(selectedOrder.goShippoRes.tracking_status.object_created)}}</div>
+      </div>
+
+      <div class="row m-0 mb-2">
+        <div class="col-6 colorlightGray float-left pl-0">Status:</div>
+        <div *ngIf="selectedOrder.goShippoRes.tracking_status !=null" class="col-6 wordWrap float-right">{{selectedOrder.goShippoRes.tracking_status.status}}</div>
+      </div>
+    </div>
+  </div>
+</div>

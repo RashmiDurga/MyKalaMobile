@@ -1,0 +1,342 @@
+<div class="container scrollContainer">
+    <div class="mob-pageHeader padd0">
+        <div class="height50 backgrond-white">
+            <div class="col-3 text-center" (click)="core.goPrevPage()">
+                <i class="fa fa-angle-left" aria-hidden="true" *ngIf="!showCategoryFilterBar"></i>
+                <span *ngIf="!showCategoryFilterBar">back</span>
+            </div>
+
+            <!-- <div class="col-6 text-center p-0 overflowEllipsis">{{getSearchedTerm()}}</div> -->
+
+            <div class="col-9 text-right pl-2 elastic_filter">
+                <span class="float-right exploreFC" (click)="toggleCFPanel()">
+                    <i class="fa fa-filter" aria-hidden="true" *ngIf="!showCategoryFilterBar"></i>
+                    <span style="font-family: open_sansbold; font-size: 17px; color:#ffffff" *ngIf="showCategoryFilterBar">x</span>
+                </span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12 categoryFilterBar pt-4 elastic_filterSide" [hidden]="!showCategoryFilterBar">
+                <div class="col-12 pl-2 pr-2 float-left">
+                        <form [formGroup]="getOffer_orderInfo">
+                                <div class="row"> 
+                                    <div class="col-sm-12">
+                                        <div class="dx-field">
+                                            <dx-range-slider #rangeSlider [min]="0" [max]="maxPrice" [start]="minValuePrice" (onValueChanged) ="fetchDataOnPriceRange()"
+                                            [end]="maxValuePrice"></dx-range-slider>
+                                        </div> 
+                                        <div class="dx-fieldset row m-0">
+                                        <div class="dx-field col-sm-6 col-6 py-2">
+                                            <div class="dx-field-value">
+                                            <span style="position: relative" class="d-block">
+                                                <span class="currencySymbol">min $</span>
+                                                <dx-number-box formControlName="minPrice" (keypress)="core.allowOnlyNumbers($event)" (focusout) ="fetchDataOnPriceRangeDxNum()" 
+                                                [min]="minPrice" [max]="maxPrice" [showSpinButtons]="true" [(ngModel)]="rangeSlider.start" class="w-100 mr-2"></dx-number-box>
+                                            </span>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field col-sm-6 col-6 py-2">
+                                            <div class="dx-field-value float-right">
+                                                <span style="position: relative" class="d-block">
+                                                    <span class="currencySymbol">max $</span>
+                                                    <dx-number-box formControlName="maxPrice" (keypress)="core.allowOnlyNumbers($event)"  (focusout) ="fetchDataOnPriceRangeDxNum()"
+                                                    [min]="minPrice" [max]="maxPrice" [showSpinButtons]="true" [(ngModel)]="rangeSlider.end" class="w-100 mr-2"></dx-number-box>
+                                                </span>
+                                            </div>
+                                        </div> 
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2"></div>
+                                </div>
+                            </form>
+                    <!--Side Bar Filter Panel-->
+                    <div id="mySidenavFilter" class="sidenavFilter pt-0" style="border: none">
+                        <!--Select and Data Capsules Wrapper If Searched Without Suggestion List : Starts-->
+                        <ng-container *ngIf="core.isSearchWithoutSuggestion">
+                               
+                            <div class="selectionWrapperFilter margin_0" *ngFor="let data of filteredData">
+                                    
+                                <!--Select Drop Down : Place-->
+                                <div class="w-100" *ngIf="data.level == 1">
+
+                                    <select class="form-control" (change)="changeFilter($event.target.value, data)" [ngModel]="data.selectedValues.length !=0 ?toStr(data.selectedValues[data.selectedValues.length - 1]): 'Place'">
+                                        <option selected disabled value="Place">Place</option>
+                                            <option [disabled]="place.isProductAvailable == undefined" [value]="place.isProductAvailable != undefined ? toStr(place) : null" *ngFor="let place of data.data">{{place.placeName}}
+                                                    {{place.isProductAvailable == undefined ? ' - Coming Soon' : ''}}
+                                            </option>
+                                    </select>
+                                    <!-- <select class="form-control" (change)="changeFilter($event.target.value, data)">
+                                        <optgroup label="Place">
+                                            <option selected disabled hidden>Please select a Place</option>
+                                            <ng-container *ngFor="let place of data.data">
+                                                <option [disabled]="place.isProductAvailable == undefined" [value]="place.isProductAvailable != undefined ? toStr(place) : null">
+                                                    {{place.isProductAvailable != undefined ?
+                                                    place.placeName :
+                                                    place.placeName.concat(' - Coming Soon')}}
+                                                </option>
+                                            </ng-container>
+                                        </optgroup>
+                                    </select> -->
+
+                                    <div class="selectedDataCapsules" *ngFor="let value of data.selectedValues">
+                                        <span class="selectedDataCapsulesContent">{{value.placeName}}</span>
+                                        <span (click)="deleteFilter(value, $event)" class="selectedDataCapsulesDelete">x</span>
+                                    </div>
+                                </div>
+                                <!--Select Drop Down : Place-->
+
+                                <!--Select Drop Down With Option Group : Category-->
+                                <div class="w-100" *ngIf="data.level == 2">
+                                    <select class="form-control" (change)="changeFilter($event.target.value, data)"  [ngModel]="data.selectedValues.length !=0 ?toStr(data.selectedValues[data.selectedValues.length - 1]): 'Category'">
+                                        <optgroup label="{{newData.label}}" *ngFor="let newData of data.data">
+                                            <option selected disabled value="Category">Category</option>
+                                            <ng-container *ngFor="let category of newData.data">
+                                                <option  *ngIf="category.isProductAvailable != undefined"
+                                                            [value]="toStr(category)">
+                                                            {{category.categoryName}} {{category.isProductAvailable == undefined ? ' - Coming Soon'
+                                                            : ''}}
+                                                </option>
+                                            </ng-container>
+                                        </optgroup>
+                                    </select>
+                                    <!-- <select class="form-control" (change)="changeFilter($event.target.value, data)">
+                                        <optgroup label="{{newData.label}}" *ngFor="let newData of data.data">
+                                            <option selected disabled>Please select a Category</option>
+                                            <option *ngFor="let category of newData.data" [disabled]="category.isProductAvailable == undefined"
+                                                [value]="category.isProductAvailable != undefined ? toStr(category) : null">
+                                                {{category.categoryName}} {{category.isProductAvailable == undefined ?
+                                                ' - Coming Soon'
+                                                : ''}}
+                                            </option>
+                                        </optgroup>
+                                    </select> -->
+
+                                    <div class="selectedDataCapsules" *ngFor="let value of data.selectedValues">
+                                        <span class="selectedDataCapsulesContent">{{value.categoryName}}</span>
+                                        <span (click)="deleteFilter(value, $event)" class="selectedDataCapsulesDelete">x</span>
+                                    </div>
+                                </div>
+                                <!--Select Drop Down With Option Group : Category-->
+
+                                <!--Select Drop Down With Option Group : Sub Category-->
+                                <div class="w-100" *ngIf="data.level == 3">
+                                    <select class="form-control" (change)="changeFilter($event.target.value, data)" [ngModel]="data.selectedValues.length !=0 ?toStr(data.selectedValues[data.selectedValues.length - 1]): 'Sub Category'">
+                                        <optgroup label="{{newData.label}}" *ngFor="let newData of data.data">
+                                            <option selected disabled value="Sub Category">Sub Category</option>
+                                            <ng-container *ngFor="let subcategory of newData.data">
+                                                <option  *ngIf="subcategory.isProductAvailable != undefined"
+                                                        [value]="toStr(subcategory)">
+                                                        {{subcategory.subCategoryName}} {{subcategory.isProductAvailable == undefined ? ' -
+                                                        Coming Soon' : ''}}
+                                                    </option>
+                                            </ng-container>
+                                        </optgroup>
+                                    </select>
+                                    <!-- <select class="form-control" (change)="changeFilter($event.target.value, data)">
+                                        <optgroup label="{{newData.label}}" *ngFor="let newData of data.data">
+                                            <option selected disabled>Please select a Sub Category</option>
+                                            <option *ngFor="let subcategory of newData.data" [disabled]="subcategory.isProductAvailable == undefined"
+                                                [value]="subcategory.isProductAvailable != undefined ? toStr(subcategory) : null">
+                                                {{subcategory.subCategoryName}} {{subcategory.isProductAvailable ==
+                                                undefined ? ' -
+                                                Coming Soon' : ''}}
+                                            </option>
+                                        </optgroup>
+                                    </select> -->
+
+                                    <div class="selectedDataCapsules" *ngFor="let value of data.selectedValues">
+                                        <span class="selectedDataCapsulesContent">{{value.subCategoryName}}</span>
+                                        <span (click)="deleteFilter(value, $event)" class="selectedDataCapsulesDelete">x</span>
+                                    </div>
+                                </div>
+                                <!--Select Drop Down With Option Group : Sub Category-->
+
+                                <!--Select Drop Down With Option Group : Types-->
+                                <div class="w-100" *ngIf="data.level > 3">
+
+                                    <select class="form-control" (change)="changeFilter($event.target.value, data)" [ngModel]="data.selectedValues.length !=0 ?toStr(data.selectedValues[data.selectedValues.length - 1]): 'Type'">
+                                        <optgroup label="{{newData.label}}" *ngFor="let newData of data.data">
+                                            <option selected disabled value="Type">Type</option>
+                                                <ng-container *ngFor="let type of newData.data">
+                                                <option *ngIf="type.isProductAvailable != undefined"
+                                                        [value]="toStr(type)">
+                                                        {{type.productTypeName}} {{type.isProductAvailable == undefined ? ' - Coming Soon' :
+                                                        ''}}
+                                                </option>
+                                                </ng-container>
+                                        </optgroup>
+                                    </select>
+
+                                    <!-- <select class="form-control" (change)="changeFilter($event.target.value, data)">
+                                        <optgroup label="{{newData.label}}" *ngFor="let newData of data.data">
+                                            <option selected disabled>Please select a Type</option>
+                                            <option *ngFor="let type of newData.data" [disabled]="type.isProductAvailable == undefined"
+                                                [value]="type.isProductAvailable != undefined ? toStr(type) : null">
+                                                {{type.productTypeName}} {{type.isProductAvailable == undefined ? ' -
+                                                Coming Soon' :
+                                                ''}}
+                                            </option>
+                                        </optgroup>
+                                    </select> -->
+
+                                    <div class="selectedDataCapsules" *ngFor="let value of data.selectedValues">
+                                        <span class="selectedDataCapsulesContent">{{value.productTypeName}}</span>
+                                        <span (click)="deleteFilter(value, $event)" class="selectedDataCapsulesDelete">x</span>
+                                    </div>
+                                </div>
+                                <!--Select Drop Down With Option Group : Types-->
+                            </div>
+                        </ng-container>
+                        <!--Select and Data Capsules Wrapper If Searched Without Suggestion List : Ends-->
+
+
+                        <!--Select and Data Capsules Wrapper If Searched With Suggestion List : Starts-->
+                        <ng-container *ngIf="!core.isSearchWithoutSuggestion">
+                                
+                                
+                            <div class="selectionWrapperFilter margin_0" *ngFor="let data of filteredData">
+                                <!--Select Drop Down-->
+                                <div class="w-100" *ngIf="data.level == 0;else next">
+                                    <!-- <select class="form-control" (change)="changeFilter($event.target.value, data)">
+                                        <optgroup label="Sub Category">
+                                            <option selected disabled hidden>Please select a Sub Category</option>
+                                            <ng-container *ngFor="let subCategory of data.data">
+                                                <option [disabled]="subCategory.isProductAvailable == undefined"
+                                                    [value]="subCategory.isProductAvailable != undefined ? toStr(subCategory) : null">
+                                                    {{subCategory.subCategoryName}}
+                                                    {{subCategory.isProductAvailable == undefined ? ' - Coming Soon' :
+                                                    ''}}
+                                                </option>
+                                            </ng-container>
+                                        </optgroup>
+                                    </select> -->
+
+                                    <select class="form-control" (change)="changeFilter($event.target.value, data)" [ngModel]="data.selectedValues.length !=0 ?toStr(data.selectedValues[data.selectedValues.length - 1]): 'Sub Category'">
+                                            <option selected disabled value="Sub Category">Sub Category</option>
+                                            <option [disabled]="subCategory.isProductAvailable == undefined" [value]="toStr(subCategory)"
+                                                *ngFor="let subCategory of data.data">{{subCategory.subCategoryName}}
+                                                {{subCategory.isProductAvailable == undefined ? ' - Coming Soon' : ''}}
+                                            </option>
+                                    </select>
+                    
+
+                                    <div class="selectedDataCapsules" *ngFor="let value of data.selectedValues">
+                                        <span class="selectedDataCapsulesContent">{{value.subCategoryName}}</span>
+                                        <span (click)="deleteFilter(value, $event)" class="selectedDataCapsulesDelete">x</span>
+                                    </div>
+                                </div>
+                                <!--Select Drop Down-->
+
+                                <!--Select Drop Down With Option Group-->
+                                <ng-template #next>
+                                    <div class="w-100">
+
+                                        <select class="form-control" (change)="changeFilter($event.target.value, data)" [ngModel]="data.selectedValues.length !=0 ?toStr(data.selectedValues[data.selectedValues.length - 1]): 'Type'">
+                                            <optgroup label="{{newData.label}}" *ngFor="let newData of data.data">
+                                                <option selected disabled value="Type">Type</option>
+                                                <ng-container *ngFor="let type of newData.data">
+                                                    <option  *ngIf="type.isProductAvailable != undefined"
+                                                            [value]="toStr(type)">{{type.productTypeName}} {{type.isProductAvailable ==
+                                                            undefined ?
+                                                            ' - Coming Soon' : ''}}
+                                                    </option>
+                                                </ng-container>
+                                            </optgroup>
+                                        </select>
+
+                                        <!-- <select class="form-control" (change)="changeFilter($event.target.value, data)">
+                                            <optgroup label="{{newData.label}}" *ngFor="let newData of data.data">
+                                                <option selected disabled>Please select a Type</option>
+                                                <option *ngFor="let type of newData.data" [disabled]="type.isProductAvailable == undefined"
+                                                    [value]="type.isProductAvailable != undefined ? toStr(type) : null">{{type.productTypeName}}
+                                                    {{type.isProductAvailable ==
+                                                    undefined ?
+                                                    ' - Coming Soon' : ''}}
+                                                </option>
+                                            </optgroup>
+                                        </select>
+ -->
+
+
+                                        <div class="selectedDataCapsules" *ngFor="let value of data.selectedValues">
+                                            <span class="selectedDataCapsulesContent">{{value.productTypeName}}</span>
+                                            <span (click)="deleteFilter(value, $event)" class="selectedDataCapsulesDelete">x</span>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                                <!--Select Drop Down With Option Group-->
+                            </div>
+                        </ng-container>
+                        <!--Select and Data Capsules Wrapper If Searched With Suggestion List : Starts-->
+
+
+                        <!--Apply and Clear Buttons-->
+                        <div class="w-100 float-left margin_top20">
+                            <button class="btn filterButtons" (click)="applyFilters()">
+                                Apply Filter
+                            </button>
+                            <button class="btn filterButtons" (click)="clearAllFilters()">
+                                Clear Filter
+                            </button>
+                        </div>
+                        <!--Apply and Clear Buttons-->
+                    </div>
+                    <!--Side Bar Filter Panel-->
+                </div>
+            </div>
+            <ng4-loading-spinner [threshold]="1000" [template]="template" [zIndex]="999"></ng4-loading-spinner>
+        </div>
+    </div>
+    <div class="contentHeight"></div>
+
+    <div class="row browseProduct mt-3 mb-3" *ngIf="!loader">
+        <div class="example col-sm-3 col-6" style="margin-bottom: 25px" *ngFor="let tile of tilesData" (click)="viewDetails(tile)">
+            <div class="prodImageContainer prodImageContainer_xl">
+                <img [src]="tile.product.mainImageSrc" class="product_hover img-fluid">
+                <!-- <div class="">
+                    <h5>{{tile.product.productName}}</h5>
+                    <span style="font-size:17px;margin-right:10px;">{{tile.product.kalaPrice | currency}}</span>
+                    <span style="font-size:14px;text-decoration:line-through;margin-right:100px;">{{tile.product.retailPrice
+                        | currency}}</span>
+                </div> -->
+            </div>
+            <div>
+                    <h5 class="pl-0 font_14">{{tile.product.productName}}</h5>
+                    <!-- <div class="d-block">
+                        <span class="elastKalaprice">hi{{tile.product.kalaPrice | currency}}</span>
+                        <span class="retailelastPrice">{{tile.product.retailPrice
+                                | currency}}</span>
+                    </div> -->
+
+                     <span class="d-block" *ngIf="tile.product.retailPrice <= tile.product.kalaPrice; else showDefault">
+                        <div class="elastKalaprice_act">{{tile.product.kalaPrice | currency}}</div>
+                    </span>
+                    <ng-template #showDefault>
+                        <div class="elastKalaprice_act">{{tile.product.kalaPrice | currency}}</div>
+                        <div class="retailelastPrice_act">{{tile.product.retailPrice | currency}}</div>
+                    </ng-template>
+
+
+                </div>
+        </div>
+        <!-- <div *ngIf="showMoreBtn" class="col-sm-12 text-center mt-4 mb-2">
+            <button (click)="showMore()" class="btn btn_red_right" *ngIf="!loaderShowMore">show more</button>
+            <img src="./assets/images/loader.gif" *ngIf="loaderShowMore" />
+        </div> -->
+        <div class="row">
+                <div *ngIf="showMoreBtn" class="col-sm-12 text-center mt-4 mb-4 mob-btnShowMore">
+                        <div *ngIf="showMoreBtn && !loader" class="col-sm-12 text-center mb-5 mob-btnShowMore search-results"
+                            infiniteScroll
+                            [infiniteScrollDistance]="2"
+                            [infiniteScrollThrottle]="50"
+                            (scrolled)="onScroll()"
+                            >
+                        <!-- <button (click)="showMore()" class="btn btn_red_right" *ngIf="!loaderShowMore">show more</button> -->
+                        <img src="./assets/images/loader.gif" *ngIf="loaderShowMore" />
+                    </div>
+                    <div class="footerHeight"></div>
+                </div>
+            </div>
+    </div>
+</div>

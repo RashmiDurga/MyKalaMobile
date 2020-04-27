@@ -1,0 +1,154 @@
+<footer>
+    <div class="mob-footer global">
+        <ul>
+            <li>
+                <img src="./assets/images/withkey.png" (click)="footerSwap()" width="35">
+            </li>
+            <li>
+                <i routerLink="/my-news-alerts" class="fa fa-bell-o" aria-hidden="true"></i>
+            </li>
+            <li>
+                <i routerLink="/home" class="fa fa-home" aria-hidden="true"></i>
+            </li>
+            <li (click)="cartDetails()">
+                <i class="fa fa-cart-arrow-down" aria-hidden="true"></i>
+            </li>
+            <li>
+                <i (click)="ShowLounge()" class="fa fa-user-o" aria-hidden="true"></i>
+            </li>
+        </ul>
+    </div>
+    <div class="mob-footer_text">
+        <ul>
+            <li>
+                <img src="./assets/images/withoutkey.png" (click)="footerSwap()" width="35">
+            </li>
+            <li>
+                <div class="search-wrapper text-left">
+                   
+
+                        <input type="text" *ngIf="!core.onlyPassword && !core.inputNewLocation && !core.inputNewOption" [ngModelOptions]="{standalone: true}"
+                            name="focus" required class="form-control search-box w-100 txt-chat" [(ngModel)]="UserInput" placeholder="" (keyup.enter)="getWrittenText(UserInput);blur();"/>
+
+                        <input *ngIf="core.onlyPassword && !core.inputNewLocation && !core.inputNewOption" required
+                            type="password" class="form-control search-box w-100 txt-chat" [(ngModel)]="UserInput" [ngModelOptions]="{standalone: true}"
+                            placeholder="Password" (keyup.enter)="getWrittenText(UserInput);blur();">
+
+                        <input *ngIf="core.inputNewLocation " (keypress)="core.allowOnlyNumbers($event)" [(ngModel)]="UserInput" 
+                            [ngModelOptions]="{standalone: true}" maxlength="5" type="text" class="form-control search-box w-100 txt-chat"
+                            placeholder="Add new Zipcode" (keyup.enter)="getWrittenText(UserInput);blur();"/>
+
+                        <input *ngIf="core.inputNewOption" [(ngModel)]="UserInput" [ngModelOptions]="{standalone: true}"
+                            type="text" class="form-control search-box w-100 txt-chat" placeholder="other" (keyup.enter)="getWrittenText(UserInput);blur();" />
+                        <button class="close-icon" type="reset"></button>
+                    
+                </div>
+            </li>
+            <li>
+                <i class="fa fa-chevron-circle-right" aria-hidden="true" (touchstart)="getWrittenText(UserInput)" (click)="getWrittenText(UserInput, $event)"></i>
+            </li>
+        </ul>
+    </div>
+</footer>
+<div class="loungeMenu">
+    <div id="mySidenav" class="sidenav_right mobile_nav">
+        <div class="row p-2 pb-3 mobUserSetting">
+            <div class="col-3 pr-0">
+                <img src="{{userImg}}" class="img-fluid">
+            </div>
+            <div class="col-9">
+                <h5>{{firstName}} {{lastName}}</h5>
+                <p>{{emailId}}</p>
+            </div>
+        </div>
+        <div class="sidemenu_Spacing"></div>
+        <table class='table'>
+            <tbody>
+                <tr *ngIf="getUserInfo != null" routerLink="/myaccount">
+                    <td>
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <span>My Account</span>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr *ngIf="getUserInfo != null" routerLink="/mycart">
+                    <td>
+                        <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                        <span>My Cart</span>
+                    </td>
+                    <td class="right" *ngIf="core.showNoOfItemsInCart()">{{core.noOfItemsInCart}}</td>
+                </tr>
+                <tr *ngIf="getUserInfo != null" routerLink="/myorders">
+                    <td>
+                        <i class="fa fa-list-ul" aria-hidden="true"></i>
+                        <span>My Orders</span>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr *ngIf="getUserInfo != null" routerLink="/app-myoffers">
+                    <td>
+                        <i class="fa fa-tags" aria-hidden="true"></i>
+                        <span>My Offers</span>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr *ngIf="getUserInfo != null" routerLink="/my-news-alerts">
+                    <td>
+                        <i class="fa fa-bell-o" aria-hidden="true"></i>
+                        <span>News & Alerts</span>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr *ngIf="getUserInfo != null" (click)="signOut()">
+                    <td>
+                        <i class="fa fa-sign-out" aria-hidden="true"></i>
+                        <span>Sign Out</span>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr *ngIf="getUserInfo == null" (click)="signIn()">
+                    <td>
+                        <i class="fa fa-sign-out" aria-hidden="true"></i>
+                        <span>Sign In</span>
+                    </td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="tokenReactivate text-center" *ngIf="core.refreshingSession" [@slideInOut]>
+    <span class="d-inline-block spanLoader">
+        <img src="./assets/images/loader.gif" />
+    </span>
+</div>
+
+<div class="tokenReactivate text-center" *ngIf="core.selectSearchOrCUI" [@slideInOut]>
+    <div class="searchOrCUIWrapper">
+        <div class="left_chat mb-2">Looking for a specific product ?</div>
+        <div class="clearfix">&nbsp;</div>
+        <button type="button" class="btn btn-outer btn_red_right searchOrCUIWrapperFirstButton" (click)="enableSearchBar()">
+            Search for a Product
+        </button>
+        <button type="button" class="btn btn-outer btn_red_right" (click)="continueCUI()">
+            Return to Conversation
+        </button>
+    </div>
+</div>
+
+<div class="tokenReactivate text-center" style="z-index: 999999" *ngIf="core.noProductsFoundModal" [@slideInOut]>
+    <span class="d-inline-block spanLoader pl-2 pr-2 w-75">
+        Sorry, we couldn't find any products that matched your search.
+        <br /><br />
+        <button type="button" class="btn btn-outer btn_red_right" (click)="disablenNoProdFoundModal()">
+            close
+        </button>
+    </span>
+</div>
+
+<div class="tokenReactivate esGlobalSearchWrapper text-center" (click)="disableElasticSearch()" *ngIf="core.enableElasticSearch">
+    <div class="esWrapper" [@slideInOut] (click)="$event.stopPropagation()">
+        <app-elastic-search-bar class="d-block"></app-elastic-search-bar>
+    </div>
+</div>

@@ -1,0 +1,150 @@
+<div class="container">
+        <div class="row prom_banner_bg">
+                <div class="col-6">
+                    <div (click)="core.goPrevPage()">
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span>back</span>
+                    </div>
+                </div>
+    
+    
+                <!-- <div class="mob-menu product_mob_menu col-6 d-flex align-itemes-center justify-content-end">
+                    <i class="fa fa-bars"></i>
+                    <div class="btn-group float-left" (click)="menuClicked()">
+                        <div ngbDropdown class="d-inline-block" (clickOutside)="ClickOutsideModule($event)">
+                            <nav id="mobile-menu">
+                                <label for="tm" id="toggle-menu"><span class="drop-icon"><i class="fa fa-bars"></i></span></label>
+                                <input type="checkbox" id="tm">
+                                <ul class="main-menu cf">
+                                    <li *ngFor="let tile of core.placeCategDataArrayGeneric">
+                                        <div *ngIf="tile.count > 0">
+                                            <a><span (click)="viewAllPlaceProducts(tile)">{{tile.placeName}}</span>
+                                                <span class="drop-icon">▾</span>
+                                                <label title="Toggle Drop-down" class="drop-icon" for="{{tile.placeId}}">▾</label>
+                                            </a>
+                                            <input type="checkbox" id="{{tile.placeId}}">
+                                            <ul class="sub-menu">
+                                                <li *ngFor="let cteg of tile.categoryList">
+                                                    <div *ngIf="cteg.count > 0" class="catmenu">
+                                                        <a><span (click)="viewAllCategProducts(tile,cteg)">{{cteg.categoryName}}</span>
+                                                            <span class="drop-icon">▾</span>
+                                                            <label title="Toggle Drop-down" class="drop-icon" for="{{cteg.categoryId}}">▾</label>
+                                                        </a>
+                                                        <input type="checkbox" id="{{cteg.categoryId}}">
+                                                        <ul class="sub-menu">
+                                                            <li *ngFor="let subCateg of cteg.subCategoryList">
+                                                                <div *ngIf="subCateg.count > 0" class="sub-catmenu">
+                                                                    <a> <span (click)="viewAllProducts(tile,cteg,subCateg)">{{subCateg.subCategoryName}}</span>
+                                                                    </a>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div> -->
+    
+            </div>
+    
+    <img src="./assets/images/loader.gif" style="margin: 0 46% 10%" *ngIf="loader" />
+
+    <!--Side Bar Filter Panel-->
+    <div id="mySidenavFilter" class="sidenavFilter" [hidden]="!showFilterPanel">
+        <!--Close and Clear Filter Section-->
+        <div class="row">
+            <div class="col-sm-12">
+                <ul class="filterActionList">
+                    <li>
+                        <a (click)="enableFilterPanel()">Close Filters</a>
+                    </li>
+                    <li>
+                        <a (click)="clearAllFilters()">Clear All Filters</a>
+                    </li>
+                </ul>
+            </div> 
+        </div>
+        <!--Close and Clear Filter Section-->
+
+
+        <!--Select and Data Capsules Wrapper If Searched Without Suggestion List : Starts-->
+      
+        <!--Select and Data Capsules Wrapper If Searched Without Suggestion List : Ends-->
+
+
+      
+    </div>
+    <!--Side Bar Filter Panel-->
+
+    <div class="browseProduct mt-3 mb-3" *ngIf="!loader">
+        <div class="row">
+            <div class="col-12">
+               
+            </div>
+        </div>
+        <div class="row">
+            <div class="example elasticSearch col-sm-3 col-6" style="margin-bottom: 25px" *ngFor="let tile of tilesData" (click)="viewDetails(tile)">
+                <div *ngIf="tile.product.attributes != undefined && tile.product.attributes.Brand != undefined; else noBrandTemplate" >
+                    <a [routerLink]="['/view-product']" [queryParams]="{brandName:tile.product.attributes.Brand | replaceUnderscore,productName:tile.product.productName| replaceUnderscore,productId:tile.product.kalaUniqueId,Isfilter:(this.filteredData != undefined && this.filteredData.length > 0)?'1':'0'}">
+                        <div class="prodImageContainer prodImageContainer_xl">
+                            <img [src]="tile.product.mainImageSrc" class="product_hover img-fluid"> 
+                        </div>
+                        <div >
+                            <h5 class="pl-0">{{tile.product.productName}}</h5>
+                             <span class="d-block" *ngIf="tile.product.retailPrice <= tile.product.kalaPrice; else showDefault">
+                                <div class="elastKalaprice_act">{{tile.product.kalaPrice | currency}}</div>
+                            </span>
+                            <ng-template #showDefault>
+                                <div class="elastKalaprice_act">{{tile.product.kalaPrice | currency}}</div>
+                                <div class="retailelastPrice_act">{{tile.product.retailPrice | currency}}</div>
+                            </ng-template>
+
+
+                           
+                        </div>
+                    </a>
+                </div>
+                <ng-template #noBrandTemplate> 
+                        <a [routerLink]="['/view-product']" [queryParams]="{brandName:tile.product.attributes.Brand | replaceUnderscore,productName:tile.product.productName| replaceUnderscore,productId:tile.product.kalaUniqueId,Isfilter:(this.filteredData != undefined && this.filteredData.length > 0)?'1':'0'}">
+                            <div class="prodImageContainer prodImageContainer_xl">
+                                <img [src]="tile.product.mainImageSrc" class="product_hover img-fluid"> 
+                            </div>
+                            <div>
+                                <h5 class="pl-0">{{tile.product.productName}}</h5>
+                                <span class="d-block" *ngIf="tile.product.retailPrice <= tile.product.kalaPrice; else showDefault">
+                                    <div class="elastKalaprice_act">{{tile.product.kalaPrice | currency}}</div>
+                                </span>
+                                <ng-template #showDefault>
+                                    <div class="elastKalaprice_act">{{tile.product.kalaPrice | currency}}</div>
+                                    <div class="retailelastPrice_act">{{tile.product.retailPrice | currency}}</div>
+                                </ng-template>
+
+                                
+                            </div>
+                        </a>
+                </ng-template>
+            </div>
+        </div>
+        <div class="row">
+            <div *ngIf="showMoreBtn" class="col-sm-12 text-center mt-4 mb-4 mob-btnShowMore">
+                    <div *ngIf="showMoreBtn && !loader" class="col-sm-12 text-center mb-5 mob-btnShowMore search-results"
+                        infiniteScroll
+                        [infiniteScrollDistance]="2"
+                        [infiniteScrollThrottle]="50"
+                        (scrolled)="onScroll()"
+                        >
+                    <!-- <button (click)="showMore()" class="btn btn_red_right" *ngIf="!loaderShowMore">show more</button> -->
+                    <img src="./assets/images/loader.gif" *ngIf="loaderShowMore" />
+                </div>
+                <div class="footerHeight"></div>
+            </div>
+        </div>
+       
+        <div class="footerHeight"></div>
+</div>
+<app-askkala></app-askkala>

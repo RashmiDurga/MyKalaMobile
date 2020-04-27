@@ -1,0 +1,183 @@
+<div class="container scrollContainer">
+  <!-- <app-sub-menus></app-sub-menus> -->
+  <div class="mob-allpageHeader">
+    <div class="row">
+      <div class="col-3 text-center" (click)="core.goPrevPage()">
+        <i class="fa fa-angle-left" aria-hidden="true"></i>
+        <span>back</span>
+      </div>
+      <div class="col-6 text-center">
+        <h5>My Cart</h5>
+      </div>
+      <div class="col-3"></div>
+    </div>
+  </div>
+  <div class="contentHeight">&nbsp;</div>
+
+  <!--Cart-->
+  <img src="./assets/images/loader.gif" style="margin:0 49%" class="mt-3" *ngIf="loader" />
+
+  <div *ngIf="IsUserLoggedIn; else notLoggedIn">
+    <div class="myCart row" *ngIf="!loader">
+      <div class="myCart-list w-100" *ngFor="let item of itemsInCart | reverse">
+        <h4 class="subtitle" id="{{item.retailerId}}">{{item.retailerName}}</h4>
+        <div class="row">
+          <div class="col-2 col-3 pr-0 orderImageContainer">
+            <img [src]="item.productImage" (click)="core.getProductDetails(item.productId)" class="img-fluid cursor" />
+          </div>
+          <div class="col-7 col-9 pl-4">
+            <div id="{{item.productId}}">
+              <strong (click)="core.getProductDetails(item.productId)" class="cursor">{{item.productName}}</strong>
+            </div>
+            <div class="row pt-2 pb-2">
+              <div class="col-sm-3 col-3 colorlightGray">Quantity:</div>
+              <div class="col-sm-9 col-9">
+                <button class="btn btn_red_right customBtnSmall mr-3 decreaseQuantity" (click)="calculateQantity($event, 'decrease', item)">-</button>
+                {{item.quantity}}
+                <button class="btn btn_red_right customBtnSmall ml-3 increaseQuantity" (click)="calculateQantity($event, 'increase', item)">+</button>
+              </div>
+            </div>
+            <div class="row pb-2">
+              <div class="col-sm-3 col-3 colorlightGray">Price:</div>
+              <div class="col-sm-9 col-9">{{item.price | currency}}</div>
+            </div>
+            <div class="myCart-btn_mob col-12">
+              <div class="row">
+                <div class="col-6 text-right">
+                  <a class="btn_redouter_right" (click)="deleteItem(item, 'cart')">delete</a>
+                </div>
+                <div class="col-6 text-right">
+                  <a class="btn_redouter_right" (click)="move(item, 'toWishlist')">save&nbsp;for&nbsp;later</a>
+                </div>
+              </div>
+            </div>
+            <hr />
+            <div class="row myCart-price">
+              <div class="col-7 text-right colorlightGray">Total price:</div>
+              <div class="col-5 text-right colorred">
+                <strong class="itemPrices">{{itemTotal(item.price, item.quantity) | currency}}</strong>
+              </div>
+            </div>
+          </div>
+          <div class="col-3">
+            <div class="row myCart-btn_web">
+              <div class="col-5 d-block pb-4">
+                <a class="btn-outer btn_redouter_right" (click)="deleteItem(item, 'cart')">delete</a>
+              </div>
+              <div class="col-7 d-block">
+                <a class="btn-outer btn_redouter_right" (click)="move(item, 'toWishlist')">save&nbsp;for&nbsp;later</a>
+              </div>
+            </div>
+            <!-- <div class="row pt-3 pb-1">
+            
+          </div>
+          <div class="row pt-1">
+            
+          </div> -->
+          </div>
+        </div>
+      </div>
+
+      <div class="myCartTotal w-100" *ngIf="!noItemsInCart">
+        <div class="col-12 pt-1 pb-1 text-center">
+          <div class="row">
+            <div class="col-2 p-0">
+              <div class="row pb-2">
+                <div class="col-12 colorred p-0 text-right">Total Amount</div>
+                <div class="col-12 colorred p-0 text-right">
+                  <h5 #TotalAmountPayable>{{totalPayableAmount() | currency}}</h5>
+                </div>
+              </div>
+            </div>
+            <div class="col-10 p-0">
+              <div class="row mt-3">
+                <div class="col-8 text-right pr-0">
+                  <a routerLink="/home" class="btn-outer btn_redouter_right">continue
+                    shopping</a>
+                </div>
+                <div class="col-4 text-right">
+                  <a (click)="checkOut()" class="btn-outer btn_red_right">checkout</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="myCart-list col-12 mt-2" *ngIf="cartEmpty">
+        <div class="col-12 p-0 text-center colorred">
+          <u routerLink="/home">Your cart is empty. Click here to continue shopping.</u>
+        </div>
+      </div>
+      <!--Cart-->
+
+      <!--Saved For Later-->
+      <div class="myCart-list w-100" *ngIf="savedForLater.length > 0">
+        <h4 class="subtitle pl-2">Saved for later</h4>
+
+        <div class="myCart-Savelist myCart-list w-100 mb-5" *ngFor="let item of savedForLater">
+          <h4 class="subtitle" id="{{item.retailerId}}">{{item.retailerName}}</h4>
+          <div class="row">
+            <div class="col-3 pr-0 orderImageContainer" (click)="core.getProductDetails(item.productId)">
+              <img [src]="item.productImage" class="img-fluid" />
+            </div>
+            <div class="col-9 pl-4">
+              <div id="{{item.productId}}" (click)="core.getProductDetails(item.productId)">
+                <strong>{{item.productName}}</strong>
+              </div>
+              <div class="row pt-2 pb-2">
+                <div class="col-5 colorlightGray">Quantity:</div>
+                <div class="col-7">{{item.quantity}}</div>
+              </div>
+              <div class="row pb-2">
+                <div class="col-5 colorlightGray">Price:</div>
+                <div class="col-7">{{item.price | currency}}</div>
+              </div>
+              <div class="row mb-2 mt-2">
+                <div class="col-6 p-0 text-right">
+                  <a class="btn_redouter_right border-0 colorred" (click)="deleteItem(item, 'wishlist')">delete</a>&nbsp;&nbsp;&nbsp;
+                </div>
+                <div class="col-6 text-right">
+                  <a class="btn_redouter_right border-0 colorred" (click)="move(item, 'toCart')">move to cart</a>
+                </div>
+              </div>
+              <hr />
+              <div class="row">
+                <p class="col-7 text-right colorlightGray">Total price:</p>
+                <p class="col-5 text-right colorred">
+                  <strong>{{itemTotal(item.price, item.quantity) | currency}}</strong>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--Saved For Later-->
+    </div>
+  </div>
+
+  <ng-template #notLoggedIn>
+    <div class="myCart-list text-center mt-2 colorred">
+      You must be logged in to check items in cart.
+    </div>
+  </ng-template>
+</div>
+
+<!--My Cart-->
+<ng-template #myCartModal let-c="close" let-d="dismiss">
+  <div class="modal-body">
+    <p>
+      {{this.confirmValidationMsg.message}}
+    </p>
+  </div>
+  <div class="modal-footer">
+    <div *ngIf="this.confirmValidationMsg.label == 'login';else default">
+      <button type="button" class="btn btn-outer btn_red_right" (click)="c('Close click'); confirmUser()">Yes</button>
+      <button type="button" class="btn btn-outer btn_redouter_right" (click)="c('Close click')">No</button>
+    </div>
+    <ng-template #default>
+      <button type="button" class="btn btn-outer btn_redouter_right" (click)="c('Close click')">Close</button>
+    </ng-template>
+  </div>
+</ng-template>
+<!--My Cart-->

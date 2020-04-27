@@ -1,0 +1,538 @@
+<div class="container scrollContainer">
+  <div class="mob-allpageHeader height50 pt-3 pb-3" [ngClass]="{'blurBackground':isMakeABid}">
+    <div class="row">
+        <div class="col-3 text-center" (click)="core.goPrevPage()" style="height: 40px;">
+        <i class="fa fa-angle-left" aria-hidden="true"></i>
+        <span>back</span>
+        </div>
+      <div class="mob-menu top12">
+          <!-- <i class="fa fa-bars"></i> -->
+          <div class="btn-group float-left" (click)="menuClicked()">
+              <div ngbDropdown class="d-inline-block" (clickOutside)="ClickOutsideModule($event)">
+                  <nav id="mobile-menu">
+                      <label for="tm" id="toggle-menu"><span class="drop-icon"><i class="fa fa-bars"></i></span></label>
+                      <input type="checkbox" id="tm">
+                      <ul class="main-menu cf">
+                          <li *ngFor="let tile of core.placeCategDataArrayGeneric">
+                              <div *ngIf="tile.count > 0">
+                                  <a><span (click)="viewAllPlaceProducts(tile)">{{tile.placeName}}</span>
+                                      <span class="drop-icon">▾</span>
+                                      <label title="Toggle Drop-down" class="drop-icon" for="{{tile.placeId}}">▾</label>
+                                  </a>
+                                  <input type="checkbox" id="{{tile.placeId}}">
+                                  <ul class="sub-menu">
+                                      <li *ngFor="let cteg of tile.categoryList">
+                                          <div *ngIf="cteg.count > 0" class="catmenu">
+                                              <a><span (click)="viewAllCategProducts(tile,cteg)">{{cteg.categoryName}}</span>
+                                                  <span class="drop-icon">▾</span>
+                                                  <label title="Toggle Drop-down" class="drop-icon" for="{{cteg.categoryId}}">▾</label>
+                                              </a>
+                                              <input type="checkbox" id="{{cteg.categoryId}}">
+                                              <ul class="sub-menu">
+                                                  <li *ngFor="let subCateg of cteg.subCategoryList">
+                                                      <div *ngIf="subCateg.count > 0" class="sub-catmenu">
+                                                          <a> <span (click)="viewAllProducts(tile,cteg,subCateg)">{{subCateg.subCategoryName}}</span>
+                                                          </a>
+                                                      </div>
+                                                  </li>
+                                              </ul>
+                                          </div>
+                                      </li>
+                                  </ul>
+                              </div>
+                          </li>
+                      </ul>
+                  </nav>
+              </div>
+          </div>
+      </div>
+    </div>
+  </div>
+  <div class="contentHeight height50"></div>
+  <img src="./assets/images/loader.gif" style="margin:0 49%" class="mb-5" *ngIf="loader" />
+
+  <div *ngIf="!loader && selectedProduct !=undefined">
+    <!--Title-->
+    <div class="title web-title">
+      <h2>{{selectedProduct.product.productName}} |
+        <span *ngIf="fromES;else default" class="btnClose" (click)="navigateToElastic(selectedProduct)" style="cursor: pointer">X</span>
+        <ng-template #default>
+          <span class="btnClose" (click) = "navigateToBrowse(selectedProduct)" style="cursor: pointer">X</span>
+        </ng-template>
+      </h2>
+    </div>
+    <!--Title-->
+
+    <div class="row web-title">&nbsp;</div>
+
+    <!--Social Media and Retailer-->
+    <div class="web-title">
+      <!-- <img src="/consumer-app/assets/images/prod-thumb.png" /> -->
+      <u style="cursor:pointer" (click)="animateToTiles('retailer')">{{selectedProduct.product.retailerName}}</u>
+    </div>
+    <!--Social Media and Retailer-->
+
+    <div class="row web-title">&nbsp;</div>
+
+    <div class="row sliderContentContainer">
+      <!--Left Images Carosel-->
+      <div class="col-sm-6 p-0 sliderShadow" [ngClass]="{'zoomInSlider':core.isSliderZoomedIn}" (click)="!core.isSliderZoomedIn && core.zoomInSlider()">
+        <i class="fa fa-times" aria-hidden="true" *ngIf="core.isSliderZoomedIn" (click)="core.closeZoomInSlider($event); $event.stopPropagation()"></i>
+        <app-swipe-slider *ngIf="selectedProduct.product.productImages != undefined && selectedProduct.product.productImages.length > 0"
+          [productImages]="selectedProduct.product.productImages"></app-swipe-slider>
+      </div>
+      <!--Left Images Carosel-->
+
+      <!--Right Details-->
+      <div class="col-12 productDtl-right">
+        <div class="row mob-title">
+          <div class="col-12">
+            <!-- <img src="/consumer-app/assets/images/prod-thumb.png" /> -->
+            <span class="d-inline-block mb-3" style="font-size: 15px">{{selectedProduct.product.productName}}</span>
+            <br />
+            <u style="cursor:pointer" (click)="animateToTiles('retailer')">{{selectedProduct.product.retailerName}}</u>
+          </div>
+        </div>
+
+        <div class="row">
+          <h4 class="col-12 pl-4 pr-4 text_multiple mb-0" *ngIf="selectedProduct.product.retailPrice <= selectedProduct.product.kalaPrice;else showDefault">
+            <span class="priceFontSize">{{selectedProduct.product.kalaPrice | currency}}</span>
+          </h4>
+          <ng-template #showDefault>
+            <h4 class="col-12 pl-4 pr-4 text_multiple mb-0">
+              <span class="priceFontSize">{{selectedProduct.product.kalaPrice | currency}}</span>
+              <span style="text-decoration: line-through; font-size: 13px !important; color: #c3c3c3; margin-left: 5px">{{selectedProduct.product.retailPrice
+                | currency}}</span>
+            </h4>
+          </ng-template>
+        </div>
+
+        <div class="row" *ngIf="totalReviewSummary != undefined && totalReviewSummary != ''">
+          <div class="col-12 pl-3 pr-3 mb-3">
+            <span *ngFor="let rating of getRating(5)" class="ratingStars"></span>
+            <span style="color: blue; margin-top: 3px" class="ml-2 cursor float-left" (click)="animateToTiles('reviews')">
+              <u>{{totalReviewSummary.total}}</u>
+            </span>
+          </div>
+        </div>
+
+        <div class="row" *ngIf="selectedProduct.product.deliveryMethod != undefined">
+          <div class="col-12 pb-3">
+            <span>Get it by
+              <span style="font-family: 'open_sansbold'">{{selectedProduct.product.deliveryMethod}}</span>
+            </span>
+          </div>
+        </div>
+        <div class="row">
+          <div *ngIf="!alreadyAddedInCart && !loaderQuantity" class="col-12 mb-3">
+            <span *ngIf="selectedProduct.product.quantity > 0;else outOfStock">{{selectedProduct.product.quantity}} in
+              stock</span>
+            <ng-template #outOfStock>
+              <span>Out of stock</span>
+            </ng-template>
+          </div>
+        </div>
+
+
+        <div *ngIf="makeofferResponse != undefined && makeofferResponse.offerMade && makeofferResponse.blockOffer" class="row">
+          <!-- <div *ngIf="makeofferResponse.offerMade && makeofferResponse.blockOffer" class="col-sm-12 pl-4 mb-4 fontBold colorred">
+            Your Offer Price: {{makeofferResponse.offerPrice | currency}}
+          </div> -->
+          <div class="col-sm-12 pl-4 mb-4 fontBold colorred" *ngIf="makeofferResponse.offerPrice >= selectedProduct.product.kalaPrice;else showDefault">
+            Your Offer Price: <span class="priceFontSize">{{makeofferResponse.offerPrice | currency}}</span>
+          </div>
+          <ng-template #showDefault>
+            <div class="col-sm-12 pl-4 mb-4 fontBold colorred">
+              Your Offer Price: <span class="priceFontSize">{{makeofferResponse.offerPrice | currency}}</span>
+              <span style="text-decoration: line-through; font-size: 16px; color: #c3c3c3; margin-left: 20px;">{{selectedProduct.product.kalaPrice | currency}}</span>
+            </div>
+          </ng-template>
+      </div>
+
+
+        <div *ngIf="dynamicAttributeData != undefined" class="row">
+          <div *ngFor="let dynmData of dynamicAttributeData.allVariations | keys" class="col-12 pr-4 mb-2">
+              <span class="w-25 text-left d-block float-left" style="width: 40% !important">{{dynmData.key}}
+                <span  *ngIf="unitValue != undefined && unitValue != '' && unitValue != null && this.selectedProduct.product.units.hasOwnProperty(dynmData.key)">({{unitValue}})</span>
+              </span>
+              <span class="w-75 text-left d-block float-right" style="width: 60% !important">
+                <span *ngFor="let val of dynmData.value" title="val" (click)="loadSimilarItems($event, val, dynmData.key)" [ngClass]="['data_' + dynmData.key]" class="categ_outline_gray cursor mr-2 mb-2">{{val}}</span>
+              </span>
+          </div>
+      </div>
+
+        <!-- <strike>$258.00 +</strike> -->
+        <div class="row">
+          <div *ngIf="!alreadyAddedInCart" class="col-12">
+            <input class="btn btn_red_right w-100" type="button" [disabled]="!quantity || selectedProduct.product.quantity == 0"
+              (click)="addToCart('toCart')" value="buy it now" />
+          </div>
+
+          <div *ngIf="alreadyAddedInCart" class="col-12">
+            <label>
+              <strong>Item already added in cart</strong>
+            </label>
+            <input class="btn btn_red_right w-100" type="button" *ngIf="userData != undefined" routerLink="/mycart" value="go to cart" />
+            <input class="btn btn_red_right w-100" *ngIf="userData == undefined" type="button" routerLink="/guest-cart" value="go to cart" />
+          </div>
+
+          <div *ngIf="!alreadyAddedInCart" class="col-12 mt-2">
+              <div class="row py-0 px-2">
+                  <div [ngClass]="{'col-12 pl-2 pr-2':userData !=undefined && ((makeofferResponse == undefined && !lowestPriceError) || (makeofferResponse != undefined && makeofferResponse.offerMade)), 'col-6 pad_left8 pr-2':(userData == undefined) ||(makeofferResponse != undefined && !makeofferResponse.offerMade) || lowestPriceError}" >
+                    <input class="btn w-100 btn_redouter_right mt-3" (click)="goGetOffer()" type="button" value="get offers" />
+                  </div>
+                  <div *ngIf="makeofferResponse !=undefined && !makeofferResponse.offerMade" class="col-6 pr-2">
+                    <input class="btn w-100 btn_redouter_right mt-3" (click)="makeBid()"  type="button" value="make an offer" />
+                  </div>
+                  <div *ngIf="userData == undefined" class="col-6 pr-2">
+                    <input class="btn w-100 btn_redouter_right mt-3" (click)="makeBidWithoutUser()"  type="button" value="make an offer" />
+                  </div>
+                  <div *ngIf="lowestPriceError" class="col-6 pr-2">
+                      <input class="btn w-100 btn_redouter_right mt-3 makeOfferScroll disabled" (click)="noOfferOnLowestPrice()"  type="button" value="make an offer" />
+                  </div>
+              </div> 
+              <div class="col-12" *ngIf="makeOfferErrorMsg !='' && makeOfferErrorMsg != undefined">
+                  <div class="alert alert-danger mb-2 errorMessages">{{makeOfferErrorMsg}}</div>
+              </div>
+
+
+
+
+            <!-- <input class="btn w-100 btn_redouter_right" (click)="goGetOffer()" type="button" value="get offers" /> -->
+          </div>
+        </div>
+      </div>
+      <!--Right Details-->
+    <!-- </div> -->
+
+    <div class="col-sm-12 col-12 w-100 px-1 offerSectioncls overlayMakeAnOffer " *ngIf="isMakeABid" id="offerSection"> 
+       
+        <!--Support Section-->
+        <div class="position-relative bidSection suportWrapper" >
+          <div class="row borderBotton">
+            <div class="col-2">
+                <button type="button" class="close" aria-label="Close" (click)="closeMakeAnOffer()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="col-10 text-center">
+                <h4>Make an offer</h4>
+            </div>
+          </div>  
+           
+           <div class="allowScroll pt-3 pt-3" id="conversationSection" [ngClass]="{'inputOfferSection':makeOfferUserInput == 'InputOffer'}">
+              <div class="row mb-3 m-0 py-2 px-4 backgroundWhite borderBoth">   
+                  <div class="col-4 p-0 pt-2">
+                    <span class="fixImageContainer" *ngIf="selectedProduct.product.mainImageSrc;else noImage">
+                      <img [src]="selectedProduct.product.mainImageSrc" class="product_hover img-fluid">
+                    </span>
+                    <ng-template #noImage>
+                      <span class="noImageLogo">
+                        <i class="fa fa-picture-o" aria-hidden="true"></i>
+                        <br /> Image Not Available
+                      </span>
+                    </ng-template>
+                  </div>
+                  <div class="col-8 pr-0">
+                    <span style="font-family: 'open_sanssemibold'" class="mb-3 d-inline-block">{{selectedProduct.product.productName}}</span>
+                    <br />
+                    <span style="font-family: 'open_sansbold'; color: #e06263; margin-right: 15px" class="float-left">{{selectedProduct.product.kalaPrice
+                        | currency}}</span>
+                    <span style="text-decoration:line-through; color: #999" *ngIf="selectedProduct.product.retailPrice > selectedProduct.product.kalaPrice && selectedProduct.product.kalaPrice != selectedProduct.product.retailPrice">{{selectedProduct.product.retailPrice
+                      | currency}}</span>
+                    
+                  </div>  
+            </div>
+            <div class="supportMessages chatConversation w-100" id="conversationScroll">
+              <div class="float-left w-100 mb-3" *ngFor="let message of makeABidMessages">
+                <div [ngClass]="{'float-left ligherBack':message.from == 'Kala', 'float-right darkerBack':message.from == 'User'}">
+                  <!-- <img  [src]="message.mainImage" [ngClass] = "{'chatImage':message.from == 'Kala', 'offerImage':message.from == 'User'}" class="mr-2" />  -->
+                  {{message.message}}
+                </div>
+              </div>
+            </div>
+            <div [ngSwitch]="makeOfferUserInput" >
+              <div *ngSwitchCase="'InputOffer'"  class="supportOptions mob-slider">
+              <div class="slidecontainer d-block w-100 pr-2 mb-3">
+                  <!-- <input type="text" appTwoDigitDecimaNumber [(ngModel)]="makeofferValue"  id="myRange"> -->
+                <input type="range" (focusout)="set2Decimal(makeofferValue)" (change)="set2Decimal(makeofferValue)" [(min)]="makeofferMinValue" [(max)]="makeofferMaxValue" step='0.01' [(value)]="makeofferValue" [(ngModel)]="makeofferValue" class="slider"  id="myRange">
+                
+              </div>
+              <div class="d-flex row make_offer_input"> 
+                <div class="dx-fieldset pl-0 text-left col-6">
+                  <div class="dx-field">
+                    <div class="dx-field-value">
+                      <span style="position: relative" class="d-flex">
+                        <span class="currencySymbol m-0">$</span>
+                        <!-- <input type="number" class="categ_outline_red w-100 mr-2" (keypress)="core.allowOnlyNumbers($event)" [(min)]="makeofferMinValue" [(max)]="makeofferMaxValue" name="price" [(value)]="makeofferValue"  [(ngModel)]="makeofferValue"  step="0.01"> -->
+                        <input type="number"  appTwoDigitDecimaNumber (focusout)="set2Decimal(makeofferValue)" (keyup.enter)="scrollOnOfferEnter();makeanOffer('confirmOfferValue');" (focus)="addClassBody()" (focusout)="removeClassBody()" [(ngModel)]="makeofferValue"  id="myRange">
+                        <!-- <dx-number-box 
+                          [showSpinButtons]="false" [(value)]="makeofferValue"  step='0.1' [(ngModel)]="makeofferValue" class="categ_outline_red w-100 mr-2"></dx-number-box> -->
+                      </span>
+                    </div>
+                  </div>
+                </div> 
+                <div class="pr-0 text-right col-6">
+                    <span class="btn btn_redouter_right cancelButton mr-3" (touchstart)="scrollOnOfferEnter();makeanOffer('confirmOfferValue')" (click)="scrollOnOfferEnter();makeanOffer('confirmOfferValue')">confirm</span>
+                </div>
+              
+              <!-- <input class="btn w-100 btn_redouter_right" (click)="checkOfferExistBefore = false;makeanOffer()"  type="button" value="make an offer" /> -->
+              </div>
+              </div>
+              <div *ngSwitchCase="'AcceptRejectOffer'" class="supportOptions mob-slider _row" id="acceptRejSection">
+                  <span  class="btn btn_redouter_right" (click)="AcceptOfferToCheckout()">accept</span>
+                  <span  class="btn btn_redouter_right" (click)="RejectOffer()">reject</span>
+
+                  <!-- <input class="btn w-100 btn_redouter_right" (click)="checkOfferExistBefore = false;makeanOffer()"  type="button" value="make an offer" /> -->
+              </div>
+              <div *ngSwitchCase="'ContinueCheckout'" class="supportOptions mob-slider _row" id="contCheckoutSection">
+                  <span *ngIf="fromES;else defaultBTP" class="btn btn_redouter_right" (click)="toElasticFromMakeOffer(selectedProduct)">continue shopping</span>
+                  <ng-template #defaultBTP>
+                    <span class="btn btn_redouter_right" (click)="toBrowseProdFromMakeOffer(selectedProduct)">continue shopping</span>
+                  </ng-template>
+                  <span  class="btn btn_redouter_right" (click)="gotoCart()">checkout</span>
+              </div>
+            </div>
+         </div>
+         <!--Support Section-->
+       </div>
+ </div>
+    </div>
+
+
+    <!-- mobile Desription -->
+    <div class="row mob-producttabs">
+      <ngb-tabset>
+        <ngb-tab>
+          <ng-template ngbTabTitle>description</ng-template>
+          <ng-template ngbTabContent>
+            <div class="col-12 p-3 pt-3">
+              <h4 class="subtitle colorlightGray" *ngIf="selectedProduct.product.productDescription">
+                <strong>description</strong>
+              </h4>
+              <div *ngIf="selectedProduct.product.productDescription" class="col-12 p-0 mb-4">{{selectedProduct.product.productDescription}}</div>
+
+              <h4 class="subtitle colorlightGray" *ngIf="selectedProduct.product.filteredAttr?.length > 0">
+                <strong>details</strong>
+              </h4>
+              <div class="col-12 p-0">
+                <table *ngIf="selectedProduct.product.filteredAttr?.length > 0" class="customeTable fullwidth">
+                  <tr *ngFor="let attribute of selectedProduct.product.filteredAttr">
+                    <td colspan="2" *ngIf="attribute.key == 'Features';else showDefault">
+                      <table width="100%">
+                        <tr>
+                          <td width="40%" valign="top" class="colorlightGray">{{attribute.key}}:</td>
+                          <td width="60%" class="colorred" >
+                            <ul class="pl-3 mb-0">
+                              <li *ngFor="let value of attribute.value">{{value}}</li>
+                            </ul>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                    <ng-template #showDefault>
+                      <td width="40%" valign="top" class="colorlightGray">{{attribute.key}}:</td>
+                      <td width="45%" class="colorred"  *ngIf="attribute.key == 'Part Number' ;else showPartDefault" [ngClass]="{'partNumbDescription':attribute.key=='Part Number'}">
+                          <ul class="pl-3 mb-0">
+                              <li *ngFor="let prtval of getPartNumArray(attribute.value)">{{prtval}}</li>
+                           </ul>
+                           <!-- {{attribute.value}} -->
+                          
+                        </td>
+                        <ng-template #showPartDefault>
+                            <td  width="60%" class="colorred">{{attribute.value}}
+                              </td>
+                        </ng-template>
+                    </ng-template>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </ng-template>
+        </ngb-tab>
+        <ngb-tab>
+          <ng-template ngbTabTitle>
+            <span class="float-left">|</span>reviews
+            <span class="float-right">|</span>
+          </ng-template>
+          <ng-template ngbTabContent>
+            <div class="col-12 p-3 pt-3 mb-5">
+              <h4 class="subtitle">reviews {{productReviews.length}}</h4>
+              <table class="reviewlayout table">
+                <tr *ngFor="let reviews of productReviews">
+                  <td class="p-0">
+                    <div class="star-rating col-12 p-0">
+                      <span *ngFor="let rating of getRating(reviews.rating)">
+                        <i class="fa fa-star starIcon starIconView" aria-hidden="true"></i>
+                      </span>
+                    </div>
+                    <div class="row">
+                      <div class="col-12 breakWord">
+                        <strong>{{reviews.reviewDescription}}</strong>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-3 star-rating my-2" *ngIf="reviews.reviewImages != ''">
+                        <span class="readReviewImage" *ngIf="reviews.reviewImages">
+                          <img [src]="reviews.reviewImages" class="img-fluid" />
+                        </span>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-12 colorlightGray">by
+                        <u>{{reviews.firstName}} {{reviews.lastName}}</u>
+                      </div>
+                    </div>
+                    <hr />
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </ng-template>
+        </ngb-tab>
+        <ngb-tab>
+          <ng-template ngbTabTitle>return policy</ng-template>
+          <ng-template ngbTabContent>
+            <div class="col-12 p-3 pt-3 returnPolicy">
+              <h4 class="subtitle mb-0">returns and exchange policy</h4>
+              <br />
+              <p class="w-100">{{retailerPolicy}}</p>
+            </div>
+          </ng-template>
+        </ngb-tab>
+      </ngb-tabset>
+    </div>
+
+    <!-- mobile Desription -->
+    <div class="web-desription">
+      <!--Description-->
+      <div class="row" *ngIf="selectedProduct.product.productDescription">
+        <h4 class="subtitle mt-4">Description</h4>
+        <br />
+        <p class="w-100">{{selectedProduct.product.productDescription}}</p>
+      </div>
+      <!--Description-->
+
+      <!--Brand Details-->
+      <div class="row" *ngIf="selectedProduct.product.filteredAttr != undefined && selectedProduct.product.filteredAttr.length > 0">
+        <h4 class="subtitle mt-4">details</h4>
+        <div class="col-sm-12 p-0">
+          <table width="100%" class="customeTable">
+            <tr *ngFor="let attribute of selectedProduct.product.filteredAttr">
+              <td colspan="2" *ngIf="attribute.key == 'Features';else showDefault">
+                <table width="100%">
+                  <tr>
+                    <td width="20%" valign="top">{{attribute.key}}:</td>
+                    <td width="80%" class="colorred">
+                      <ul class="pl-3 mb-0">
+                        <li *ngFor="let value of attribute.value">{{value}}</li>
+                      </ul>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <ng-template #showDefault>
+                <td width="20%" valign="top">{{attribute.key}}:</td>
+                <td width="80%" class="colorred" *ngIf="attribute.key == 'Part Number' ;else showPartDefault" [ngClass]="{'partNumbDescription':attribute.key=='Part Number'}">
+                    <ul class="pl-3 mb-0">
+                        <li *ngFor="let prtval of getPartNumArray(attribute.value)">{{prtval}}</li>
+                     </ul>
+                  <!-- {{attribute.value}} -->
+                </td>
+                <ng-template #showPartDefault>
+                    <td  width="60%" class="colorred">{{attribute.value}}
+                      </td>
+                </ng-template>
+              </ng-template>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <!--Brand Details-->
+
+      <!--Reviews-->
+      <div class="row consumerReviews">
+        <h4 class="subtitle mt-4">reviews {{productReviews.length}}</h4>
+        <table class="reviewlayout table" *ngIf="productReviews.length > 0;else noReviews">
+          <tr *ngFor="let reviews of productReviews">
+            <td class="p-0">
+              <div class="star-rating productWrap">
+                <span *ngFor="let rating of getRating(reviews.rating)">
+                  <i class="fa fa-star starIcon starIconView" aria-hidden="true"></i>
+                </span>
+                <br />
+                <strong>{{reviews.reviewDescription}}</strong>
+              </div>
+              <div class="star-rating mt-3 mb-2" *ngIf="reviews.reviewImages">
+                <span class="readReviewImage">
+                  <img [src]="reviews.reviewImages" />
+                </span>
+              </div>
+              <div class="colorlightGray">by
+                <u>{{reviews.firstName}} {{reviews.lastName}}</u>
+              </div>
+              <hr />
+            </td>
+          </tr>
+          <!-- <tr>
+        <td class="p-0 text-right">
+          <a href="#" class="colorred">
+            <small>show more</small>
+          </a>
+        </td>
+      </tr> -->
+        </table>
+        <ng-template #noReviews>
+          <div class="row w-100">
+            <div class="col-sm-12">No reviews available for this product.</div>
+          </div>
+        </ng-template>
+      </div>
+      <!--Reviews-->
+
+      <div class="row">&nbsp;</div>
+
+      <!--Return Policy-->
+      <div class="row returnPolicy mb-4">
+        <h4 class="subtitle">Returns and exchange policy</h4>
+        <br />
+        <p class="w-100">{{retailerPolicy}}</p>
+      </div>
+      <!--Return Policy-->
+    </div>
+  </div>
+</div>
+
+<!--Promt For Login-->
+<ng-template #viewProductModal let-c="close" let-d="dismiss">
+  <div class="modal-body">
+      <button type="button"  class="close browseLoginSignUpBtn  " aria-label="Close" (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+    <p class="browseLoginSignUpCls">{{this.confirmValidationMsg.message}}</p>
+  </div>
+  <div class="modal-footer display_inline_block guest_checkout_modal">
+      <button type="button" class="btn btn-outer btn_red_right margin_bottom10 guest_login_width_91" (click)="c('Close click'); confirmUser()">Login</button>
+      <button type="button" class="btn btn-outer btn_redouter_right width_32" (click)="c('Close click'); signUpUser()">Sign up</button>
+      <button type="button" class="btn btn-outer btn_redouter_right width_63" (click)="c('Close click'); addToGuestCart()">Continue as Guest</button>
+  </div>
+</ng-template>
+<!--Promt For Login-->
+
+<!--Promt For Login-->
+<ng-template #loginSignUpModal let-c="close" let-d="dismiss">
+    <div class="modal-body">
+        <button type="button"  class="close browseLoginSignUpBtn  " aria-label="Close" (click)="d('Cross click')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+      <p class ="browseLoginSignUpCls">{{this.confirmValidationMsg.message}}</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outer btn_red_right" (click)="c('Close click'); confirmUser()">Login</button>
+        <button type="button" class="btn btn-outer btn_redouter_right" (click)="c('Close click'); signUpUser()">Sign up</button>
+    </div>
+</ng-template>
+<!--Promt For Login-->
+
+
+

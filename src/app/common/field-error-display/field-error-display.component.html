@@ -1,0 +1,4 @@
+<div *ngIf="field.dirty || field.touched">
+    <div *ngIf="getHasRequired() && !field.value" class="alert alert-danger errorMessages">{{ getRequiredMsg() }}</div>
+    <div *ngIf="field.value && field.errors" class="alert alert-danger errorMessages">{{ getErrorMsg() }}</div>
+</div>

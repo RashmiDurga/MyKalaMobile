@@ -1,0 +1,12 @@
+{
+  "background_color": "#FFF",
+  "display": "standalone",
+  "name": "Kala",
+  "short_name": "Kala",
+  "version": "com.kala.mykala",
+  "description": "Kala Marketplace Project.",
+  "author": "Accion Labs Team",
+  "icons": [],
+  "orientation": "portrait",
+  "start_url": "index.html"
+}

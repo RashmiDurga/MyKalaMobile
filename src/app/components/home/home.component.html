@@ -1,0 +1,112 @@
+<div class="header bgimage headerParent">
+	<div class="banner_content">
+		<div *ngIf="navigateToPlace" class="col-12 text-left  homeBack " style="color: #ffffff" (click)="reloadPlaces()">
+			<i class="fa fa-angle-left" aria-hidden="true"></i>
+			<span>back</span>
+		</div>
+
+		<img src="./assets/images/kala_logo.png" class="img-fluid webLogo" />
+		<img src="./assets/images/logo.png" class="img-fluid mobLogo" />
+		<div class="mob-menu">
+			<!-- <i class="fa fa-bars"></i> -->
+			<div class="btn-group float-left" (click)="menuClicked()">
+				<div ngbDropdown class="d-inline-block" (clickOutside)="ClickOutsideModule($event)">
+					<nav id="mobile-menu">
+						<label for="tm" id="toggle-menu"><span class="drop-icon"><i class="fa fa-bars"></i></span></label>
+						<input type="checkbox" id="tm">
+						<ul class="main-menu cf">
+							<li *ngFor="let tile of core.placeCategDataArrayGeneric">
+								<div *ngIf="tile.count > 0">
+									<a><span (click)="viewAllPlaceProducts(tile)">{{tile.placeName}}</span>
+										<span class="drop-icon">▾</span>
+										<label title="Toggle Drop-down" class="drop-icon" for="{{tile.placeId}}">▾</label>
+									</a>
+									<input type="checkbox" id="{{tile.placeId}}">
+									<ul class="sub-menu">
+										<li *ngFor="let cteg of tile.categoryList">
+											<div *ngIf="cteg.count > 0" class="catmenu">
+												<a><span (click)="viewAllCategProducts(tile,cteg)">{{cteg.categoryName}}</span>
+													<span class="drop-icon">▾</span>
+													<label title="Toggle Drop-down" class="drop-icon" for="{{cteg.categoryId}}">▾</label>
+												</a>
+												<input type="checkbox" id="{{cteg.categoryId}}">
+												<ul class="sub-menu">
+													<li *ngFor="let subCateg of cteg.subCategoryList">
+														<div *ngIf="subCateg.count > 0" class="sub-catmenu">
+															<a> <span (click)="viewAllProducts(tile,cteg,subCateg)">{{subCateg.subCategoryName}}</span>
+															</a>
+														</div>
+													</li>
+												</ul>
+											</div>
+										</li>
+									</ul>
+								</div>
+							</li>
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+		<h1>Take the Search out of Shopping</h1>
+		<h4 style="line-height: 23px" class="pt-4">Your Online Shopping Experience. Personalized.</h4>
+
+		<app-elastic-search-bar class="d-block"></app-elastic-search-bar>
+
+	</div>
+	<ng4-loading-spinner [threshold]="1000" [template]="template" [zIndex]="999"></ng4-loading-spinner>
+</div>
+
+<section id="homegarden" class="py-5" class="homegarden pt-1">
+	<div class="container banner_title">
+		<h1>Explore. Bid. Create & Buy.</h1>
+		<h4>Are you ready to shop your own way?</h4>
+		<app-breadcrums [breadCrums]="breadCrums" (selectTile)="tileSelected($event, 'IsBc')"></app-breadcrums>
+		<app-tiles [tilesData]="tiles" (selectTile)="tileSelected($event, undefined)"></app-tiles>
+	</div>
+</section>
+<section id="homePromoID" class="homePromoID">
+	<div class="container pb-2 px-0" *ngFor="let banner of dealBanners" (click)="viewBannerResult(banner)">
+		<img src="{{banner.bannerImg}}" class="img-fluid" alt="" >
+	</div>
+</section>
+<section class="homeCarosel homeCarousel_icon_left_right py-1">
+
+	<div class="container">
+		<p class="py-2">Things you might like</p>
+		<ngx-slick-carousel *ngIf="carouselData != undefined" class="carousel" #slickModal="slick-carousel" [config]="slideConfig"
+		 (init)="slickInit($event)" (breakpoint)="breakpoint($event)" (afterChange)="afterChange($event)" (beforeChange)="beforeChange($event)">
+			<div ngxSlickItem *ngFor="let tile of carouselData; let i=index" class="slide" (click)="viewBestDealsDetails(tile)">
+				<div *ngIf="i==0" class="dealRubbon"><span>Today's Best Deals!</span></div>
+				<div *ngIf="i==1" class="dealRubbon"><span>BEST SELLER</span></div>
+				<img src="{{tile.productImages[0].location}}" alt="" width="100%">
+				<h4>{{tile.productName}}
+				</h4>
+				<h3 *ngIf="tile.retailPrice == tile.kalaPrice;else showDefault">{{(tile.kalaPrice | number:'.2') | currency}}</h3>
+				<ng-template #showDefault>
+					<h3> {{(tile.kalaPrice | number:'.2') | currency}}</h3>
+					<h3> <span>{{(tile.retailPrice | number:'.2') | currency}}</span></h3>
+				</ng-template>
+			</div>
+		</ngx-slick-carousel>
+	</div>
+</section>
+<section id="homeFAQ" class="py-5">
+	<a class="centerArrow nav-link" href="#FAQ">
+		<i class="fa fa-angle-down" aria-hidden="true"></i>
+	</a>
+</section>
+
+<div class="row">
+	<a class="topArrow nav-link" href="#top">
+		<i class="fa fa-angle-up" aria-hidden="true"></i>
+	</a>
+</div>
+
+<div class="windowOverlay text-center" *ngIf="core.productNotFound">
+		<div class="windowOverlayContent">
+		  <p class="mb-0">Sorry, we couldn't find any products that matched your search.</p>
+		  <br />
+		  <button type="button" class="btn btn-outer btn_redouter_right" (click)="core.disableNtFoundFlag()">Close</button>
+		</div>
+	  </div>

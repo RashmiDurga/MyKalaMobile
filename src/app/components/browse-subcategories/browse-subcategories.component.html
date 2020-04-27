@@ -1,0 +1,137 @@
+<div class="header bgimage headerParent">
+	<div class="banner_content">
+		<div class="col-12 text-left tilesBack homeBack" style="color: #ffffff">
+				<div routerLink="/home">
+				<i class="fa fa-angle-left" aria-hidden="true"></i>
+				<span>back</span>
+				</div>
+			
+		</div>
+
+		<img src="./assets/images/kala_logo.png" class="img-fluid webLogo" />
+		<img src="./assets/images/logo.png" class="img-fluid mobLogo" />
+		<div class="mob-menu">
+			<!-- <i class="fa fa-bars"></i> -->
+			<div class="btn-group float-left" (click)="menuClicked()">
+				<div ngbDropdown class="d-inline-block" (clickOutside)="ClickOutsideModule($event)">
+					<nav id="mobile-menu">
+						<label for="tm" id="toggle-menu"><span class="drop-icon"><i class="fa fa-bars"></i></span></label>
+						<input type="checkbox" id="tm">
+						<ul class="main-menu cf">
+							<li *ngFor="let tile of core.placeCategDataArrayGeneric">
+								<div *ngIf="tile.count > 0">
+									<a><span (click)="viewAllPlaceProducts(tile)">{{tile.placeName}}</span>
+										<span class="drop-icon">▾</span>
+										<label title="Toggle Drop-down" class="drop-icon" for="{{tile.placeId}}">▾</label>
+									</a>
+									<input type="checkbox" id="{{tile.placeId}}">
+									<ul class="sub-menu">
+										<li *ngFor="let cteg of tile.categoryList">
+											<div *ngIf="cteg.count > 0" class="catmenu">
+												<a><span (click)="viewAllCategProducts(tile,cteg)">{{cteg.categoryName}}</span>
+													<span class="drop-icon">▾</span>
+													<label title="Toggle Drop-down" class="drop-icon" for="{{cteg.categoryId}}">▾</label>
+												</a>
+												<input type="checkbox" id="{{cteg.categoryId}}">
+												<ul class="sub-menu">
+													<li *ngFor="let subCateg of cteg.subCategoryList">
+														<div *ngIf="subCateg.count > 0" class="sub-catmenu">
+															<a> <span (click)="viewAllProducts(tile,cteg,subCateg)">{{subCateg.subCategoryName}}</span>
+															</a>
+														</div>
+													</li>
+												</ul>
+											</div>
+										</li>
+									</ul>
+								</div>
+							</li>
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+		<h1>Take the Search out of Shopping</h1>
+		<h4 style="line-height: 23px" class="pt-4">Your Online Shopping Experience. Personalized.</h4>
+
+		<app-elastic-search-bar class="d-block"></app-elastic-search-bar>
+
+	</div>
+	<ng4-loading-spinner [threshold]="1000" [template]="template" [zIndex]="999"></ng4-loading-spinner>
+</div>
+
+<section id="homegarden" class="py-5" class="homegarden">
+	<div class="categoryBanner ">
+		<div class="imgCategory " *ngIf="core.headerImgCateg != undefined" [ngStyle]="{'background-image':'url(' + core.headerImgCateg + ') '}"></div>
+	</div>
+	<div class="container banner_title">
+		<h1>Explore. Bid. Create & Buy.</h1>
+		<h4>Are you ready to shop your own way?</h4>
+		<div class="title browserHdr">
+			<h2 class="d-flex">
+				<div class="d-inline-block breadCrums_parent" *ngIf="selectedTilesData != undefined">
+					<div class="btn-group float-left placeMenu">
+						<div ngbDropdown class="d-inline-block" [autoClose]="true">
+							<a class="btn" id="dropdownBasic1" ngbDropdownToggle>{{selectedTilesData.place.name}}</a>
+							<div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+								<div class="dropdown-item" *ngFor="let tile of tilesPlaces" (click)="tile.isProductAvailable && getSelectedTile(tile)">
+									<span>{{tile.name}}</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- {{selectedTilesData.place.name}} 
+                      <input id="check01" type="checkbox" name="menu" />
+                      <label for="check01"><span  style="cursor: pointer" class="dropdown-toggle"></span></label>
+                      <ul class="submenu">
+                          <li *ngFor="let tile of tilesPlaces" (click)="tile.isProductAvailable && getSelectedTile(tile)" >
+                              <a>{{tile.name}}</a>
+                          </li> 
+                      </ul>  -->
+				</div>
+				<div class="d-inline-block breadCrums_parent">
+					<div class="btn-group float-left placeMenu">
+						<div ngbDropdown class="d-inline-block" [autoClose]="true">
+							<a class="btn" id="dropdownBasic2" ngbDropdownToggle>Categories</a>
+							<div ngbDropdownMenu aria-labelledby="dropdownBasic2">
+								<div class="dropdown-item" *ngFor="let tile of tiles"
+								[ngStyle]="{'display': tile.isProductAvailable == undefined ? 'none' : '','disabled': tile.isProductAvailable == undefined , 'color': tile.isProductAvailable == undefined ? '#ccc' : ''}"
+								 (click)="tile.isProductAvailable && tileSelected(tile, undefined)">
+									<span>{{tile.name}}</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</h2>
+		</div>
+		<img src="./assets/images/loader.gif" style="margin: 0 46% 10%" *ngIf="loader" />
+		<div class="browseProduct browserSubCat">
+			<div id="homegarden" class="homegarden">
+				<div class="container banner_title" [ngClass]="{'pets-cls': (placeName == 'Pets'),'kids-cls':(placeName == 'Kids'),'bt-150':(placeName == 'Home & Garden' || placeName =='Sports & Fitness'),'bt-80':(placeName == 'Fashion & Apparel' || placeName=='Travel' || placeName == 'Kids' )}">
+					<img src="./assets/images/loader.gif" style="right: 15px; top: 245px; width: 20px; height:20px" class="absoluteImg_2"
+					 *ngIf="loader" />
+					<app-tiles [ngClass]="{'hardware-cls': (placeName =='Tools & Hardware')}" [tilesData]="tiles" (selectTile)="tileSelected($event, undefined)"></app-tiles>
+				</div>
+				<div class="container py-2 tilesBannerBottom" *ngFor="let banner of dealBanners" >
+					<img src="{{banner.bannerImg}}" class="img-fluid" alt="" (click)="viewBannerResult(banner)">
+				</div>
+			</div>
+		</div>
+
+	</div>
+</section>
+
+
+<section id="homeFAQ" class="py-5">
+	<a class="centerArrow nav-link" href="#FAQ">
+		<i class="fa fa-angle-down" aria-hidden="true"></i>
+	</a>
+</section>
+
+<div class="row">
+	<a class="topArrow nav-link" href="#top">
+		<i class="fa fa-angle-up" aria-hidden="true"></i>
+	</a>
+</div>
+<app-askkala></app-askkala>

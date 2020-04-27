@@ -1,0 +1,34 @@
+{
+  "prepare_queue": {
+    "installed": [],
+    "uninstalled": []
+  },
+  "config_munge": {
+    "files": {}
+  },
+  "installed_plugins": {
+    "cordova-plugin-camera": {
+      "PACKAGE_NAME": "com.kala.mykala"
+    },
+    "cordova-plugin-device": {
+      "PACKAGE_NAME": "com.kala.mykala"
+    },
+    "cordova-plugin-splashscreen": {
+      "PACKAGE_NAME": "com.kala.mykala"
+    },
+    "cordova-plugin-stripe": {
+      "PACKAGE_NAME": "com.kala.mykala"
+    },
+    "cordova-plugin-whitelist": {
+      "PACKAGE_NAME": "com.kala.mykala"
+    },
+    "cordova-plugin-customurlscheme": {
+      "URL_SCHEME": "mykala",
+      "ANDROID_SCHEME": " ",
+      "ANDROID_HOST": " ",
+      "ANDROID_PATHPREFIX": "/",
+      "PACKAGE_NAME": "com.kala.mykala"
+    }
+  },
+  "dependent_plugins": {}
+}

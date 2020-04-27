@@ -1,0 +1,42 @@
+<div class="category_home_list IPhone_height pb-2">
+  <!-- <ul class="category_list">
+    <li *ngFor="let tile of tilesData" [id]="tile.id" (click)="getSelectedTile(tile)">
+      <span class="bg">
+        <img src="./consumer-app/assets/images/kitchen.png" />
+      </span>
+      <span class="overlayBg"></span>
+      <span class="iconText">
+        <img src="./consumer-app/assets/images/icon_home & appliances.png" />
+        <p class="text-center">{{tile.text}}</p>
+      </span>
+    </li>
+  </ul> -->
+  <div class="container p-0">
+    <div class="card-columns">
+      <!--Product-->
+      <div class="card productsHome imgHover" style="background-color: #000000" *ngFor="let tile of tilesData" [id]="tile.id"
+        (click)="resetOverlay($event); tile.isProductAvailable && getSelectedTile(tile)">
+        <img [ngStyle]="{'opacity':!tile.isProductAvailable ? '0.3' : '1'}" src="{{tile.imgUrl}}" class="img-fluid card-img-top" />
+        <span class="imageOverlayText">{{tile.text}}</span>
+
+        <!--Overlay-->
+        <div *ngIf="!tile.isProductAvailable" class="overlay_CS text-center d-none">
+          <div class="overlay_CSText">
+            <img src="./assets/images/icon_comingsoon.png" />
+            <br />
+            <span>COMING SOON</span>
+          </div>
+        </div>
+        <!--Overlay-->
+      </div>
+    </div>
+    <!--Product-->
+
+    <!-- <div class="row">
+        <div *ngFor="let banner of dealBanners">
+            <img src="{{banner.bannerImg}}" alt="" />
+        </div>
+    </div> -->
+  </div>
+
+</div>

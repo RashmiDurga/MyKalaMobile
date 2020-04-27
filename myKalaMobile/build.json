@@ -1,0 +1,11 @@
+{
+    "android": {
+        "release": {
+            "keystore": "app-kala.keystore",
+            "storePassword": "Kala@123",
+            "alias": "app-kala",
+            "password": "Kala@123",
+            "keystoreType": ""
+        }
+    }
+}

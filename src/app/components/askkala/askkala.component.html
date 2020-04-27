@@ -1,0 +1,50 @@
+<div class="askKala p-3" *ngIf="core.showaskKalaConveration">
+	<div class="kalaChart">
+			<a class="helpClose" (click)="core.closeAskKala()">X</a>
+		<div class="row">
+			<div class="col-sm-2 pr-0 col-2">
+				<img src="./assets/images/sellerLogo.png" class="img-fluid" alt="">
+			</div>
+			<div class="col-sm-10 col-10">
+				<h2>Kala Support</h2>
+			</div>
+		</div>
+		<div class="d-block">
+
+			<div class="supportLeft" *ngIf="core.showPageMsg">
+				{{ core.pageMsg}}
+			</div>
+			<div class="supportLeft" *ngIf="core.showHeaderMessage != undefined">
+				{{core.showHeaderMessage}}
+			</div>
+			<div class="supportBtn text-right">
+				<span class="supportRight" (click)="getOffers()">get offers</span>
+
+			</div>
+		</div>
+
+	</div>
+	
+
+</div>
+<div class="askKala-btn">
+	<a class="btnaskkala" *ngIf="!core.showaskKalaConveration" (click)="core.closeAskKala()"><img src="./assets/images/KalaChat.png"
+		 alt="Ask Kala" /></a>
+</div>
+<!--Promt For Login or Signup -->
+<ng-template #loginSignUpModal let-c="close" let-d="dismiss">
+	<div class="modal-header loginSignUpModalCls">
+		<h6 class="modal-title"></h6>
+		<button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+	<div class="modal-body">
+		<p>{{this.confirmValidationMsg.message}}</p>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-outer btn_red_right" (click)="c('Close click'); confirmUser()">log in</button>
+		<button type="button" class="btn btn-outer btn_red_right" (click)="c('Close click'); signUpUser()">sign up</button>
+	</div>
+</ng-template>
+<!--Promt For Login or Signup -->

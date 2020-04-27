@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>MyKala</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    #myBtn {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 30px;
+      z-index: 99;
+      font-size: 18px;
+      border: none;
+      outline: none;
+      background-color: #e06263;
+      color: white;
+      cursor: pointer;
+      border-top-right-radius: 10px;
+      border-top-left-radius: 10px;
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 0px;
+      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+      padding: 7px 20px;
+      text-align: center;
+    }
+
+    #myBtn:hover {
+      background-color: #555;
+    }
+  </style>
+  <script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+
+    function scrollFunction() {
+      if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        document.getElementById("myBtn").style.display = "block";
+      } else {
+        document.getElementById("myBtn").style.display = "none";
+      }
+    }
+
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+    }
+  </script>
+</head>
+
+<body class="text-secondary text-justify">
+  <button onclick="topFunction()" id="myBtn" title="Go to top">
+    <i class="fa fa-angle-up"></i>
+  </button>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top header_Scroll active">
+    <div class="container">
+      <div class="col-sm-2 pt-2">
+        <a>
+          <img src="logo.png">
+        </a>
+      </div>
+      <div class="col-sm-8 text-right">
+        <a href="https://www.facebook.com/KalaMarketplace" target="_blank">
+          <i class="fa fa-facebook colorlightGray colorlightGray_2" aria-hidden="true"></i>
+        </a>
+        <a href="https://twitter.com/kalamarketplace" target="_blank">
+          <i class="fa fa-twitter colorlightGray colorlightGray_2" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+  </nav>
+  <div class="container">
+    <div class="pt-5"></div>
+    <h3>Terms of Use</h3>
+    <p>Welcome to the Kala community &ndash; we&rsquo;re so excited to have you as a member. We know you&rsquo;re here to shop, so let&rsquo;s get through the rules and terms of use so you can get started.</p>
+
+    <ol class="text-warning">
+      <li>
+        <a class="text-warning" href="#YOUR_ACCEPTANCE_OF">
+          <strong>Your Acceptance of the Terms</strong>
+        </a>
+      </li>
+      <li>
+        <a class="text-warning" href="#DEFINITIONS_TERMS">
+          <strong>Definitions &amp; Terms</strong>
+        </a>
+      </li>
+      <li>
+        <a class="text-warning" href="#YOUR_KALA_ACCOUNT">
+          <strong>Your Kala Account</strong>
+        </a>
+      </li>
+      <li>
+        <a class="text-warning" href="#USE_OF_SERVICES">
+          <strong>Use of Services</strong>
+        </a>
+      </li>
+      <li>
+        <a class="text-warning" href="#TERMINATION">
+          <strong>Termination</strong>
+        </a>
+      </li>
+      <li>
+        <a class="text-warning" href="#CHANGES">
+          <strong>Changes</strong>
+        </a>
+      </li>
+      <li>
+        <a class="text-warning" href="#LIMITATIONS_OF_LIABILITY">
+          <strong>Limitation of Liability</strong>
+        </a>
+      </li>
+      <li>
+        <a class="text-warning" href="#TRADEMARK_PROPRIETARY">
+          <strong>Trademarks &amp; Proprietary Rights</strong>
+        </a>
+      </li>
+      <li>
+        <a class="text-warning" href="#WARRANTIES_DISCLAIMERS">
+          <strong>Warranties &amp; Disclaimers</strong>
+        </a>
+      </li>
+      <li>
+        <a class="text-warning" href="#DISPUTES">
+          <strong>Disputes</strong>
+        </a>
+      </li>
+      <li>
+        <a class="text-warning" href="#GENERAL_PROVISIONS">
+          <strong>General Provisions</strong>
+        </a>
+      </li>
+      <li>
+        <a class="text-warning" href="#ASSIGNMENT">
+          <strong>Assignment</strong>
+        </a>
+      </li>
+      <li>
+        <a class="text-warning" href="#CONTACT_KALA">
+          <strong>Contact Kala</strong>
+        </a>
+      </li>
+    </ol>
+    <h5 id="YOUR_ACCEPTANCE_OF">YOUR ACCEPTANCE OF THE TERMS</h5>
+    <p>These Terms of Service (the &ldquo;Agreement&rdquo;) governs your use of Kala. By enrolling in Kala, you are consenting, without condition, to act in accordance and be bound by the Agreement, as well as our Privacy and Data Use Policy found at
+      <a href="/privacy">http://www.mykala.com/privacy</a> (&ldquo;Privacy Policy&rdquo;). Your continued use of Kala shall also constitute assent to the terms set forth in this Agreement. If you do not wish to comply with our terms and conditions, please do not accept this Agreement and do not use the Kala services.</p>
+    <p>We will periodically update the Agreement to reflect our current practices and policies.&nbsp; We will notify you via email, text or other notice on Kala of any material changes to this policy before those changes become effective.</p>
+    <h5 id="DEFINITIONS_TERMS">DEFINITIONS &amp; TERMS</h5>
+    <p>&ldquo;Data&rdquo; means all of your registration information and other data and information collected, processed and retained by Kala.&nbsp; For more information on the Data we collect, please review our Privacy and Data Use Policy.</p>
+    <p>&ldquo;Kala&rdquo; means the Kala Online Retail Marketplace program owned and provided by Triliant, LLC and accessed by you under this agreement via the MyKala.com website, the Kala mobile application, and other access points.</p>
+    <p>&ldquo;Systems&rdquo; means mobile devices, computers, software, network and communications equipment and ancillary services that are owned, controlled or procured by you.</p>
+    <p>&ldquo;Vendors&rdquo; means, collectively, third parties that perform business operations on behalf of Kala, such as transaction processing, billing, mailing, communications services (e-mail, direct mail, etc.), marketing, data processing and analytics, servicing, collections, or ad management.</p>
+    <p>"Business Partners" means, collectively, the retailers, merchants, service organizations, consumer goods companies, and other third party businesses enrolled in or employed by Kala to perform services on our behalf. Examples include 3
+      <sup>rd</sup> party sellers who list products and fulfill orders, as well as service organizations used to process payments, track your order shipments, provide customer service support, and send messages and communications such as email.</p>
+
+    <h5 id="YOUR_KALA_ACCOUNT">YOUR KALA ACCOUNT</h5>
+    <p>You will need to create an account in order to use Kala&rsquo;s full services. Let&rsquo;s go over a few ground rules with respect to your account.</p>
+    <ul>
+      <li>
+        <strong>Be an adult </strong>&ndash; you must be 18 or older to use Kala and our Services. If you are 15 years of age or older, you may elect to use our Services, provided that they are used under the supervision of a parent or legal guardian who manages your Kala account.</li>
+      <li>
+        <strong>Be respectful</strong> &ndash; in posting content, reviews, and interacting with sellers and other users, be respectful not to use language or content that could be considered offensive, threatening, vulgar, obscene, or otherwise illegal. Members who are found to be in violation may have their content removed, or have their account suspended and/or terminated by Kala. You are representing that you have all necessary rights to any content posted from your account in Kala, and that you are not violating any third parties&rsquo; rights by using it.</li>
+      <li>
+        <strong>Be honest</strong> &ndash; please provide accurate information about yourself when creating and using your account. Do not use false information or impersonate another user, person, or company through your account.</li>
+      <li>
+        <strong>Be responsible</strong> &ndash; you are solely responsible for your own account, and for activity performed under your account. Kala accounts may not be transferred to another person or entity. Any fraudulent activity, including use of stolen credit cards, or other fraudulent payment methods, scams, or other illicit activity within your account will not be tolerated.</li>
+      <li>
+        <strong>Protect your account </strong>&ndash; it&rsquo;s extremely important to keep your account and password secure. Please be sure to use a unique password that contains at least 8 characters, including a combination of uppercase letters, lowercase letters, numbers and symbols that is difficult for anyone else to guess.</li>
+      <li>
+        <strong>We&rsquo;re not in a relationship </strong>&ndash; the terms of this Agreement don&rsquo;t create any partnership, joint venture, employment, agency, or other relationship between yourself and Kala.</li>
+      <li>
+        <strong>Grant Permission to your Content</strong> &ndash; by posting content within Kala, you are granting Kala a non-exclusive, worldwide, irrevocable, perpetual, and royalty free license to use, display, modify, store, distribute, and reproduce that content.. Kala does not claim any ownership rights to your content, but does have permission to use it for our business purposes.</li>
+    </ul>
+    <p>To give you a better understanding of why this is important, take the example of profile images and product reviews. Kala may need to reformat the profile image to properly fit within a page, or we may feature your reviews to allow other users to gain from your wisdom before making a purchase.</p>
+    <p>You agree to indemnify and hold Kala harmless from all claims, damages, liabilities, losses, costs and expenses (including attorneys' fees) arising out of any use or disclosure of your data or content permitted hereunder.</p>
+    <h5 id="USE_OF_SERVICES">USE OF SERVICES</h5>
+    <p>Subject to the terms of this Agreement, you are granted a limited, non-exclusive, non-transferable, and revocable license to use Kala and its services. Except for the limited rights and licenses expressly granted hereunder, no other license is granted to you, no other use is permitted and Kala (and its licensors) shall retain all right, title and interest in and to Kala, including all intellectual property and proprietary rights.</p>
+    <ul>
+      <li>Shipping charges, return policies, response to non-delivered products or stolen deliveries, and other terms of your purchases made through Kala vary for each retailer or brand (collectively referred to herein as &ldquo;Business Partners&rdquo;).</li>
+    </ul>
+    <ul>
+      <li>Kala sells products from many Business Partners. Unless otherwise specifically indicated, each Business Partner establishes their own policies independently. You are responsible for reviewing and understanding the specific rules, terms, shipping and return policies, and other disclosures of each Business Partner.</li>
+    </ul>
+    <ul>
+      <li>Help us make Kala better by providing your ideas and suggestions on how to improve your user experience or make our services more enjoyable. Any ideas or materials you submit to us are considered non-proprietary and non-confidential, and you are granting us a non-exclusive, worldwide, irrevocable, perpetual, and royalty free license to use, build, and publish those ideas and materials without compensating you.</li>
+    </ul>
+    <ul>
+      <li>You shall obtain and operate all Systems needed to use Kala, and ensure that all Systems are compatible with Kala.</li>
+    </ul>
+    <h5 id="TERMINATION">TERMINATION</h5>
+    <ul>
+      <li>
+        <strong>Terminating your Account </strong>&ndash; while we never want to see you leave, you can terminate your account with Kala at any point by logging in and accessing your account settings. Termination will not necessarily affect the content you posted through Kala, and does not relieve you of any outstanding payments or bills you may have incurred.</li>
+      <li>
+        <strong>Termination of your Account </strong>&ndash; Kala may terminate, suspend, or otherwise deactivate your account, and any accounts related to you, at any time and for any reason. Advanced notice is not required for Kala to terminate an account. In a case where your account is terminated or otherwise discontinued or deactivated, you have no legal right to continue use of Kala. We reserve the right to refuse service to anyone, for any reason.</li>
+      <li>
+        <strong>Survival </strong>&ndash; in the event of any termination, the terms of this Agreement shall remain in effect even after your access rights have been removed or revoked.</li>
+    </ul>
+    <h5 id="CHANGES">CHANGES</h5>
+    <p>We reserve the right to amend or update our Terms of Use on occasion. When this does happen, Kala will alert you via email, text or other notification on Kala of any material changes to this policy before those changes become effective. That way, you have the control to determine whether you wish to continue using our services. Your acceptance of the changes may be through your continued use of Kala after the changes become effective.</p>
+    <h5 id="LIMITATIONS_OF_LIABILITY">LIMITATIONS OF LIABILITY</h5>
+    <ul>
+      <li>
+        <strong>Systems</strong> &ndash; Kala is not responsible or liable for any failure resulting from or attributable to (a) your Systems, (b) network, telecommunications or other service or equipment, (c) your, or third party products, services, negligence, acts or omissions, (d) any force majeure or cause beyond Kala's reasonable control, (e) scheduled maintenance or (f) unauthorized access or breach by third parties.</li>
+    </ul>
+
+    <ul>
+      <li>
+        <strong>Third-Party Services</strong> &ndash; Kala&rsquo;s services may contain links to third-party websites or services that we don&rsquo;t own or control, including, but not limited to, Pinterest, Facebook, Instagram, and Twitter. In accessing the third-party services, you do so at your own risk. The third parties may require you to accept their own terms of use. Kala is not a party to those terms, conditions, and agreements.</li>
+    </ul>
+    <ul>
+      <li>
+        <strong>Products and Services</strong> &ndash; you agree that Kala is not responsible in any way for the products or services offered by Business Partners, or of the fulfillment thereof. Kala does not manufacture, warehouse or otherwise store, or inspect any products or services sold through Kala&rsquo;s platform. We are a marketplace, or medium, where the goods sold are created, listed, and sold directly by independent sellers. Kala makes no warranties regarding the quality, safety, legal standing, condition, features, or fitness of use for a particular purpose for any goods or services. Any claim regarding an item or service purchased must be brought directly against the seller.</li>
+    </ul>
+    <ul>
+      <li>
+        <strong>Subject Matter</strong> &ndash; in no event shall Kala (or its Suppliers) be liable concerning the subject matter of this Agreement, regardless of the form of any claim or action (whether in contract, negligence, strict liability, or otherwise), for any a) matter beyond its reasonable control (including any error or damage attributable to any network or system), b) loss or inaccuracy of data, loss or interruption of use or service, or cost of procuring substitute technology, goods, or services, c) indirect, punitive, incidental, reliance, special, exemplary or consequential damages including, but not limited to, loss of business, revenues, profits or goodwill. These limitations are independent from all other provisions of this Agreement and shall apply notwithstanding the failure of any remedy provided herein.</li>
+    </ul>
+    <ul>
+      <li>
+        <strong>Indemnification</strong> &ndash; you agree to indemnify and hold Kala harmless from all claims, damages, liabilities, losses, costs and expenses (including attorneys&rsquo; fees) arising from or related to products, services, goods, or rewards offered by any Business Partner, or from a Business Partner&rsquo;s use of the services.</li>
+    </ul>
+    <h5 id="TRADEMARK_PROPRIETARY">TRADEMARK &amp; PROPRIETARY RIGHTS</h5>
+    <p>You shall not alter, obscure or remove any printed or on-screen trademark, copyright or other proprietary or legal notice.</p>
+    <p>Any reproduction, modification, creation of derivative works from or redistribution of the MyKala.com website or other applications, and/or copying or reproducing the MyKala.com website, application, or any portion thereof to any other server or location for further reproduction or redistribution is prohibited without the express written consent of Kala. You may not decompile or disassemble, reverse engineer or otherwise attempt to discover any source code contained in Kala. Without limiting the foregoing, you agree not to reproduce, duplicate, copy, sell, resell or exploit for any commercial purposes, any aspect of Kala.</p>
+    <h5 id="WARRANTIES_DISCLAIMERS">WARRANTIES &amp; DISCLAIMERS</h5>
+    <p>Except as specifically provided herein, Kala is provided &ldquo;as is&rdquo; without warranty of any kind. Kala does not warrant that it will meet your requirements or that their operation will be uninterrupted or error-free. To the fullest extent permitted by law, Kala hereby disclaims (for itself and its Suppliers) all other warranties, whether express or implied, oral or written, with respect to Kala include, without limitation, all implied warranties of title, non-infringement, quiet enjoyment, integration, merchantability or fitness for any particular purpose and all warranties arising from any course of dealing, course of performance or usage of trade. Kala makes no warranties of any kind with respect to the products, services, or good offered by Business Partners.</p>
+    <h5 id="DISPUTES">DISPUTES</h5>
+    <p>In the case of a dispute with a Business Partner or Vendor, Kala encourages our users to contact the party in order to resolve the dispute in a satisfactory manner. Should you be unable to amicably resolve your dispute related to an order on Kala, you may elect to participate in our customer support system. Kala will attempt to help you resolve the dispute in good faith, at our sole discretion. Kala will not make any decisions or representation regarding any legal position, outcome, or claim, and does not maintain any legal or contractual obligation to resolve a dispute. As a member, you agree to release Kala from any claims or damages arising from a dispute with other users, Business Partners, Vendors, or other 3
+      <sup>rd</sup> parties.</p>
+    <h5 id="GENERAL_PROVISIONS">GENERAL PROVISIONS</h5>
+    <ul>
+      <li>
+        <strong>Entire Agreement</strong> &ndash; this Agreement (together with the PRIVACY POLICY) constitutes the entire agreement, and supersedes all prior negotiations, understandings or agreements (oral or written), between the parties about the subject matter of this Agreement. No waiver, consent or, except as expressly provided herein, modification of this Agreement shall bind either party unless in writing and signed by the party against which enforcement is sought. The failure of either party to enforce its rights under this Agreement at any time for any period will not be construed as a waiver of such rights. If any provision of this Agreement is determined to be illegal or unenforceable, that provision will be limited or eliminated to the minimum extent necessary so that this Agreement will otherwise remain in full force and effect and enforceable. If this Agreement is required to be registered with any governmental authority, you shall cause such registration to be made and shall bear any expense or tax payable in respect thereof.</li>
+    </ul>
+    <ul>
+      <li>
+        <strong>Governing Law</strong> &ndash; this Agreement shall be governed in accordance with the laws of Indiana, USA, without regard to its conflicts of law provisions. Neither the United Nations Convention on Contracts for the International Sale of Goods nor any enactment of the Uniform Computer Information Transactions Act shall apply to this Agreement.</li>
+    </ul>
+    <ul>
+      <li>
+        <strong>Arbitration</strong> &ndash; any dispute relating in any way to your use of Kala shall be submitted to confidential arbitration in Indianapolis, Indiana, except that to the extent you have in any manner violated or threatened to violate our intellectual property rights, Kala may seek injunctive or other appropriate relief in any state or federal court in the State of Indiana. You hereby consent to, and waive all defenses of lack of personal jurisdiction and forum non conveniens with respect to venue and jurisdiction in the state and federal courts of Indiana. Arbitration under this Agreement shall be conducted pursuant to the Commercial Arbitration Rules then prevailing at the American Arbitration Association. The arbitrator's award shall be final and binding and may be entered as a judgment in any court of competent jurisdiction. To the fullest extent permitted by applicable law, no arbitration under this Agreement shall be joined to an arbitration involving any other party subject to this Agreement, whether through class action proceedings or otherwise. You agree that regardless of any statute or law to the contrary, any claim or cause of action arising out of, related to or connected with the use of the Kala or this Agreement must be filed within one (1) year after such claim or cause of action arose or be forever banned. Triliant operates Kala from its offices in the State of Indiana.</li>
+    </ul>
+    <h5 id="ASSIGNMENT">ASSIGNMENT</h5>
+    <p>Without your consent, Triliant may assign this Agreement. This Agreement shall be binding upon, and inure to the benefit of, the successors, representatives and permitted assigns of the parties hereto.</p>
+
+    <h5 id="CONTACT_KALA">CONTACT KALA</h5>
+    <p>If you have any questions about this policy, you can contact Kala&rsquo;s support team by sending an email to privacy@mykala.com. Please be sure to indicate the nature of your question or concern.</p>
+  </div>
+
+  <footer class="bg-dark">
+    <div class="container">
+      <hr>
+      <div class="row py-3">
+        <div class="col-sm-6 text-left colorlightGray">
+          <small>Copyright 2018 Kala. All Rights Reserved</small>
+        </div>
+        <div class="col-sm-6 text-right">
+          <ul class="footer_link m-0 p-0">
+            <li>
+              <a href="/privacy.html">PRIVACY POLICY</a>
+            </li>
+            <li class="colorlightGray">.</li>
+            <li>
+              <a href="/terms.html">TERMS OF SERVICE</a>
+            </li>
+            <li>
+              <a href="https://www.facebook.com/KalaMarketplace" target="_blank">
+                <i class="fa fa-facebook colorlightGray" aria-hidden="true"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://twitter.com/kalamarketplace" target="_blank">
+                <i class="fa fa-twitter colorlightGray" aria-hidden="true"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- /.container -->
+  </footer>
+  <style>
+    .colorlightGray_2 {
+      font-size: 20px !important;
+      margin-left: 20px;
+    }
+
+    .colorlightGray {
+      color: #999999;
+      font-size: 14px;
+    }
+
+    footer .footer_link a {
+      color: #999999;
+      font-size: 14px;
+    }
+
+    footer .footer_link li {
+      list-style: none;
+      display: inline-block;
+      padding: 0px 3px;
+    }
+
+    footer .footer_link li:nth-child(4) i {
+      padding: 0px 10px;
+      font-size: 20px !important;
+    }
+
+    footer .footer_link li:nth-child(5) i {
+      padding-right: 20px;
+      font-size: 20px !important;
+    }
+
+    footer {
+      border-bottom: solid 5px #999999;
+      background: #fff;
+    }
+  </style>
+</body>
+
+</html>

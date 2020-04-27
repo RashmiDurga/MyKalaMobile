@@ -1,0 +1,325 @@
+<div class="container scrollContainer">
+	<div class="mob-pageHeader pt-3 pb-3 height50 backgrond-white" [ngClass] = "{'padd0': afterFilter}">
+		<div class="row" *ngIf="!showCategoryFilterBar">
+			<div class="col-6 pl-4">
+				<div (click)="core.goPrevPage()">
+					<i class="fa fa-angle-left" aria-hidden="true" *ngIf="!showCategoryFilterBar"></i>
+					<span>back</span>
+				</div>
+			</div>
+
+
+			<div class="mob-menu product_mob_menu col-6 d-flex align-itemes-center justify-content-end">
+				<!-- <i class="fa fa-bars"></i> -->
+				<div class="btn-group float-left" (click)="menuClicked()">
+					<div ngbDropdown class="d-inline-block" (clickOutside)="ClickOutsideModule($event)">
+						<nav id="mobile-menu">
+							<label for="tm" id="toggle-menu"><span class="drop-icon"><i class="fa fa-bars"></i></span></label>
+							<input type="checkbox" id="tm">
+							<ul class="main-menu cf">
+								<li *ngFor="let tile of core.placeCategDataArrayGeneric">
+									<div *ngIf="tile.count > 0">
+										<a><span (click)="viewAllPlaceProducts(tile)">{{tile.placeName}}</span>
+											<span class="drop-icon">▾</span>
+											<label title="Toggle Drop-down" class="drop-icon" for="{{tile.placeId}}">▾</label>
+										</a>
+										<input type="checkbox" id="{{tile.placeId}}">
+										<ul class="sub-menu">
+											<li *ngFor="let cteg of tile.categoryList">
+												<div *ngIf="cteg.count > 0" class="catmenu">
+													<a><span (click)="viewAllCategProducts(tile,cteg)">{{cteg.categoryName}}</span>
+														<span class="drop-icon">▾</span>
+														<label title="Toggle Drop-down" class="drop-icon" for="{{cteg.categoryId}}">▾</label>
+													</a>
+													<input type="checkbox" id="{{cteg.categoryId}}">
+													<ul class="sub-menu">
+														<li *ngFor="let subCateg of cteg.subCategoryList">
+															<div *ngIf="subCateg.count > 0" class="sub-catmenu">
+																<a> <span (click)="viewAllProducts(tile,cteg,subCateg)">{{subCateg.subCategoryName}}</span>
+																</a>
+															</div>
+														</li>
+													</ul>
+												</div>
+											</li>
+										</ul>
+									</div>
+								</li>
+							</ul>
+						</nav>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="row">
+			<div class="col-12 categoryFilterBar" [ngClass] = "{'afterFilterSection': afterFilter}" [hidden]="!showCategoryFilterBar">
+				<!-- <div class="col-12 pt-4 pl-2 pr-2 float-left mb-3 categoryFilterBtnBarWrapper">
+					<button class="btn categoryFilterBarBtn" [ngStyle]="{'background': showCategoryPanel ? '#b1b1b1' : 'none'}"
+					 (click)="setArea()">
+						<i class="fa fa-globe" aria-hidden="true"></i> Category
+					</button>
+					<button class="btn categoryFilterBarBtn" [ngStyle]="{'background': showFilterPanel ? '#b1b1b1' : 'none'}" (click)="enableFilterPanel()">
+						<i class="fa fa-filter" aria-hidden="true"></i> Filter
+					</button>
+				</div> -->
+
+				<div class="col-12 pl-2 pr-2 float-left">
+					<!--Side Bar Category Panel : Starts-->
+					<!-- <div class="catTiles" [hidden]="!showCategoryPanel">
+						<div class="catTiles-sub" id="mySidenav">
+							<ul class="category_tiles" *ngFor="let category of categoryList">
+								<li [ngStyle]="{'opacity': category.isProductAvailable == undefined ? '0.5' : '1'}">
+									<span (click)="category.isProductAvailable && loadSubcategory($event, category)" class="pr-3">{{category.name}}</span>
+									<ul class="cat_subMenu" *ngIf="category.expanded">
+										<li [ngStyle]="{'opacity': subcategory.isProductAvailable == undefined ? '0.5' : '1'}" *ngFor="let subcategory of subCategory"
+										 (click)="subcategory.isProductAvailable && refreshSubcategory(subcategory)">{{subcategory.name}}</li>
+									</ul>
+								</li>
+							</ul>
+						</div>
+					</div> -->
+					<!--Side Bar Category Panel : Ends-->
+
+					<!--Side Bar Filter Panel-->
+					<div id="mySidenavFilter" class="sidenavFilter browse_product_filter">
+							<form [formGroup]="getOffer_orderInfo">
+									<div class="row"> 
+										<div class="col-sm-12">
+											<div class="dx-field">
+												<dx-range-slider #rangeSlider [min]="0" [max]="maxPrice" [start]="minValuePrice" (onValueChanged) ="fetchDataOnPriceRange()"
+												[end]="maxValuePrice"></dx-range-slider>
+											</div> 
+											<div class="dx-fieldset row browse_filter_height50">
+											<div class="dx-field col-sm-6 col-6 py-2">
+												<div class="dx-field-value">
+												<span style="position: relative" class="d-block">
+													<span class="currencySymbol">min $</span>
+													<dx-number-box formControlName="minPrice" (keypress)="core.allowOnlyNumbers($event)" (focusout) ="fetchDataOnPriceRangeDxNum()"
+													[min]="minPrice" [max]="maxPrice" [showSpinButtons]="true" [(ngModel)]="rangeSlider.start" class="w-100 mr-2 left10"></dx-number-box>
+												</span>
+												</div>
+											</div>
+											<div class="dx-field col-sm-6 col-6 py-2">
+												<div class="dx-field-value float-right">
+												<span style="position: relative" class="d-block">
+													<span class="currencySymbol">max $</span>
+													<dx-number-box formControlName="maxPrice" (keypress)="core.allowOnlyNumbers($event)"  (focusout) ="fetchDataOnPriceRangeDxNum()"
+													[min]="minPrice" [max]="maxPrice" [showSpinButtons]="true" [(ngModel)]="rangeSlider.end" class="w-100 mr-2"></dx-number-box>
+												</span>
+												</div>
+											</div> 
+											</div>
+										</div>
+										<div class="col-sm-2"></div>
+									</div>
+								</form>
+						<!--Select and Data Capsules Wrapper : Starts-->
+						
+						<div class="selectionWrapperFilter margin_0" *ngFor="let data of filteredData">
+							<!--Select Drop Down-->
+							<div class="w-100" *ngIf="data.level == 0;else next" [ngClass] = "{'display_product_none': data.level == 0}">
+								<!-- <select class="form-control filterSelectTag" (change)="changeFilter($event.target.value, data)" [ngModel]="data.selectedValues.length !=0 ?toStr(data.selectedValues[data.selectedValues.length - 1]):SubCategoryStr" >
+                  <optgroup label="Sub Category">
+                    <option selected disabled hidden>Please select a Sub Category</option>
+                    <ng-container *ngFor="let subCategory of data.data">
+                      <option [disabled]="subCategory.isProductAvailable == undefined" [value]="subCategory.isProductAvailable != undefined ? toStr(subCategory) : null">
+                        {{subCategory.isProductAvailable != undefined ? subCategory.subCategoryName :
+                        subCategory.subCategoryName.concat(' - Coming Soon')}}
+                      </option>
+                    </ng-container>
+                  </optgroup>
+                </select> -->
+								<select class="form-control filterSelectTag" placeholder="select"
+								 (change)="changeFilter($event.target.value, data)" [ngModel]="data.selectedValues.length !=0 ?toStr(data.selectedValues[data.selectedValues.length - 1]):SubCategoryStr">
+									<optgroup label="{{selectedTilesData.category.name}}">
+										<option style="background: #CCC" value="Sub Category" disabled>Sub Category</option>
+										<ng-container *ngFor="let subCategory of data.data">
+										<option [disabled]="subCategory.isProductAvailable == undefined" [value]="toStr(subCategory)" >{{subCategory.subCategoryName}}
+											{{subCategory.isProductAvailable == undefined ? ' - Coming Soon' : ''}}</option>
+										</ng-container>
+									</optgroup>
+								</select>
+
+								<div class="selectedDataCapsules" *ngFor="let value of data.selectedValues">
+									<span class="selectedDataCapsulesContent">{{value.subCategoryName}}</span>
+									<span (click)="deleteFilter(value, $event)" class="selectedDataCapsulesDelete">x</span>
+								</div>
+							</div>
+							<!--Select Drop Down-->
+
+							<!--Select Drop Down With Option Group-->
+							<ng-template #next>
+								<div class="w-100">
+									<!-- <select class="form-control filterSelectTag" (change)="changeFilter($event.target.value, data)">
+                    <optgroup label="{{newData.label}}" *ngFor="let newData of data.data">
+                      <option selected disabled hidden>Please select a Type</option>
+                      <ng-container *ngFor="let type of newData.data">
+                        <option [disabled]="type.isProductAvailable == undefined" [value]="type.isProductAvailable != undefined ? toStr(type) : null">
+                          {{type.isProductAvailable != undefined ? type.productTypeName : type.productTypeName.concat('
+                          - Coming Soon')}}
+                        </option>
+                      </ng-container>
+                    </optgroup>
+                  </select> -->
+
+									<select class="form-control filterSelectTag" (change)="changeFilter($event.target.value, data)" [ngModel]="data.selectedValues.length !=0 ?toStr(data.selectedValues[data.selectedValues.length - 1]) : typeStr">
+										<optgroup label="{{newData.label}}" *ngFor="let newData of data.data">
+											<option selected style="background: #CCC" value="Type" disabled>Type</option>
+											<ng-container *ngFor="let type of newData.data">
+												<option *ngIf="type.isProductAvailable != undefined" [value]="toStr(type)">{{type.productTypeName}}
+													{{type.isProductAvailable == undefined ? ' - Coming Soon' : ''}}</option>
+											</ng-container>
+										</optgroup>
+									</select>
+
+									<div class="selectedDataCapsules" *ngFor="let value of data.selectedValues">
+										<span class="selectedDataCapsulesContent">{{value.productTypeName}}</span>
+										<span (click)="deleteFilter(value, $event)" class="selectedDataCapsulesDelete">x</span>
+									</div>
+								</div>
+							</ng-template>
+							<!--Select Drop Down With Option Group-->
+						</div>
+					
+						<!--Select and Data Capsules Wrapper : Ends-->
+
+						<!--Apply and Clear Buttons-->
+						<div class="w-100 float-left margin_top20">
+							<button class="btn filterButtons" (click)="enableFilterPanel(); applyFilters()">
+								Apply Filter
+							</button>
+							<button class="btn filterButtons" (click)="clearAllFilters()">
+								Clear Filter
+							</button>
+						</div>
+						<!--Apply and Clear Buttons-->
+					</div>
+					<!--Side Bar Filter Panel-->
+				</div>
+			</div>
+
+			<ng4-loading-spinner [threshold]="1000" [template]="template" [zIndex]="999"></ng4-loading-spinner>
+		</div>
+	</div>
+	<div class="contentHeight height50" *ngIf="!showCategoryFilterBar"></div>
+
+	<ng-template #noData>
+		<div class="row">
+			<span class="d-inline offerStatus expireSoon">Coming Soon
+				<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+			</span>
+		</div>
+	</ng-template>
+	<div class="row mt-2">
+		<div class="title col-9 browserHdr browserHdrGroup" *ngIf="!showCategoryFilterBar">
+			<h2 class="d-flex">
+				<div class="d-inline-block breadCrums_parent" *ngIf="selectedTilesData != undefined">
+					<div class="btn-group float-left placeMenu">
+						<div ngbDropdown class="d-inline-block">
+							<a class="btn" id="dropdownBasic1" ngbDropdownToggle>{{placeName}}</a>
+							<div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+								<div class="dropdown-item" [ngStyle]="{'cursor': tile.isProductAvailable == undefined ? 'no-drop' : 'auto','disabled': tile.isProductAvailable == undefined , 'color': tile.isProductAvailable == undefined ? '#ccc' : ''}"
+								 *ngFor="let tile of tilesPlaces" (click)="tile.isProductAvailable && navigateToCat(tile)">
+									<span>{{tile.name}}</span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+				<div class="d-inline-block breadCrums_parent">
+					<div class="btn-group float-left placeMenu">
+						<div ngbDropdown class="d-inline-block">
+							<a class="btn" id="dropdownBasic2" ngbDropdownToggle>{{cat}}</a>
+							<div ngbDropdownMenu aria-labelledby="dropdownBasic2" *ngIf="tiles !=undefined && tiles.length>0">
+								<div class="dropdown-item" *ngFor="let tile of tiles" [ngStyle]="{'cursor': tile.isProductAvailable == undefined ? 'no-drop' : 'auto','disabled': tile.isProductAvailable == undefined , 'color': tile.isProductAvailable == undefined ? '#ccc' : ''}"
+								 (click)="tile.isProductAvailable && navigateToSubCat(tile)">
+									<span>{{tile.name}}</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</h2>
+		</div>
+		<div class="col-3 pl-2 d-flex align-items-center justify-content-end" [ngClass] = "{'afterFilter': afterFilter}">
+			<span class="float-right exploreFC" (click)="toggleCFPanel()">
+				<i *ngIf="!showCategoryFilterBar" aria-hidden="true" class="fa fa-filter color-white"></i>
+				<span style="font-family: open_sansbold; font-size: 17px; color:#ffffff" *ngIf="showCategoryFilterBar">x</span>
+			</span>
+		</div>
+	</div>
+	<!--Type Section-->
+	<!-- <div class="title mt-3">
+    <h2 *ngIf="selectedTilesData != undefined && selectedTilesData.subcategory.length == undefined">
+      {{selectedTilesData.place.name}}
+      <span class="colorGray">{{selectedTilesData.subcategory.name}}
+      </span>
+    </h2>
+    <span class="float-right mt-4 web-category">
+      <a (click)="openNav()">
+        <img src="./assets/images/category.png" />
+      </a>
+    </span>
+  </div> -->
+	<!--Type Section-->
+	<div class="row browseProduct" *ngIf="tilesData.length >0">
+		<div class="example col-6" *ngFor="let tile of tilesData" (click)="viewDetails(tile)">
+			<div *ngIf="tile.product.attributes != undefined && tile.product.attributes.Brand != undefined; else noBrandTemplate" >
+                <!-- <a routerLink="/view-product?brandName={{tile.product.attributes.Brand}}&productName={{tile.product.productName}}&productId={{ tile.product.kalaUniqueId }}"> -->
+                 
+                 <a [routerLink]="['/view-product']" [queryParams]="{brandName:tile.product.attributes.Brand | replaceUnderscore,productName:tile.product.productName| replaceUnderscore,productId:tile.product.kalaUniqueId,Isfilter:(this.filteredData != undefined && this.filteredData.length > 0)?'1':'0'}">
+                    <div class="prodImageContainer prodImageContainer_xl d-block">
+                        <img [src]="tile.product.mainImageSrc" class="img-fluid">   
+                    </div>
+                    <div class="row p-2">
+                            <h5 class="browseTitle ">{{tile.product.productName}}</h5>
+                            <span class="d-block" *ngIf="tile.product.retailPrice <= tile.product.kalaPrice; else showDefault">
+                                <span class="pl-2 browsePrice">{{tile.product.kalaPrice | currency}}</span>
+                            </span>
+                            <ng-template #showDefault>
+                                <span class="pl-2 browsePrice d-inline-block">{{tile.product.kalaPrice | currency}}</span>
+                                <span class="pl-3 browsePriceline d-inline-block">{{tile.product.retailPrice | currency}}</span>
+                            </ng-template>
+                    </div> 
+                </a>
+            </div>
+            <ng-template #noBrandTemplate> 
+                    <!-- <a routerLink="/view-product?brandName={{tile.product.attributes.Brand}}&productName={{tile.product.productName}}&productId={{ tile.product.kalaUniqueId }}"> -->
+                 <a [routerLink]="['/view-product']" [queryParams]="{productName:tile.product.productName | replaceUnderscore,productId:tile.product.kalaUniqueId,Isfilter:(this.filteredData != undefined && this.filteredData.length > 0)?'1':'0'}">
+                   
+                <div class="prodImageContainer prodImageContainer_xl d-block">
+                            <img [src]="tile.product.mainImageSrc" class="img-fluid">   
+                    </div>
+                    <div class="row p-2">
+                            <h5 class="browseTitle ">{{tile.product.productName}}</h5>
+                            <span class="d-block" *ngIf="tile.product.retailPrice <= tile.product.kalaPrice; else showDefault">
+                                <span class="pl-2 browsePrice">{{tile.product.kalaPrice | currency}}</span>
+                            </span> 
+                            <ng-template #showDefault>
+                                <span class="pl-2 browsePrice d-inline-block">{{tile.product.kalaPrice | currency}}</span>
+                                <span class="pl-3 browsePriceline d-inline-block">{{tile.product.retailPrice | currency}}</span>
+                            </ng-template>
+                    </div> 
+                </a>
+            </ng-template>
+		</div>
+	</div>
+
+	<!-- <div class="col-sm-12 text-center">
+		<button *ngIf="showMoreBtn && !loader" (click)="loadTypes('loadMore')" class="btn btn_red_right mb-4" style="margin-top: 20px !important">show
+			more</button>
+		<span class="btn btn btn_red_right" (click)="getOffers()">get offers</span> 
+	</div> -->
+	<div *ngIf="showMoreBtn && !loader" class="col-sm-12 text-center mb-5 mob-btnShowMore search-results"
+	infiniteScroll
+	[infiniteScrollDistance]="2"
+	[infiniteScrollThrottle]="50"
+	(scrolled)="onScroll()"
+	>
+	<!-- <button (click)="loadTypes('loadMore')" class="btn btn_red_right">show more</button> -->
+</div>
+</div>

@@ -1,0 +1,24 @@
+ <div class="col-12 p-0 float-right">
+    <div class="chat_product">
+        <div class="title">Checkout</div> 
+        <div class="sellerProduct" *ngFor="let item of filteredCartItems">
+            <strong class="p-2">{{item.retailerName}}</strong> 
+            <div class="sellerProduct" *ngFor="let orders of item.orderItems">
+            <div class="backgroundWhite curve">
+                <div class="row p-2">
+                    <div class="col-3">
+                        <img [src]="orders.productImage" (click)="core.getProductDetails(orders.productId)" class="img-fluid cursor" />
+                    </div>
+                    <div class="col-9 p-0">
+                        <div class="pr-3">{{orders.productName}}</div>
+                        <div class="pr-2">Quantity: {{orders.quantity}}</div>
+                        <div class="pr-3">Prize: {{orders.price | currency}} <span class="float-right"><strong>{{getPerItemTotal(orders.price, orders.quantity) | currency}}</strong></span></div> 
+                    </div>
+                </div> 
+            </div>
+        </div>
+        </div>
+    </div>
+ </div>
+
+ 

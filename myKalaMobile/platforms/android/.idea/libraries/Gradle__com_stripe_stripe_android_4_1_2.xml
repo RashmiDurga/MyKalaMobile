@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Gradle: com.stripe:stripe-android-4.1.2">
+    <ANNOTATIONS>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/stripe-android-4.1.2.aar/b39a0dc9c28effba053c92c1fd94c8b5/annotations.zip!/" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/stripe-android-4.1.2.aar/b39a0dc9c28effba053c92c1fd94c8b5/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/stripe-android-4.1.2.aar/b39a0dc9c28effba053c92c1fd94c8b5/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.stripe/stripe-android/4.1.2/7d743f63abef01df3fed2cd49800c31b36f91e35/stripe-android-4.1.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

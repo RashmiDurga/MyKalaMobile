@@ -1,0 +1,341 @@
+<div class="container scrollContainer">
+  <div class="mob-allpageHeader">
+    <div class="row">
+        <div class="col-3 text-center" (click)="core.goPrevPage()">
+        <i class="fa fa-angle-left" aria-hidden="true"></i>
+        <span>back</span>
+        </div>
+    </div>
+  </div>
+  <div class="contentHeight"></div>
+  <img src="./assets/images/loader.gif" style="margin:0 49%" class="mb-5" *ngIf="loader" />
+
+  <div *ngIf="!loader && selectedProduct != undefined">
+    <!--Title-->
+    <div class="title web-title">
+      <h2>{{selectedProduct.product.productName}} |
+        <span *ngIf="fromES;else default" class="btnClose" routerLink="/elastic-product" style="cursor: pointer">X</span>
+        <ng-template #default>
+          <span class="btnClose" routerLink="/browse-product" style="cursor: pointer">X</span>
+        </ng-template>
+      </h2>
+    </div>
+    <!--Title-->
+
+    <div class="row web-title">&nbsp;</div>
+
+    <!--Social Media and Retailer-->
+    <div class="web-title">
+      <!-- <img src="/consumer-app/assets/images/prod-thumb.png" /> -->
+      <u style="cursor:pointer" (click)="animateToTiles('retailer')">{{selectedProduct.product.retailerName}}</u>
+    </div>
+    <!--Social Media and Retailer-->
+
+    <div class="row web-title">&nbsp;</div>
+
+    <div *ngIf="selectedProduct != undefined"  class="row sliderContentContainer">
+      <!--Left Images Carosel-->
+      <div class="col-sm-6 p-0 sliderShadow" [ngClass]="{'zoomInSlider':core.isSliderZoomedIn}" (click)="!core.isSliderZoomedIn && core.zoomInSlider()">
+        <i class="fa fa-times" aria-hidden="true" *ngIf="core.isSliderZoomedIn" (click)="core.closeZoomInSlider($event); $event.stopPropagation()"></i>
+        <app-swipe-slider *ngIf="selectedProduct.product.productImages != undefined && selectedProduct.product.productImages.length > 0"
+          [productImages]="selectedProduct.product.productImages"></app-swipe-slider>
+      </div>
+      <!--Left Images Carosel-->
+
+      <!--Right Details-->
+      <div class="col-12 productDtl-right">
+        <div class="row mob-title">
+          <div class="col-12">
+            <!-- <img src="/consumer-app/assets/images/prod-thumb.png" /> -->
+            <span class="d-inline-block mb-3" style="font-size: 15px">{{selectedProduct.product.productName}}</span>
+            <br />
+            <u style="cursor:pointer" (click)="animateToTiles('retailer')">{{selectedProduct.product.retailerName}}</u>
+          </div>
+        </div>
+        <div class="row">
+          <h4 class="col-12 pl-4 pr-4 text_multiple mb-0" *ngIf="selectedProduct.product.retailPrice <= selectedProduct.product.kalaPrice;else showDefault">
+            <span class="priceFontSize">{{selectedProduct.product.kalaPrice | currency}}</span>
+          </h4>
+          <ng-template #showDefault>
+            <h4 class="col-12 pl-4 pr-4 text_multiple mb-0">
+              <span class="priceFontSize">{{selectedProduct.product.kalaPrice | currency}}</span>
+              <span style="text-decoration: line-through; font-size: 16px; color: #c3c3c3; margin-left: 20px;">{{selectedProduct.product.retailPrice
+                | currency}}</span>
+            </h4>
+          </ng-template>
+        </div>
+        <div class="row" *ngIf="totalReviewSummary != undefined && totalReviewSummary != ''">
+          <div class="col-12 pb-2">
+            <span *ngFor="let rating of getRating(totalReviewSummary.average)">
+              <i class="fa fa-star starIcon starIconView" aria-hidden="true"></i>
+            </span>
+            <span *ngFor="let rating of getRating(totalReviewSummary.left)">
+              <i class="fa fa-star fa-star-gray starIcon starIconView" aria-hidden="true"></i>
+            </span>
+            <span class="cursor" style="color: blue" class="ml-2" (click)="animateToTiles('reviews')">
+              <u>{{totalReviewSummary.total}}</u>
+            </span>
+          </div>
+        </div>
+
+        <div class="row" *ngIf="selectedProduct.product.deliveryMethod != undefined">
+          <div class="col-12 pb-2">
+            <span>Get it by
+              <span style="font-family: 'open_sansbold'">{{selectedProduct.product.deliveryMethod}}</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="row">
+          <div *ngIf="!alreadyAddedInCart" class="col-12 mb-3">
+            <span *ngIf="selectedProduct.product.quantity > 0;else outOfStock">{{selectedProduct.product.quantity}} in
+              stock</span>
+            <ng-template #outOfStock>
+              <span>Out of stock</span>
+            </ng-template>
+          </div>
+        </div>
+
+        <div class="row">
+          <div *ngIf="!alreadyAddedInCart" class="col-12">
+            <input class="btn btn_red_right w-100" type="button" [disabled]="!quantity || selectedProduct.product.quantity == 0"
+              (click)="addToCart('toCart')" value="accept" />
+          </div>
+
+          <div *ngIf="alreadyAddedInCart" class="col-12">
+            <label>
+              <strong>Item already added in cart</strong>
+            </label>
+            <input class="btn btn_red_right w-100" type="button" routerLink="/mycart" value="go to cart" />
+          </div>
+
+          <div *ngIf="!alreadyAddedInCart" class="col-12">
+            <div class="row mt-3">
+              <div class="col-6">
+                <input (click)="declineOffer(selectedProduct.product.kalaUniqueId)" class="btn w-100 btn_redouter_right"
+                  type="button" value="decline" />
+              </div>
+              <div class="col-6">
+                <input class="btn w-100 btn_redouter_right" type="button" value="save for later" routerLink="/app-myoffers" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--Right Details-->
+    </div>
+    <!-- mobile Desription -->
+    <div *ngIf="selectedProduct != undefined"  class="row mob-producttabs backgroundWhite">
+      <ngb-tabset>
+        <ngb-tab>
+          <ng-template ngbTabTitle>description</ng-template>
+          <ng-template ngbTabContent>
+            <div class="col-12 p-3 pt-3">
+              <h4 class="subtitle colorlightGray" *ngIf="selectedProduct.product.productDescription">
+                <strong>description</strong>
+              </h4>
+              <div *ngIf="selectedProduct.product.productDescription" class="col-12 p-0 mb-4">{{selectedProduct.product.productDescription}}</div>
+
+              <h4 class="subtitle colorlightGray" *ngIf="selectedProduct.product.filteredAttr?.length > 0">
+                <strong>details</strong>
+              </h4>
+              <div class="col-12 p-0">
+                <table *ngIf="selectedProduct.product.filteredAttr?.length > 0" class="customeTable fullwidth">
+                  <tr *ngFor="let attribute of selectedProduct.product.filteredAttr">
+                    <td colspan="2" *ngIf="attribute.key == 'Features';else showDefault">
+                      <table width="100%">
+                        <tr>
+                          <td width="35%" valign="top" class="colorlightGray">{{attribute.key}}:</td>
+                          <td width="75%" class="colorred">
+                            <ul class="pl-3 mb-0">
+                              <li *ngFor="let value of attribute.value">{{value}}</li>
+                            </ul>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                    <ng-template #showDefault>
+                      <td width="35%" valign="top" class="colorlightGray" >{{attribute.key}}:</td>
+                      <td width="75%" class="colorred" *ngIf="attribute.key == 'Part Number' ;else showPartDefault" [ngClass]="{'partNumbDescription':attribute.key=='Part Number'}">
+                          <ul class="pl-3 mb-0">
+                              <li *ngFor="let prtval of getPartNumArray(attribute.value)">{{prtval}}</li>
+                           </ul>
+                      </td>
+                      <ng-template #showPartDefault>
+                          <td  width="60%" class="colorred">{{attribute.value}}
+                            </td>
+                      </ng-template>
+                    </ng-template>
+                  </tr>
+                </table>
+
+                <div class="row mobile-description-alignments" *ngIf="!selectedProduct.product.filteredAttr?.length > 0">
+                  <h4 class="subtitle mt-4">Description</h4>
+                  <br />
+                  <p class="w-100">{{selectedProduct.product.productDescription}}</p>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </ngb-tab>
+        <ngb-tab>
+          <ng-template ngbTabTitle>
+            <span class="float-left">|</span>reviews
+            <span class="float-right">|</span>
+          </ng-template>
+          <ng-template ngbTabContent>
+            <div class="col-12 p-3 pt-3 mb-5">
+              <h4 class="subtitle">reviews {{productReviews.length}}</h4>
+              <table class="reviewlayout table">
+                <tr *ngFor="let reviews of productReviews">
+                  <td class="p-0">
+                    <div class="star-rating col-12 p-0">
+                      <span *ngFor="let rating of getRating(reviews.rating)">
+                        <i class="fa fa-star starIcon starIconView" aria-hidden="true"></i>
+                      </span>
+                    </div>
+                    <div class="row">
+                      <div class="col-12 breakWord">
+                        <strong>{{reviews.reviewDescription}}</strong>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-3 star-rating my-2" *ngIf="reviews.reviewImages != ''">
+                        <span class="readReviewImage" *ngIf="reviews.reviewImages">
+                          <img [src]="reviews.reviewImages" class="img-fluid" />
+                        </span>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-12 colorlightGray">by
+                        <u>{{reviews.firstName}} {{reviews.lastName}}</u>
+                      </div>
+                    </div>
+                    <hr />
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </ng-template>
+        </ngb-tab>
+        <ngb-tab>
+          <ng-template ngbTabTitle>retailer policy</ng-template>
+          <ng-template ngbTabContent>
+            <div class="col-12 p-3 pt-3 mb-5 returnPolicy">
+              <h4 class="subtitle">Returns and exchange policy</h4>
+              <br />
+              <p class="w-100">{{retailerPolicy}}</p>
+            </div>
+          </ng-template>
+        </ngb-tab>
+      </ngb-tabset>
+    </div>
+
+    <!-- mobile Desription -->
+    <div *ngIf="selectedProduct != undefined"  class="web-desription">
+      <!--Description-->
+      <div class="row" *ngIf="selectedProduct.product.productDescription">
+        <h4 class="subtitle mt-4">Description</h4>
+        <br />
+        <p class="w-100">{{selectedProduct.product.productDescription}}</p>
+      </div>
+      <!--Description-->
+
+      <!--Brand Details-->
+      <div class="row" *ngIf="selectedProduct.product.filteredAttr != undefined && selectedProduct.product.filteredAttr.length > 0">
+        <h4 class="subtitle mt-4">details</h4>
+        <div class="col-sm-12 p-0">
+          <table width="100%" class="customeTable">
+            <tr *ngFor="let attribute of selectedProduct.product.filteredAttr">
+              <td colspan="2" *ngIf="attribute.key == 'Features';else showDefault">
+                <table width="100%">
+                  <tr>
+                    <td width="20%" valign="top">{{attribute.key}}:</td>
+                    <td width="80%" class="colorred">
+                      <ul class="pl-3 mb-0">
+                        <li *ngFor="let value of attribute.value">{{value}}</li>
+                      </ul>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <ng-template #showDefault>
+                <td width="20%" valign="top">{{attribute.key}}:</td>
+                <td width="80%" class="colorred">{{attribute.value}}</td>
+              </ng-template>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <!--Brand Details-->
+
+      <!--Reviews-->
+      <div class="row consumerReviews">
+        <h4 class="subtitle mt-4">reviews {{productReviews.length}}</h4>
+        <table class="reviewlayout table" *ngIf="productReviews.length > 0;else noReviews">
+          <tr *ngFor="let reviews of productReviews">
+            <td class="p-0">
+              <div class="star-rating productWrap">
+                <span *ngFor="let rating of getRating(reviews.rating)">
+                  <i class="fa fa-star starIcon starIconView" aria-hidden="true"></i>
+                </span>
+                <br />
+                <strong>{{reviews.reviewDescription}}</strong>
+              </div>
+              <div class="star-rating mt-3 mb-2" *ngIf="reviews.reviewImages">
+                <span class="readReviewImage">
+                  <img [src]="reviews.reviewImages" />
+                </span>
+              </div>
+              <div class="colorlightGray">by
+                <u>{{reviews.firstName}} {{reviews.lastName}}</u>
+              </div>
+              <hr />
+            </td>
+          </tr>
+          <!-- <tr>
+        <td class="p-0 text-right">
+          <a href="#" class="colorred">
+            <small>show more</small>
+          </a>
+        </td>
+      </tr> -->
+        </table>
+        <ng-template #noReviews>
+          <div class="row w-100">
+            <div class="col-sm-12">No reviews available for this product.</div>
+          </div>
+        </ng-template>
+      </div>
+      <!--Reviews-->
+
+      <div class="row">&nbsp;</div>
+
+      <!--Return Policy-->
+      <div class="row returnPolicy mb-4">
+        <h4 class="subtitle">Returns and exchange policy</h4>
+        <br />
+        <p class="w-100">{{retailerPolicy}}</p>
+      </div>
+      <!--Return Policy-->
+    </div>
+  </div>
+</div>
+
+<!--Promt For Login-->
+<ng-template #viewProductModal let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Buy Now</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>{{this.confirmValidationMsg.message}}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outer btn_red_right" (click)="c('Close click'); confirmUser()">Yes</button>
+    <button type="button" class="btn btn-outer btn_redouter_right" (click)="c('Close click')">No</button>
+  </div>
+</ng-template>
+<!--Promt For Login-->

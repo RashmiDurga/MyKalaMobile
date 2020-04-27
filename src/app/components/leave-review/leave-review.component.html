@@ -1,0 +1,101 @@
+<div class="container scrollContainer">
+  <div class="mob-allpageHeader">
+    <div class="row">
+      <div class="col-3 text-center" (click)="core.goPrevPage()">
+        <i class="fa fa-angle-left" aria-hidden="true"></i>
+        <span>back</span>
+      </div>
+      <div class="col-6 text-center">
+        <h5>Leave Review</h5>
+      </div>
+      <div class="col-3 text-right"> </div>
+    </div>
+  </div>
+</div>
+<div class="contentHeight"></div>
+
+<div class="hiddenOverlay" *ngIf="hiddenOverlay" (click)="hideOverlay()"></div>
+
+<div class="container scrollContainer scrollContainerHeight">
+  <!--Review Block-->
+  <div class="row backgroundWhite mt-2 margin_bottom50 pb-3">
+    <div class="col-12 mt-3 lr-title">
+      <span class="mb-2 d-inline-block">{{this.requestReviewModel.productName}}</span>
+      <br />
+      <span class="colorred lr-retailerName">{{this.requestReviewModel.retailerName}}</span>
+    </div>
+
+    <!--Product Image-->
+    <div class="col-12 text-center lr-productimage mt-3 mb-3">
+      <span *ngIf="productForReview.order.productImage;else noImage">
+        <img [src]="productForReview.order.productImage" class="img-fluid" />
+      </span>
+      <ng-template #noImage>
+        <span class="noImageLogo lr-noImage">
+          <i class="fa fa-picture-o" aria-hidden="true"></i>
+          <br /> Image Not Available
+        </span>
+      </ng-template>
+    </div>
+    <!--Product Image-->
+
+    <!--Product Details and Review Block-->
+    <div class="col-12 lr-rating">
+      <span>Select Rating:</span>
+      <span>
+        <i class="fa fa-star-o starIcon" style="cursor: pointer" (click)="selectRating($event)" data-number="1"
+          aria-hidden="true"></i>
+        <i class="fa fa-star-o starIcon" style="cursor: pointer" (click)="selectRating($event)" data-number="2"
+          aria-hidden="true"></i>
+        <i class="fa fa-star-o starIcon" style="cursor: pointer" (click)="selectRating($event)" data-number="3"
+          aria-hidden="true"></i>
+        <i class="fa fa-star-o starIcon" style="cursor: pointer" (click)="selectRating($event)" data-number="4"
+          aria-hidden="true"></i>
+        <i class="fa fa-star-o starIcon" style="cursor: pointer" (click)="selectRating($event)" data-number="5"
+          aria-hidden="true"></i>
+      </span>
+      <img src="./assets/images/loader.gif" *ngIf="loader" class="float-right" width="20" />
+    </div>
+
+    <div class="col-12 mb-3">
+      <textarea class="form-control w-100" rows="4" placeholder="Write your review here..." [(ngModel)]="reviewContent"></textarea>
+    </div>
+
+    <div class="col-12 text-center">
+      <input (change)="fileChangeEvent($event)" accept="image/*" type="file" class="form-control uploadImage" />
+      <span class="reviewImageContainer mr-0 mb-4 w-25" *ngIf="imageURL">
+        <img [src]="imageURL" />
+      </span>
+    </div>
+
+    <div class="col-12 lr-Btns">
+      <button class="btn-outer btn_redouter_right" (click)="callUpload()">upload photo</button>
+      <button style="cursor: pointer" class="btn-outer btn_red_right" (click)="postReview()">post your review</button>
+    </div>
+    <!--Product Details and Review Block-->
+  </div>
+  <!--Review Block-->
+
+</div>
+
+<!--Leave Review Success-->
+<ng-template #leaveReviewSubmittedModal let-c="close" let-d="dismiss">
+  <div class="modal-body">
+    <p>{{reviewValidationMsg}}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outer btn_red_right" (click)="c('Close click')">Close</button>
+  </div>
+</ng-template>
+<!--Leave Review Success-->
+
+<!--File Size Exceeded-->
+<ng-template #fileSizeTooBig let-c="close" let-d="dismiss">
+  <div class="modal-body">
+    <p>File size exceeded the limit of 2 MB.</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outer btn_red_right" (click)="c('Close click')">Close</button>
+  </div>
+</ng-template>
+<!--File Size Exceeded-->

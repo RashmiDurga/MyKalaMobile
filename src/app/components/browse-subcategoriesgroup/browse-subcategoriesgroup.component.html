@@ -1,0 +1,190 @@
+<div class="header bgimage headerParent">
+    <div class="banner_content browseCatGroup backgroundWhite top_fixed">
+
+        <div class="col-12 text-left homeBack">
+                <div (click)="goPrevPage()">
+                <i class="fa fa-angle-left" aria-hidden="true"></i>
+                <span>back</span>
+                </div>
+        </div>
+
+        <div class="mob-menu top13">
+            <!-- <i class="fa fa-bars"></i> -->
+            <div class="btn-group float-left" (click)="menuClicked()">
+                <div ngbDropdown class="d-inline-block" (clickOutside)="ClickOutsideModule($event)">
+                    <nav id="mobile-menu">
+                        <label for="tm" id="toggle-menu"><span class="drop-icon"><i class="fa fa-bars"></i></span></label>
+                        <input type="checkbox" id="tm">
+                        <ul class="main-menu cf">
+                            <li *ngFor="let tile of core.placeCategDataArrayGeneric">
+                                <div *ngIf="tile.count > 0">
+                                    <a><span (click)="viewAllPlaceProducts(tile)">{{tile.placeName}}</span>
+                                        <span class="drop-icon">▾</span>
+                                        <label title="Toggle Drop-down" class="drop-icon" for="{{tile.placeId}}">▾</label>
+                                    </a>
+                                    <input type="checkbox" id="{{tile.placeId}}">
+                                    <ul class="sub-menu">
+                                        <li *ngFor="let cteg of tile.categoryList">
+                                            <div *ngIf="cteg.count > 0" class="catmenu">
+                                                <a><span (click)="viewAllCategProducts(tile,cteg)">{{cteg.categoryName}}</span>
+                                                    <span class="drop-icon">▾</span>
+                                                    <label title="Toggle Drop-down" class="drop-icon" for="{{cteg.categoryId}}">▾</label>
+                                                </a>
+                                                <input type="checkbox" id="{{cteg.categoryId}}">
+                                                <ul class="sub-menu">
+                                                    <li *ngFor="let subCateg of cteg.subCategoryList">
+                                                        <div *ngIf="subCateg.count > 0" class="sub-catmenu">
+                                                            <a> <span (click)="viewListAllProducts(tile,cteg,subCateg)">{{subCateg.subCategoryName}}</span>
+                                                            </a>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+</div>
+
+<section id="homegarden" class="py-5" class="homegarden pt-2 position_top50">
+
+
+    <div class="container banner_title">
+        <h1>Explore. Bid. Create & Buy.</h1>
+        <h4>Are you ready to shop your own way?</h4>
+        <div class="title browserHdr browserHdrGroup">
+            <h2 class="d-flex">
+                <div class="d-inline-block breadCrums_parent" *ngIf="selectedTilesData != undefined">
+                    <div class="btn-group float-left placeMenu">
+                        <div ngbDropdown class="d-inline-block">
+                            <a class="btn" id="dropdownBasic1" ngbDropdownToggle>{{placeName}}</a>
+                            <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                                <div class="dropdown-item" [ngStyle]="{'cursor': tile.isProductAvailable == undefined ? 'no-drop' : 'auto','disabled': tile.isProductAvailable == undefined , 'color': tile.isProductAvailable == undefined ? '#ccc' : ''}"
+                                    *ngFor="let tile of tilesPlaces" (click)="tile.isProductAvailable && navigateToCat(tile)">
+                                    <span>{{tile.name}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-inline-block breadCrums_parent">
+                    <div class="btn-group float-left placeMenu">
+                        <div ngbDropdown class="d-inline-block">
+                            <a class="btn" id="dropdownBasic2" ngbDropdownToggle>{{cat}}</a>
+                            <div ngbDropdownMenu aria-labelledby="dropdownBasic2">
+                                <div class="dropdown-item" *ngFor="let tile of tiles" [ngStyle]="{'display': tile.isProductAvailable == undefined ? 'none' : '','disabled': tile.isProductAvailable == undefined , 'color': tile.isProductAvailable == undefined ? '#ccc' : ''}"
+                                    (click)="tile.isProductAvailable && navigateToSubCat(tile)">
+                                    <span>{{tile.name}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </h2>
+        </div>
+
+
+
+    </div>
+</section>
+
+
+<section class="homeCarosel catPage_carosel p-3 cat_group position_top39">
+    <div class="pb-2">
+            <div class="filtergroup" *ngFor="let data of filteredDataCarousel">
+                <div (click)="viewAllProducts(data.fileterDataSet.data)">{{data.fileterDataSet.data.subCategoryName}}</div>
+            </div>
+    </div>
+    <div class="filterOuterLine">
+        <div class="container py-3 pb-3" *ngFor="let data of filteredDataCarousel">
+            <div class="row pt-3" *ngIf="data.carouselData.length > 0">
+                <div class="col-sm-10 col-9 d-flex">
+                    <h3 class="pl-5 colorred">{{data.fileterDataSet.data.subCategoryName}}</h3>
+                    <h6 class="noOfItemscarousel" *ngIf="data.carouselData.length > 1">  ({{data.fileterDataSet.data.count}} items)</h6><h6 class="p-6 noOfItemscarousel" *ngIf="data.carouselData.length == 1">  ({{data.fileterDataSet.data.count}} item)</h6>
+                </div>
+                <div class="col-sm-2 col-3">
+                    <h5 class="colorred fontsize-14" (click)="viewAllProductsList(data.fileterDataSet.data)"><a>view all</a></h5>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="container">
+                    <ngx-slick-carousel *ngIf="data.carouselData.length > 0" class="carousel" [ngClass]="{'carouse_data3': data.carouselData.length > 3 }" #slickModal="slick-carousel"
+                        [config]="slideConfigGroup" (init)="slickInit($event)" (breakpoint)="breakpoint($event)"
+                        (afterChange)="afterChange($event)" (beforeChange)="beforeChange($event)">
+                        <div ngxSlickItem *ngFor="let tile of data.carouselData; let i=index" class="slide" (click)="viewProductDetails(tile,data.fileterDataSet.data)">
+                            <div class="row browseTiles prodImageContainer prodImageContainer_xl " [ngClass]="{'paddle_boards': (data.fileterDataSet.data.subCategoryId == '5ba0d2815a51565e545ed515') }">
+                                <img *ngIf="tile.productImages.length>0;else noImge" src="{{tile.mainImageSrc}}" alt="" width="100%">
+                            </div>
+                        <ng-template #noImge> 
+                            <div class="browseTiles_noImg prodImageContainer prodImageContainer_xl"> 
+                                <div class="carouselNoImgContainer productNoImage" >No Image Available</div> 
+                            </div> 
+                        </ng-template>
+                        <div class="d-inline-block pl-2">
+                            <h4>{{tile.productName}}
+                            </h4>
+                            <h3 *ngIf="tile.retailPrice == tile.kalaPrice;else showDefault">{{tile.kalaPrice |
+                                currency}}</h3>
+                            <ng-template #showDefault>
+                                <h3> {{tile.kalaPrice | currency}}</h3>
+                                <h3> <span class="colorred">{{tile.retailPrice | currency}}</span></h3>
+                            </ng-template>
+                        </div>
+                        </div>
+                    </ngx-slick-carousel>
+                </div>
+                <!-- <ngx-slick-carousel *ngIf="data.carouselData.length > 0" class="carousel" 
+                                #slickModal="slick-carousel" 
+                                [config]="slideConfigGroup" 
+                                (init)="slickInit($event)"
+                                (breakpoint)="breakpoint($event)"
+                                (afterChange)="afterChange($event)"
+                                (beforeChange)="beforeChange($event)">
+                <div ngxSlickItem *ngFor="let tile of data.carouselData; let i=index" class="slide" (click)="viewProductDetails(tile,data.fileterDataSet.data)">
+                        <img *ngIf="tile.productImages.length>0;else noImge" src="{{tile.productImages[0].location}}" alt="" width="100%">
+                    <ng-template #noImge> 
+                        <div class="browseTiles_noImg prodImageContainer prodImageContainer_xl"> 
+                            <div class="carouselNoImgContainer productNoImage" >No Image Available</div> 
+                        </div> 
+                    </ng-template>
+                    
+                    <div class="d-inline-block pl-2">
+                        <h4>{{tile.productName}} </h4>
+                            <h3  class="d-inline-block" *ngIf="tile.retailPrice <= tile.kalaPrice;else showDefault">{{tile.kalaPrice  | currency}}</h3>
+                            <ng-template #showDefault>
+                                <h3 class="d-inline-block" > {{tile.kalaPrice  | currency}}</h3>
+                                <h3 class="d-inline-block"> <span class="colorred"> {{tile.retailPrice | currency}}</span></h3>
+                            </ng-template>
+                    </div>
+                    
+                </div> 
+                        </ngx-slick-carousel>  -->
+            </div>
+
+
+
+        </div>
+    </div>
+</section>
+
+<section id="homeFAQ" class="py-5">
+    <a class="centerArrow nav-link" href="#FAQ">
+        <i class="fa fa-angle-down" aria-hidden="true"></i>
+    </a>
+</section>
+
+<div class="row">
+    <a class="topArrow nav-link" href="#top">
+        <i class="fa fa-angle-up" aria-hidden="true"></i>
+    </a>
+</div>
+<app-askkala></app-askkala>
